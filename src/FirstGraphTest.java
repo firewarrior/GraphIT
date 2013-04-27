@@ -3,7 +3,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 
-public class HelloWorld {
+public class FirstGraphTest {
 
 	public static void main(String[] args) {
 		DirectedGraph<String, DefaultEdge> g = new SimpleDirectedGraph<>(DefaultEdge.class);
@@ -22,6 +22,5 @@ public class HelloWorld {
 		g.addEdge(v3, v4);
 		
 		System.out.println(g);
-		
 	}
 }
