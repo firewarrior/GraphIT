@@ -1,4 +1,4 @@
-import org.jgraph.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 

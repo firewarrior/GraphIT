@@ -1,4 +1,4 @@
-import org.jgraph.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
@@ -6,7 +6,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 public class FirstGraphTest {
 
 	public static void main(String[] args) {
-		DirectedGraph<String, DefaultEdge> g = new SimpleDirectedGraph<>(DefaultEdge.class);
+		DirectedGraph<String, org.jgrapht.graph.DefaultEdge> g = new SimpleDirectedGraph<>(DefaultEdge.class);
 		String v1 = "HEAD";
 		String v2 = "master";
 		String v3 = "testing";
