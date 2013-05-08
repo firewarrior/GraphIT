@@ -5,7 +5,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 public class FirstGraphTest {
 
     public static void main(String[] args) {
-        DirectedGraph<String, DefaultEdge> g = new SimpleDirectedGraph<>(
+        DirectedGraph<String, DefaultEdge> g = new SimpleDirectedGraph<String, DefaultEdge>(
                 DefaultEdge.class);
         String v1 = "HEAD";
         String v2 = "master";
