@@ -1,5 +1,7 @@
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.ListenableGraph;
@@ -33,186 +35,276 @@ import com.mxgraph.view.mxGraph;
  * 
  */
 public class JGraphTXAdapter<V, E> extends mxGraph implements
-		GraphListener<V, E>, mxIEventListener {
+        GraphListener<V, E>, mxIEventListener {
 
-	/**
-	 * the corresponding Graph
-	 */
-	private Graph<V, E> graphT;
+    /**
+     * the corresponding Graph
+     */
+    private Graph<V, E> graphT;
 
-	/**
-	 * optional style information for vertices and edges in the mxGraph
-	 */
-	private String edgeStyle, vertexStyle;
+    /**
+     * optional style information for vertices and edges in the mxGraph
+     */
+    private String edgeStyle, vertexStyle;
 
-	/**
-	 * maps from the Graph vertices to the mxCells of the mxGraph and vice versa
-	 */
-	private Map<V, mxCell> vertexToCell = new HashMap<V, mxCell>();
-	private Map<mxCell, V> cellToVertex = new HashMap<mxCell, V>();
+    /**
+     * maps from the Graph vertices to the mxCells of the mxGraph and vice versa
+     */
+    private Map<V, mxCell> vertexToCell = new HashMap<V, mxCell>();
+    private Map<mxCell, V> cellToVertex = new HashMap<mxCell, V>();
 
-	/**
-	 * maps from the Graph edges to the mxCells of the mxGraph and vice versa
-	 */
-	private Map<E, mxCell> edgeToCell = new HashMap<E, mxCell>();
-	private Map<mxCell, E> cellToEdge = new HashMap<mxCell, E>();
+    /**
+     * maps from the Graph edges to the mxCells of the mxGraph and vice versa
+     */
+    private Map<E, mxCell> edgeToCell = new HashMap<E, mxCell>();
+    private Map<mxCell, E> cellToEdge = new HashMap<mxCell, E>();
 
-	/**
-	 * simple constructor
-	 * 
-	 * @param graphT
-	 *            the Graph to describe as an mxGraph
-	 */
-	public JGraphTXAdapter(Graph<V, E> graphT) {
-		this(graphT, null, null);
-	}
+    /**
+     * sets for propagating changes between JGraphX and JGraphT and to avoid
+     * bouncing events between the two listeners.
+     */
+    private Set<Object> jtElementBeingAdded = new HashSet<Object>();
+    private Set<Object> jtElementBeingRemoved = new HashSet<Object>();
+    private Set<mxCell> jxElementBeingAdded = new HashSet<mxCell>();
+    private Set<mxCell> jxElementBeingRemoved = new HashSet<mxCell>();
 
-	/**
-	 * constructor with optional style information for vertices and edges
-	 * 
-	 * @param graphT
-	 *            the Graph to describe as an mxGraph
-	 * @param edgeStyle
-	 *            optional style information for the mxGraph edges.
-	 *            <code>null</code> if no style is desired
-	 * @param vertexStyle
-	 *            optional style information for the mxGraph vertices.
-	 *            <code>null</code> if no style is desired
-	 */
-	public JGraphTXAdapter(Graph<V, E> graphT, String edgeStyle,
-			String vertexStyle) {
-		this.graphT = graphT;
-		this.edgeStyle = edgeStyle;
-		this.vertexStyle = vertexStyle;
-		addListener(mxEvent.ADD_CELLS, this);
-		addListener(mxEvent.REMOVE_CELLS, this);
-		if (graphT instanceof ListenableGraph<?, ?>) {
-			((ListenableGraph<V, E>) graphT).addGraphListener(this);
-		}
-		insertGraph();
-	}
+    /**
+     * simple constructor without style information
+     * 
+     * @param graphT
+     *            the Graph to describe as an mxGraph
+     */
+    public JGraphTXAdapter(Graph<V, E> graphT) {
+        this(graphT, null, null);
+    }
 
-	/**
-	 * adds all vertices and edges of the Graph to the mxGraph
-	 */
-	private void insertGraph() {
-		model.beginUpdate();
-		try {
-			for (V vertex : graphT.vertexSet()) {
-				addGraphTVertex(vertex);
-			}
-			for (E edge : graphT.edgeSet()) {
-				addGraphTEdge(edge);
-			}
-		} finally {
-			getModel().endUpdate();
-		}
+    /**
+     * constructor with optional style information for vertices and edges.
+     * registers listeners for changes in the mxGraph and, if possible for
+     * changes in the Graph.
+     * 
+     * @param graphT
+     *            the Graph to describe as an mxGraph
+     * @param edgeStyle
+     *            optional style information for the mxGraph edges.
+     *            <code>null</code> if no style is desired
+     * @param vertexStyle
+     *            optional style information for the mxGraph vertices.
+     *            <code>null</code> if no style is desired
+     */
+    public JGraphTXAdapter(Graph<V, E> graphT, String edgeStyle,
+            String vertexStyle) {
+        this.graphT = graphT;
+        this.edgeStyle = edgeStyle;
+        this.vertexStyle = vertexStyle;
+        addListener(mxEvent.ADD_CELLS, this);
+        addListener(mxEvent.REMOVE_CELLS, this);
+        if (graphT instanceof ListenableGraph<?, ?>) {
+            ((ListenableGraph<V, E>) graphT).addGraphListener(this);
+        }
+        insertGraph();
+    }
 
-	}
+    /**
+     * adds all vertices and edges of the Graph to the mxGraph
+     */
+    private void insertGraph() {
+        model.beginUpdate();
+        try {
+            for (V vertex : graphT.vertexSet()) {
+                addGraphTVertex(vertex);
+            }
+            for (E edge : graphT.edgeSet()) {
+                addGraphTEdge(edge);
+            }
+        } finally {
+            getModel().endUpdate();
+        }
 
-	/**
-	 * adds an edge from the corresponding Graph to the mxGraph
-	 * 
-	 * @param edge
-	 *            to be added
-	 */
-	private void addGraphTEdge(E edge) {
-		model.beginUpdate();
-		try {
-			V source = graphT.getEdgeSource(edge);
-			V target = graphT.getEdgeTarget(edge);
-			insertEdge(defaultParent, null, edge, edgeToCell.get(source), edgeToCell.get(target), edgeStyle);
-		} finally {
-			model.endUpdate();
-		}
-	}
+    }
 
-	/**
-	 * adds a vertex from the corresponding Graph to the mxGraph
-	 * 
-	 * @param vertex
-	 *            to be added
-	 */
-	private void addGraphTVertex(V vertex) {
-		model.beginUpdate();
-		try {
-			insertVertex(defaultParent, null, vertex, Math.random() * 100, Math.random() * 100, 20, 20, null, true);
-		}
-		finally {
-			model.endUpdate();
-		}
-	}
+    /**
+     * adds an edge from the corresponding Graph to the mxGraph
+     * 
+     * @param edge
+     *            to be added
+     */
+    private void addGraphTEdge(E edge) {
+        model.beginUpdate();
+        try {
+            V source = graphT.getEdgeSource(edge);
+            V target = graphT.getEdgeTarget(edge);
+            mxCell cell = (mxCell) createEdge(getDefaultParent(), null, edge,
+                    vertexToCell.get(source), vertexToCell.get(target),
+                    edgeStyle);
+            insertEdgeInternally(cell, vertexToCell.get(source),
+                    vertexToCell.get(target));
+        } finally {
+            model.endUpdate();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void vertexAdded(GraphVertexChangeEvent<V> e) {
-		addGraphTVertex(e.getVertex());
-	}
+    private void insertEdgeInternally(mxCell cell, mxCell source, mxCell target) {
+        jxElementBeingAdded.add(cell);
+        addCell(cell, cell.getParent(), null, source, target);
+        jxElementBeingAdded.remove(cell);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void vertexRemoved(GraphVertexChangeEvent<V> e) {
-		mxCell cell = vertexToCell.remove(e.getVertex());
-		cellToVertex.remove(cell);
-		removeCells(new Object[] { cell });
-	}
+    /**
+     * adds a vertex from the corresponding Graph to the mxGraph
+     * 
+     * @param vertex
+     *            to be added
+     */
+    private void addGraphTVertex(V vertex) {
+        model.beginUpdate();
+        try {
+            mxCell cell = (mxCell) createVertex(getDefaultParent(), null,
+                    vertex, 0, 0, 40, 40, vertexStyle);
+            insertVertexInternally(cell);
+        } finally {
+            model.endUpdate();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void edgeAdded(GraphEdgeChangeEvent<V, E> e) {
-		addGraphTEdge(e.getEdge());
-	}
+    private void insertVertexInternally(mxCell cell) {
+        jxElementBeingAdded.add(cell);
+        addCell(cell);
+        jxElementBeingAdded.remove(cell);
+    }
+    
+    private void internallyAddJGraphTVertex(V vertex) {
+        jtElementBeingAdded.add(vertex);
+        graphT.addVertex(vertex);
+        jtElementBeingAdded.remove(vertex);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void edgeRemoved(GraphEdgeChangeEvent<V, E> e) {
-		mxCell cell = edgeToCell.remove(e.getEdge());
-		cellToEdge.remove(cell);
-		removeCells(new Object[] { cell });
-	}
+    private void internallyAddJGraphTEdge(V source, V target, E edge) {
+        jtElementBeingAdded.add(edge);
+        if (target != null) {
+            graphT.addEdge(source, target, edge);
+        }
+        jtElementBeingAdded.remove(edge);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void invoke(Object sender, mxEventObject evt) {
-		Object[] cells = (Object[]) evt.getProperty("cells");
-		if (evt.getName().equals(mxEvent.ADD_CELLS)) {
-			for (Object o : cells) {
-				if (o instanceof mxCell) {
-					mxCell cell = (mxCell) o;
-					if (cell.isEdge()) {
-						edgeToCell.put((E) cell.getValue(), cell);
-						cellToEdge.put(cell, (E) cell.getValue());
-					} else if (cell.isVertex()) {
-						vertexToCell.put((V) cell.getValue(), cell);
-						cellToVertex.put(cell, (V) cell.getValue());
-					}
-				}
-			}
-		}
-		if (evt.getName().equals(mxEvent.REMOVE_CELLS)) {
-			for (Object o : cells) {
-				if (o instanceof mxCell) {
-					mxCell cell = (mxCell) o;
-					if (cell.isEdge()) {
-						edgeToCell.remove(cellToEdge.remove(cell));
-					} else if (cell.isVertex()) {
-						vertexToCell.remove(cellToVertex.remove(cell));
-					}
-				}
-			}
-		}
+    /**
+     * returns the associated mxCell for a given vertex. returns
+     * <code>null</code> if the vertex is invalid.
+     * 
+     * @return the associated cell
+     */
+    public mxCell vertexToCell(V vertex) {
+        return vertexToCell.get(vertex);
+    }
 
-	}
+    /**
+     * * returns the associated mxCell for a given vertex. returns
+     * <code>null</code> if the vertex is invalid.
+     * 
+     * @return the associated vertex
+     */
+    public V cellToVertex(mxCell cell) {
+        return cellToVertex.get(cell);
+    }
+
+    /**
+     * returns the associated mxCell for a given edge. returns <code>null</code>
+     * if the edge is invalid.
+     * 
+     * @return the associated cell
+     */
+    public mxCell edgeToCell(E edge) {
+        return edgeToCell.get(edge);
+    }
+
+    /**
+     * * returns the associated mxCell for a given vertex. returns
+     * <code>null</code> if the vertex is invalid.
+     * 
+     * @return the associated vertex
+     */
+    public E getCellToEdge(mxCell cell) {
+        return cellToEdge.get(cell);
+    }
+
+    /*
+     * Below are the event handlers for the GraphListener that will handle
+     * adding and removing vertices and edges from the mxGraph should the Graph
+     * also be a ListenableGraph.
+     */
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void vertexAdded(GraphVertexChangeEvent<V> e) {
+        V vertex = e.getVertex();
+        if (!jtElementBeingAdded.remove(vertex)) {
+            addGraphTVertex(vertex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void vertexRemoved(GraphVertexChangeEvent<V> e) {
+     // TODO yet to be implemented
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void edgeAdded(GraphEdgeChangeEvent<V, E> e) {
+        E edge = e.getEdge();
+        if (!jtElementBeingAdded.remove(edge)) {
+            addGraphTEdge(edge);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void edgeRemoved(GraphEdgeChangeEvent<V, E> e) {
+        // TODO yet to be implemented
+    }
+
+    /*
+     * Below is the event handler that adds and deletes vertices and edges from
+     * the Graph and updates the corresponding maps
+     */
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void invoke(Object sender, mxEventObject evt) {
+        Object[] cells = (Object[]) evt.getProperty("cells");
+        if (evt.getName().equals(mxEvent.ADD_CELLS)) {
+            for (Object o : cells) {
+                if (o instanceof mxCell) {
+                    mxCell cell = (mxCell) o;
+                    if (cell.isEdge()) {
+                        if (!jxElementBeingAdded.remove(cell)) {
+                            internallyAddJGraphTEdge((V) cell.getSource(),
+                                    (V) cell.getTarget(), (E) cell.getValue());
+                        }
+                        cellToEdge.put(cell, (E) cell.getValue());
+                        edgeToCell.put((E) cell.getValue(), cell);
+                    } else if (cell.isVertex()) {
+                        if (!jxElementBeingAdded.remove(cell)) {
+                            internallyAddJGraphTVertex((V) cell.getValue());
+                        }
+                        cellToVertex.put(cell, (V) cell.getValue());
+                        vertexToCell.put((V) cell.getValue(), cell);
+                    }
+                }
+            }
+        }
+        if (evt.getName().equals(mxEvent.REMOVE_CELLS)) {
+
+        }
+
+    }
 
 }
