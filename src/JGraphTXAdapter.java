@@ -144,12 +144,6 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
         }
     }
 
-    private void insertEdgeInternally(mxCell cell, mxCell source, mxCell target) {
-        jxElementBeingAdded.add(cell);
-        addCell(cell, cell.getParent(), null, source, target);
-        jxElementBeingAdded.remove(cell);
-    }
-
     /**
      * adds a vertex from the corresponding Graph to the mxGraph
      * 
@@ -166,44 +160,24 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
             model.endUpdate();
         }
     }
-
-    private void insertVertexInternally(mxCell cell) {
-        jxElementBeingAdded.add(cell);
-        addCell(cell);
-        jxElementBeingAdded.remove(cell);
-    }
     
-    private void internallyAddJGraphTVertex(V vertex) {
-        jtElementBeingAdded.add(vertex);
-        graphT.addVertex(vertex);
-        jtElementBeingAdded.remove(vertex);
-    }
-
-    private void internallyAddJGraphTEdge(V source, V target, E edge) {
-        jtElementBeingAdded.add(edge);
-        if (target != null) {
-            graphT.addEdge(source, target, edge);
-        }
-        jtElementBeingAdded.remove(edge);
-    }
-
     /**
      * returns the associated mxCell for a given vertex. returns
      * <code>null</code> if the vertex is invalid.
      * 
      * @return the associated cell
      */
-    public mxCell vertexToCell(V vertex) {
+    public mxCell getVertexToCell(V vertex) {
         return vertexToCell.get(vertex);
     }
 
     /**
-     * * returns the associated mxCell for a given vertex. returns
+     * * returns the associated vertex for a given mxCell. returns
      * <code>null</code> if the vertex is invalid.
      * 
      * @return the associated vertex
      */
-    public V cellToVertex(mxCell cell) {
+    public V getCellToVertex(mxCell cell) {
         return cellToVertex.get(cell);
     }
 
@@ -213,18 +187,72 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
      * 
      * @return the associated cell
      */
-    public mxCell edgeToCell(E edge) {
+    public mxCell getEdgeToCell(E edge) {
         return edgeToCell.get(edge);
     }
 
     /**
-     * * returns the associated mxCell for a given vertex. returns
-     * <code>null</code> if the vertex is invalid.
+     * * returns the associated mxCell for a given edge. returns
+     * <code>null</code> if the edge is invalid.
      * 
      * @return the associated vertex
      */
     public E getCellToEdge(mxCell cell) {
         return cellToEdge.get(cell);
+    }
+    
+    /*
+     * Below are the internally add and remove Methods
+     */
+    
+    private void insertEdgeInternally(mxCell cell, mxCell source, mxCell target) {
+    	jxElementBeingAdded.add(cell);
+    	addCell(cell, cell.getParent(), null, source, target);
+    	jxElementBeingAdded.remove(cell);
+    }
+
+    private void insertVertexInternally(mxCell cell) {
+        jxElementBeingAdded.add(cell);
+        addCell(cell);
+        jxElementBeingAdded.remove(cell);
+    }
+    
+    private void removeEdgeInternally(mxCell cell){
+    	jxElementBeingRemoved.add(cell);
+    	removeCells(new Object[] {cell});
+    	jxElementBeingRemoved.remove(cell);
+    }
+    
+    private void removeVertexInternally(mxCell cell){
+    	jxElementBeingRemoved.add(cell);
+    	removeCells(new Object[] {cell});
+    	jxElementBeingRemoved.remove(cell);
+    }
+    
+    private void internallyAddJGraphTEdge(V source, V target, E edge) {
+        jtElementBeingAdded.add(edge);
+        if (target != null) {
+            graphT.addEdge(source, target, edge);
+        }
+        jtElementBeingAdded.remove(edge);
+    }
+    
+    private void internallyAddJGraphTVertex(V vertex) {
+    	jtElementBeingAdded.add(vertex);
+    	graphT.addVertex(vertex);
+    	jtElementBeingAdded.remove(vertex);
+    }
+    
+    private void internallyRemoveJGraphTEdge(E edge){
+    	jtElementBeingRemoved.add(edge);
+    	graphT.removeEdge(edge);
+    	jtElementBeingRemoved.remove(edge);
+    }
+    
+    private void internallyRemoveJGraphTVertex(V vertex){
+    	jtElementBeingRemoved.add(vertex);
+    	graphT.removeVertex(vertex);
+    	jtElementBeingRemoved.remove(vertex);
     }
 
     /*
@@ -249,7 +277,10 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
      */
     @Override
     public void vertexRemoved(GraphVertexChangeEvent<V> e) {
-     // TODO yet to be implemented
+    	V vertex = e.getVertex();
+    	if(!jtElementBeingRemoved.remove(vertex)){
+    		removeVertexInternally(getVertexToCell(vertex));
+    	}
     }
 
     /**
@@ -268,7 +299,10 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
      */
     @Override
     public void edgeRemoved(GraphEdgeChangeEvent<V, E> e) {
-        // TODO yet to be implemented
+        E edge = e.getEdge();
+        if(!jtElementBeingRemoved.remove(edge)){
+        	removeEdgeInternally(getEdgeToCell(edge));
+        }
     }
 
     /*
@@ -302,6 +336,24 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
             }
         }
         if (evt.getName().equals(mxEvent.REMOVE_CELLS)) {
+        	for(Object o : cells) {
+        		if(o instanceof mxCell) {
+        			mxCell cell = (mxCell) o;
+        			if(cell.isEdge()) {
+        				if(!jxElementBeingRemoved.remove(cell)) {
+        					internallyRemoveJGraphTEdge((E) cell.getValue());
+        				}
+        				cellToEdge.remove(cell);
+        				edgeToCell.remove((E) cell.getValue());
+        			} else if (cell.isVertex()) {
+        				if(!jxElementBeingRemoved.remove(cell)) {
+        					internallyRemoveJGraphTVertex((V) cell.getValue());
+        				}
+        				cellToVertex.remove(cell);
+        				vertexToCell.remove((V) cell.getValue());
+        			}
+        		}
+        	}
 
         }
 
