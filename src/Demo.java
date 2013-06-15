@@ -74,8 +74,9 @@ public class Demo {
         frame.setSize(800, 600);
         frame.setVisible(true);
         
-        Thread.sleep(10000);
+        Thread.sleep(5000);
         
+        g.getModel().beginUpdate();
         graph.addVertex("fghjkl");
         graph.addEdge(s7, "fghjkl");
         for (Object vertex : g.getChildCells(g.getDefaultParent(), true, false)) {
@@ -83,11 +84,36 @@ public class Demo {
         }
         
         layout.execute(g.getDefaultParent());
+        g.getModel().endUpdate();
         
-//        g.insertEdge(g.getDefaultParent(), null, "test", source, target, style)
+        Thread.sleep(2000);
         
+        g.getModel().beginUpdate();
+        g.removeCells(new Object[]{g.getVertexToCell(s3)});
+        layout.execute(g.getDefaultParent());
+        g.getModel().endUpdate();
+        
+        Thread.sleep(2000);
+        
+        g.getModel().beginUpdate();
+        g.removeCells(new Object[]{g.getEdgeToCell(graph.getEdge(s1, s2))});
+        layout.execute(g.getDefaultParent());
+        g.getModel().endUpdate();
+        
+        Thread.sleep(2000);
+        
+        g.getModel().beginUpdate();
+        graph.removeVertex(s5);
+        layout.execute(g.getDefaultParent());
+        g.getModel().endUpdate();
+        
+        Thread.sleep(2000);
+        
+        g.getModel().beginUpdate();
+        graph.removeEdge(graph.getEdge(s1, s4));
+        layout.execute(g.getDefaultParent());
+        g.getModel().endUpdate();
+
+        System.out.println("Ende");
     }
-    
-    
-    
 }
