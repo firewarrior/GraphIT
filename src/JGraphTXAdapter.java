@@ -135,10 +135,10 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
             V source = graphT.getEdgeSource(edge);
             V target = graphT.getEdgeTarget(edge);
             mxCell cell = (mxCell) createEdge(getDefaultParent(), null, edge,
-                    vertexToCell.get(source), vertexToCell.get(target),
+                    getVertexToCell(source), getVertexToCell(target),
                     edgeStyle);
-            insertEdgeInternally(cell, vertexToCell.get(source),
-                    vertexToCell.get(target));
+            insertEdgeInternally(cell, getVertexToCell(source),
+                    getVertexToCell(target));
         } finally {
             model.endUpdate();
         }
@@ -207,25 +207,49 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
     
     private void insertEdgeInternally(mxCell cell, mxCell source, mxCell target) {
     	jxElementBeingAdded.add(cell);
-    	addCell(cell, cell.getParent(), null, source, target);
+    	model.beginUpdate();
+    	try {
+    	    addCell(cell, cell.getParent(), null, source, target);
+    	}
+    	finally {
+    	    model.endUpdate();
+    	}
     	jxElementBeingAdded.remove(cell);
     }
 
     private void insertVertexInternally(mxCell cell) {
         jxElementBeingAdded.add(cell);
-        addCell(cell);
+        model.beginUpdate();
+        try {
+            addCell(cell);
+        }
+        finally {
+            model.endUpdate();
+        }
         jxElementBeingAdded.remove(cell);
     }
     
     private void removeEdgeInternally(mxCell cell){
     	jxElementBeingRemoved.add(cell);
-    	removeCells(new Object[] {cell});
+    	model.beginUpdate();
+    	try {
+    	    removeCells(new Object[] {cell});
+    	}
+    	finally {
+            model.endUpdate();
+        }
     	jxElementBeingRemoved.remove(cell);
     }
     
     private void removeVertexInternally(mxCell cell){
     	jxElementBeingRemoved.add(cell);
-    	removeCells(new Object[] {cell});
+    	model.beginUpdate();
+    	try {
+    	    removeCells(new Object[] {cell});
+    	}
+    	finally {
+            model.endUpdate();
+        }
     	jxElementBeingRemoved.remove(cell);
     }
     
