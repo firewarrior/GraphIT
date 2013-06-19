@@ -28,6 +28,7 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 import java.io.*;
 import java.util.Collection;
@@ -324,6 +325,7 @@ public class ISGCIMainFrame extends JFrame
     	checkPanel.add(chooseProblem);
     	problemPanel.add(flowPanel);
     	problemPanel.add(checkPanel);
+    	
     	
     	//Zoom
     	JPanel zoomPanel = new JPanel(new GridLayout(2, 1));

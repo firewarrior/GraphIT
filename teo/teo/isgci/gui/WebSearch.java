@@ -18,7 +18,6 @@ import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 import teo.isgci.db.*;
-import teo.isgci.gc.GraphClass;
 import teo.isgci.gui.ISGCIMainFrame;
 import teo.isgci.gui.MessageDialog;
 import teo.isgci.gui.NodeList;
@@ -39,6 +38,38 @@ public class WebSearch extends JTextField implements Iterator {
     protected List<String> ergebnis;
     /** Next element to be given out by nextElement() */
     protected int count;
+
+
+    /**
+     * initialisiert Suche nach "graph"
+     * 
+     */
+    public static void main(String[] args) {
+        // baut testfenster mit eingabefeld auf
+        // und schreibt ergebnisse auf die Konsole
+        JFrame frame=new JFrame("testwindow");
+        WebSearch w = new WebSearch();
+        w.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    // Source ermitteln
+                    WebSearch source = (WebSearch)e.getSource();
+                    // Suche ausloesen
+                    try {
+                        source.search(e.getActionCommand(),false);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    // DEBUG: nach Suche Elemente auf Konsole ausgeben
+                    for (Object o : source.ergebnis)
+                        System.out.println(o);
+                    // Text loeschen
+                    source.setText("");
+                }});
+        frame.getContentPane().add(w);
+        frame.setSize(200,50);
+        frame.show();
+    }
+             
         
     public WebSearch(){
         super();
@@ -94,6 +125,22 @@ public class WebSearch extends JTextField implements Iterator {
         return true;
     }
     
+
+    public boolean hasNext() {
+        return count < ergebnis.size();
+    }
+
+    public Object next() {
+        if (count < ergebnis.size()) {
+            return DataSet.getClass(ergebnis.get(count++));
+        } else
+            throw new NoSuchElementException();
+    }
+
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
+    
     /**
      * Set the listdata of the given list using the search results.
      * If the search fails an errorbox is displayed and false is returned.
@@ -135,22 +182,6 @@ public class WebSearch extends JTextField implements Iterator {
         }
         if (ergebnis.size() > 1)
             Collections.sort(ergebnis, cmpor);
-    }
-    
-
-    public boolean hasNext() {
-        return count < ergebnis.size();
-    }
-
-    public Object next() {
-        if (count < ergebnis.size()) {
-            return DataSet.getClass(ergebnis.get(count++));
-        } else
-            throw new NoSuchElementException();
-    }
-
-    public void remove() {
-        throw new UnsupportedOperationException();
     }
 }
 

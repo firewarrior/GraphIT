@@ -32,7 +32,7 @@ import java.util.*;
  * It contains two lists in single selection mode.
  */
 public class CheckInclusionDialog extends JDialog
-        implements ActionListener, ListSelectionListener {
+        implements ActionListener, ListSelectionListener,KeyListener {
     
     protected ISGCIMainFrame parent;
     protected NodeList firstList, secondList;
@@ -47,10 +47,10 @@ public class CheckInclusionDialog extends JDialog
         super(parent, "Find Relation", false);
         this.parent = parent;
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        JPanel gridTop = new JPanel(new GridLayout(1,2));
-        JPanel gridMid = new JPanel(new GridLayout(1,2));
-        JPanel flowBottom = new JPanel(new FlowLayout(FlowLayout.CENTER,40,10));
+        JPanel mainPanel = new JPanel(new BorderLayout(20,20));
+        JPanel gridTop = new JPanel(new GridLayout(1,2,20,0));
+        JPanel gridMid = new JPanel(new GridLayout(1,2,20,0));
+        JPanel flowBottom = new JPanel(new FlowLayout(FlowLayout.CENTER,250,10));
         
         //GridFirst
         JPanel gridFirst = new JPanel(new GridLayout(2, 1));
@@ -115,6 +115,8 @@ public class CheckInclusionDialog extends JDialog
     protected void addListeners() {
         cancelButton.addActionListener(this);
         inclusionCheckButton.addActionListener(this);
+        firstSearch.addKeyListener(this);
+        secondSearch.addKeyListener(this);
         firstList.addListSelectionListener(this);
         secondList.addListSelectionListener(this);
     }
@@ -148,11 +150,7 @@ public class CheckInclusionDialog extends JDialog
             inclusionCheck();
         } else if (source == cancelButton) {
             closeDialog();
-        } else if (source == firstSearch) {
-            firstSearch.setListData(parent, firstList);
-        } else if (source == secondSearch) {
-            secondSearch.setListData(parent, secondList);
-        }
+        } 
     }
 
 
@@ -172,6 +170,25 @@ public class CheckInclusionDialog extends JDialog
         ).setVisible(true);
     }
 
-}
+	@Override
+	public void keyTyped(KeyEvent e) {
 
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if(!firstSearch.getText().equals("")){
+			firstSearch.setListData(parent, firstList);
+		}
+		if(!secondSearch.getText().equals("")){
+			secondSearch.setListData(parent, secondList);
+		}	
+	}
+
+}
 /* EOF */
