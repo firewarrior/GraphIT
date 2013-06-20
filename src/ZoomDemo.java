@@ -1,4 +1,3 @@
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +15,7 @@ import teo.isgci.gui.JGraphXCanvas;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.view.mxGraphView;
 
 public class ZoomDemo implements ActionListener {
 
@@ -84,21 +84,26 @@ public class ZoomDemo implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		double newScale = 1;
-
-		Dimension graphSize = component.getGraphControl().getSize();
-		Dimension viewPortSize = component.getViewport().getSize();
-
-		int gw = (int) graphSize.getWidth();
-		int gh = (int) graphSize.getHeight();
-
-		if (gw > 0 && gh > 0) {
-			int w = (int) viewPortSize.getWidth();
-			int h = (int) viewPortSize.getHeight();
-
-			newScale = Math.min((double) w / gw, (double) h / gh);
-		}
-
-		component.zoom(newScale);
+//		double newScale = 1;
+//
+//		Dimension graphSize = component.getGraphControl().getSize();
+//		Dimension viewPortSize = component.getViewport().getSize();
+//
+//		int gw = (int) graphSize.getWidth();
+//		int gh = (int) graphSize.getHeight();
+//
+//		if (gw > 0 && gh > 0) {
+//			int w = (int) viewPortSize.getWidth();
+//			int h = (int) viewPortSize.getHeight();
+//
+//			newScale = Math.min((double) w / gw, (double) h / gh);
+//		}
+//
+//		component.zoom(newScale);
+		
+		mxGraphView view = component.getGraph().getView();
+		int compLen = component.getWidth();
+		int viewLen = (int)view.getGraphBounds().getWidth();
+		view.setScale((double)compLen/viewLen * view.getScale());
 	}
 }
