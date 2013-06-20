@@ -81,10 +81,10 @@ public class ISGCIMainFrame extends JFrame
     protected JButton OpenBoundaryButton,addTab;
     protected JButton zoomIn,zoomOut,zoom;
     private String[] problems = {"None","Recognition","Treewidth","Cliquewidth","Cliquewidth expression",
-    							 "Weighted independent set","Independent set","Weighted clique","Clique",
-    							 "Domination","Colourability","Clique cover","3-Colourability","Cutwidth",
-    							 "Hamiltonian cycle","Hamiltonian path","Weighted feedback vertex set",
-    							 "Feedback vertex set"};
+			 "Weighted independent set","Independent set","Weighted clique","Clique",
+			 "Domination","Colourability","Clique cover","3-Colourability","Cutwidth",
+			 "Hamiltonian cycle","Hamiltonian path","Weighted feedback vertex set",
+			 "Feedback vertex set"};
     protected JComboBox<String> chooseProblem;
     
     //New added for Graph Browser
@@ -548,13 +548,10 @@ public class ISGCIMainFrame extends JFrame
             loader.showDocument("help.html");
         } else if (object == miSmallgraphs) {
             loader.showDocument("smallgraphs.html");
-        } else if (object == "miOpenProblem") {
-            JDialog open=new OpenProblemDialog(this,
-                   "treewidth");
+        } else if (object == miOpenProblem) {
+            JDialog open=new OpenProblemDialog(this);
             open.setLocation(50, 50);
-            open.pack();
             open.setVisible(true);
-            open.setSize(500, 400);
         } else if(object == chooseProblem){
         	//////////////////////////////////////////////////////////////////////////
         	// Choose Problem and color graph

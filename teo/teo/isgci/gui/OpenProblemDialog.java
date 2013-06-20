@@ -13,13 +13,18 @@ package teo.isgci.gui;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 import java.util.Collection;
 import java.util.ArrayList;
@@ -45,15 +50,17 @@ public class OpenProblemDialog extends JDialog
     protected ListGroup lists;
     protected Problem problem;
     protected JButton closeButton, showButton, drawButton;
+    private String[] problems = {"Recognition","Treewidth","Cliquewidth","Cliquewidth expression",
+			 "Weighted independent set","Independent set","Weighted clique","Clique",
+			 "Domination","Colourability","Clique cover","3-Colourability","Cutwidth",
+			 "Hamiltonian cycle","Hamiltonian path","Weighted feedback vertex set",
+			 "Feedback vertex set"};
+    protected JComboBox<String> chooseProblem;
 
 
-    public OpenProblemDialog(ISGCIMainFrame parent, String problem) {
-        super(parent, "Boundary classes for "+problem, false);
+    public OpenProblemDialog(ISGCIMainFrame parent) {
+        super(parent, "Boundary/Open classes", false);
         this.parent = parent;
-        this.problem = DataSet.getProblem(problem);
-        if (this.problem == null)
-            throw new IllegalArgumentException(
-                    "Problem "+ problem +" not found?!");
 
         lists = new ListGroup(3);
         JScrollPane scroller;
@@ -70,14 +77,27 @@ public class OpenProblemDialog extends JDialog
         c.weighty = 0.0;
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.BOTH;
-        JLabel label = new JLabel("Select one.", JLabel.LEFT);
+        JLabel label = new JLabel("Select:", JLabel.LEFT);
         gridbag.setConstraints(label, c);
         contents.add(label);
-
+        
+        //FlowLayouts for the Top Panel
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel top2 = new JPanel(new FlowLayout(FlowLayout.CENTER,85,0));
+        
+        chooseProblem = new JComboBox<String>(problems);
+        chooseProblem.addActionListener(this);
         fullBoundary = new JCheckBox("List all boundary classes");
         fullBoundary.addItemListener(this);
-        gridbag.setConstraints(fullBoundary, c);
-        contents.add(fullBoundary);
+        top2.add(fullBoundary);
+        
+        top.add(chooseProblem);
+        top.add(top2);
+        
+        c.insets = new Insets(0, 0, 0, 0);
+        gridbag.setConstraints(top, c);
+        contents.add(top);
+        
 
         //---- NPC/open/P labels ----
         c.gridwidth = 1;
@@ -125,9 +145,6 @@ public class OpenProblemDialog extends JDialog
         pList.addListSelectionListener(this);
         gridbag.setConstraints(scroller, c);
         contents.add(scroller);
-
-        initListOpen();
-        initListsMinMax();
 
         JPanel buttonPanel = new JPanel();
         drawButton = new JButton("Draw");
@@ -250,6 +267,14 @@ inP:
                     getNodes(lists.getSelectedNode()));
             setCursor(oldcursor);
             closeDialog();
+            
+            //Load information into informationbar
+			List<GraphClass> names = parent.graphCanvas.getClasses();
+        	if (!names.isEmpty()) {
+        		Collections.sort(names, new LessLatex());
+        		parent.classesList.setListData(names);
+        	}
+        	parent.problem.revalidate();
         } else if (source == showButton) {
             JDialog info = new GraphClassInformationDialog(
                     parent, lists.getSelectedNode());
@@ -257,6 +282,15 @@ inP:
             info.pack();
             info.setSize(800, 600);
             info.setVisible(true);
+            
+        } else if (source == chooseProblem){
+        	this.problem = DataSet.getProblem(chooseProblem.getSelectedItem().toString());
+        	if (this.problem == null)
+        		throw new IllegalArgumentException(
+        				"Problem "+ problem +" not found?!");
+        	initListOpen();
+        	initListsMinMax();
+        	
         } else if (source == closeButton) {
             closeDialog();
         }

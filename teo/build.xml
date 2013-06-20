@@ -66,11 +66,13 @@
 <!-- classpaths -->
 <property name="jarlib.dir" location="../lib"/>
 <property name="jgrapht.jar" location="${jarlib.dir}/jgrapht.jar"/>
+<property name="jgraphx.jar" location="${jarlib.dir}/jgraphx.jar"/>
 
 <path id="compile.classpath">
    <pathelement location="${jarlib.dir}/getopt.jar"/>
    <pathelement location="${jarlib.dir}/mouse.jar"/>
    <pathelement location="${jgrapht.jar}"/>
+   <pathelement location="${jgraphx.jar}"/>
 </path>
 
 <path id="run.classpath">
