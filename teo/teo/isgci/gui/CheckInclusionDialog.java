@@ -182,12 +182,8 @@ public class CheckInclusionDialog extends JDialog
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(!firstSearch.getText().equals("")){
 			firstSearch.setListData(parent, firstList);
-		}
-		if(!secondSearch.getText().equals("")){
 			secondSearch.setListData(parent, secondList);
-		}	
 	}
 
 }

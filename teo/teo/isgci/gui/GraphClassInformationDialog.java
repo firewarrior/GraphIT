@@ -17,9 +17,11 @@ import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Container;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
@@ -39,7 +41,7 @@ import teo.isgci.util.LessLatex;
  * sub- and equivalent classes.
  */
 public class GraphClassInformationDialog extends JDialog
-        implements ActionListener, ListSelectionListener {
+        implements ActionListener, ListSelectionListener,KeyListener {
 
     protected ISGCIMainFrame parent;
     protected NodeList classesList;
@@ -63,142 +65,103 @@ public class GraphClassInformationDialog extends JDialog
 
         Container contents = getContentPane();
         Dimension listdim = new Dimension(150, 150);
-        JPanel p;
-        JLabel label;
-
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        contents.setLayout(gridbag);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.fill = GridBagConstraints.BOTH;
-
-        //---- Graph class ----
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.fill = GridBagConstraints.NONE;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(5, 5, 0, 0);
-        label = new JLabel("Graph Class:", JLabel.LEFT);
-        gridbag.setConstraints(label, c);
-        contents.add(label);
-
-        //---- Filter ----
-        label = new JLabel("Filter: ", JLabel.RIGHT);
-        c.anchor = GridBagConstraints.EAST;
-        c.gridwidth = 1;
-        gridbag.setConstraints(label, c);
-        contents.add(label);
-
+        
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel mid = new JPanel(new GridLayout(1,2,20,20));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER,70,10));
+        
+        //---- Create Top Panel ----
         search = new WebSearch();
-        search.addActionListener(this);
-        c.weightx = 1.0;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(5,5,0,5);
-        gridbag.setConstraints(search, c);
-        contents.add(search);
+        search.setText("Search...");
+        search.setPreferredSize(new Dimension(180,25));
+        search.addKeyListener(this);
+        top.add(search);
 
-        //---- Graph Class list ----
-        c.insets = new Insets(5, 5, 5, 5);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+
+        //---- Mid Panel ----
+        // GraphList
         classesList = new NodeList(parent.latex);
         classesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroller = new JScrollPane(classesList);
         scroller.setPreferredSize(listdim);
         scroller.setMinimumSize(listdim);
-        gridbag.setConstraints(scroller, c);
-        contents.add(scroller);
+        mid.add(scroller);
 
         //---- Complexity ----
-        p = new JPanel(new BorderLayout());
+        JPanel p = new JPanel(new BorderLayout());
+        JPanel problem = new JPanel(new BorderLayout());
+        problem.setPreferredSize(new Dimension(300,292));
         problems = new JTable(new ProblemsModel());
-        p.add(problems.getTableHeader(), BorderLayout.NORTH);
-        p.add(problems, BorderLayout.SOUTH);
+        problem.add(problems.getTableHeader(), BorderLayout.NORTH);
+        problem.add(problems, BorderLayout.CENTER);
         problems.setShowVerticalLines(false);
-        problems.getTableHeader().setFont(label.getFont());
         problems.setBorder(
                 BorderFactory.createMatteBorder(0,1,0,1,Color.black));
-        c.gridwidth = 4;
-        c.weighty = 0.0;
-        c.insets = new Insets(5, 5, 10, 5);
-        gridbag.setConstraints(p, c);
-        contents.add(p);
         
-        // Fold line
-        p = new JPanel();
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.insets = new Insets(0, 0, 0, 0);
-        gridbag.setConstraints(p, c);
-        contents.add(p);
-
+        p.add(problem,BorderLayout.NORTH);
+        
         //---- Sub/super/equ classes ----
-        c.gridwidth = 2;
-        c.insets = new Insets(0, 5, 0, 0);
-        c.weighty = 0.0;
+        JPanel grid = new JPanel(new GridLayout(1,3,10,0));
+        
+        JPanel superP = new JPanel(new BorderLayout(0,5));
         JLabel superLabel = new JLabel("Superclasses:", JLabel.LEFT);
-        gridbag.setConstraints(superLabel, c);
-        contents.add(superLabel);
-
-        JLabel equLabel = new JLabel("Equivalent Classes:", JLabel.LEFT);
-        gridbag.setConstraints(equLabel, c);
-        contents.add(equLabel);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        JLabel subLabel = new JLabel("Subclasses:", JLabel.LEFT);
-        gridbag.setConstraints(subLabel, c);
-        contents.add(subLabel);
-
-        c.insets = new Insets(0, 5, 5, 5);
-        c.gridwidth = 2;
-        c.weighty = 1.0;
         supClassesList = new NodeList(parent.latex);
         scroller = new JScrollPane(supClassesList);
         scroller.setPreferredSize(listdim);
         scroller.setMinimumSize(listdim);
-        gridbag.setConstraints(scroller, c);
-        contents.add(scroller);
-
+        superP.add(superLabel,BorderLayout.NORTH);
+        superP.add(scroller,BorderLayout.CENTER);
+        
+        JPanel equP = new JPanel(new BorderLayout(0,5));
+        JLabel equLabel = new JLabel("Equivalent Classes:", JLabel.LEFT);
         equClassesList = new NodeList(parent.latex);
         scroller = new JScrollPane(equClassesList);
         scroller.setPreferredSize(listdim);
         scroller.setMinimumSize(listdim);
-        gridbag.setConstraints(scroller, c);
-        contents.add(scroller);
+        equP.add(equLabel,BorderLayout.NORTH);
+        equP.add(scroller,BorderLayout.CENTER);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        JPanel subP = new JPanel(new BorderLayout(0,5));
+        JLabel subLabel = new JLabel("Subclasses:", JLabel.LEFT);
         subClassesList = new NodeList(parent.latex);
         scroller = new JScrollPane(subClassesList);
         scroller.setPreferredSize(listdim);
         scroller.setMinimumSize(listdim);
-        gridbag.setConstraints(scroller, c);
-        contents.add(scroller);
+        subP.add(subLabel,BorderLayout.NORTH);
+        subP.add(scroller,BorderLayout.CENTER);
+
+        //Set to GridLayout
+        grid.add(superP);
+        grid.add(equP);
+        grid.add(subP);
+        
+        //Add grid to p Panel
+        p.add(grid, BorderLayout.SOUTH);
+        mid.add(p);
+        
+        //---- Bottom Panel ----
+        classButton = new JButton("Class details");
+        bottom.add(classButton);
+        inclButton = new JButton("Inclusion info");
+        bottom.add(inclButton);
+        drawButton = new JButton ("Draw");
+        bottom.add(drawButton);
+        okButton = new JButton("Close");
+        bottom.add(okButton);
+        
+        //---- Main Panel ----
+        mainPanel.add(top,BorderLayout.NORTH);
+        mainPanel.add(mid,BorderLayout.CENTER);
+        mainPanel.add(bottom,BorderLayout.SOUTH);
+        
+        contents.add(mainPanel);
 
         lists = new ListGroup(3);
         lists.add(subClassesList);
         lists.add(supClassesList);
         lists.add(equClassesList);
 
-        //---- Buttons ----
-        JPanel okPanel = new JPanel();
-        classButton = new JButton("Class details");
-        okPanel.add(classButton);
-        inclButton = new JButton("Inclusion info");
-        okPanel.add(inclButton);
-        drawButton = new JButton ("Draw");
-        okPanel.add(drawButton);
-        okButton = new JButton("Close");
-        okPanel.add(okButton);
-        c.weighty = 0.0;
-        c.insets = new Insets(5,0,0,0);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(okPanel, c);
-        contents.add(okPanel);
 
         classesList.setListData(DataSet.getClasses());
 
@@ -318,11 +281,26 @@ public class GraphClassInformationDialog extends JDialog
                 new GraphClassSelectionDialog(parent);
             draw.select(classesList.getSelectedNode());
             draw.setVisible(true);
-        } else if (source == search) {
-            search.setListData(parent, classesList);
-            showNode();
-        }
+        } 
     }
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		search.setListData(parent, classesList);
+		
+	}
 
 }
 

@@ -16,6 +16,7 @@ import java.net.*;
 import java.util.*;
 //import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import teo.isgci.db.*;
 import teo.isgci.gui.ISGCIMainFrame;
@@ -183,6 +184,7 @@ public class WebSearch extends JTextField implements Iterator {
         if (ergebnis.size() > 1)
             Collections.sort(ergebnis, cmpor);
     }
+
 }
 
 /* EOF */
