@@ -153,6 +153,7 @@ public class GraphClassSelectionDialog extends JDialog
             Cursor oldcursor = parent.getCursor();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             parent.graphCanvas.drawHierarchy(getNodes());
+            parent.getxCanvas().drawGraph(getNodes());
             
             for (Object o : classesList.getSelectedValues()) {
                 GraphClass gc = (GraphClass) o;

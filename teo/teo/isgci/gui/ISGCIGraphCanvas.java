@@ -10,31 +10,29 @@
 
 package teo.isgci.gui;
 
-import java.awt.Component;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.Collection;
-import java.util.Set;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import org.xml.sax.SAXException;
-import org.jgrapht.VertexFactory;
-import org.jgrapht.graph.SimpleDirectedGraph;
+import java.util.Set;
+
 import org.jgrapht.graph.DefaultEdge;
-import teo.isgci.db.*;
+import org.jgrapht.graph.SimpleDirectedGraph;
+
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+
+import teo.isgci.db.Algo;
+import teo.isgci.db.DataSet;
+import teo.isgci.gc.GraphClass;
+import teo.isgci.grapht.GAlg;
+import teo.isgci.grapht.ISGCIVertexFactory;
+import teo.isgci.grapht.Inclusion;
 import teo.isgci.problem.Complexity;
 import teo.isgci.problem.Problem;
-import teo.isgci.xml.GraphMLWriter;
 import teo.isgci.util.IntFunction;
-import teo.isgci.gc.GraphClass;
-import teo.isgci.grapht.ISGCIVertexFactory;
-import teo.isgci.grapht.GAlg;
-import teo.isgci.grapht.Inclusion;
+import teo.isgci.util.JGraphTXAdapter;
 
 /**
  * A canvas that can display an inclusion graph.
@@ -71,12 +69,11 @@ public class ISGCIGraphCanvas extends
      */
     protected GraphView<Set<GraphClass>,DefaultEdge> addGraph(
             SimpleDirectedGraph<Set<GraphClass>,DefaultEdge> g) {
-        GraphView<Set<GraphClass>,DefaultEdge> gv = super.addGraph(g);
-        for (NodeView<Set<GraphClass>,DefaultEdge> nv : gv.getNodeViews()) {
-            nv.setColor(complexityColor(nv.getNode()));
-            nv.setNameAndLabel(Algo.getName(nv.getNode(), namingPref)); 
-        }
-        return gv;
+        JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter = new JGraphTXAdapter<Set<GraphClass>, DefaultEdge>(g, "noLabel=1", "noLabel=1");
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(adapter);
+        layout.execute(adapter.getDefaultParent());
+        setGraph(adapter);
+        return null;
     }
     
 

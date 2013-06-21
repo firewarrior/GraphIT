@@ -10,28 +10,33 @@
 
 package teo.isgci.gui;
 
-import java.awt.Component;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.Collection;
-import java.util.Set;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import org.xml.sax.SAXException;
-import org.jgrapht.graph.SimpleDirectedGraph;
+
 import org.jgrapht.VertexFactory;
-import teo.isgci.xml.GraphMLWriter;
+import org.jgrapht.graph.SimpleDirectedGraph;
+import org.xml.sax.SAXException;
+
 import teo.isgci.util.IntFunction;
+import teo.isgci.xml.GraphMLWriter;
+
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.view.mxGraph;
 
 /**
  * A canvas that can display a graph.
  */
-public class GraphCanvas<V,E> extends JPanel
+public class GraphCanvas<V,E> extends mxGraphComponent
         implements MouseListener, MouseMotionListener {
 
     public static final int CANVASWIDTH = 900,          // Initial canvas size
@@ -59,7 +64,7 @@ public class GraphCanvas<V,E> extends JPanel
             LatexGraphics latexgraphics,
             VertexFactory<V> vertexFactory,
             IntFunction<V> widthFunc) {
-        super();
+        super(new mxGraph());
         this.parent = parent;
         this.latexgraphics = latexgraphics;
         this.vertexFactory = vertexFactory;
