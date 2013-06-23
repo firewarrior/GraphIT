@@ -627,7 +627,9 @@ public class ISGCIMainFrame extends JFrame
 	@Override
 	public void keyReleased(KeyEvent e) {
 		search.setListDataSearch(this, classesList);
-	}    
+	}
+	
+	
 	
 }
 
