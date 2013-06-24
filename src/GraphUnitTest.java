@@ -148,10 +148,13 @@ public class GraphUnitTest {
 		try {
 			mxCell modular = graphX.getVertexToCell("modular");
 			mxCell cubical = graphX.getVertexToCell("cubical");
+			System.out.println("Modular is Vertex: " + modular.isVertex());
+			System.out.println("Cubical is Vertex: " + cubical.isVertex());
 			graphX.insertEdge(graphX.getDefaultParent(), null, "", modular, cubical);
 		} finally {
 			graphX.getModel().endUpdate();
 		}
+		System.out.println(edgeSet(graphX));
 		assertEquals(vertexSet(graphX).toString(),
 				new TreeSet<String>(graphT.vertexSet()).toString());
 		Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
@@ -173,7 +176,68 @@ public class GraphUnitTest {
 		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
 	}
 	
-
+	@Test
+	public void graphXEdgeDeletionTest(){
+		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
+		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+				graphT, "noLabel=1",
+				"shape=triangle;perimeter=trianglePerimeter");
+		graphX.getModel().beginUpdate();
+		try {
+			mxCell tree = graphX.getVertexToCell("tree convex");
+			mxCell star = graphX.getVertexToCell("star convex");
+//			System.out.println(((mxCell)graphX.getEdgesBetween(star, tree)[0]).isEdge());
+			graphX.removeCells((graphX.getEdgesBetween(star, tree)));
+		} finally {
+			graphX.getModel().endUpdate();
+		}
+//		System.out.println(edgeSet(graphX));
+//		System.out.println(graphT.edgeSet());
+		assertEquals(vertexSet(graphX).toString(),
+				new TreeSet<String>(graphT.vertexSet()).toString());
+		Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
+		edgesT.addAll(graphT.edgeSet());
+		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
+	}
+	
+	@Test
+	public void graphTEdgeDeletionTest(){
+		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
+		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+				graphT, "noLabel=1",
+				"shape=triangle;perimeter=trianglePerimeter");
+		graphT.removeEdge("modular", "cubical");
+		assertEquals(vertexSet(graphX).toString(),
+				new TreeSet<String>(graphT.vertexSet()).toString());
+		Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
+		edgesT.addAll(graphT.edgeSet());
+		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
+	}
+	
+	@Test
+	public void graphXDoesNotPropagate(){
+		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
+		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+				graphT, "noLabel=1",
+				"shape=triangle;perimeter=trianglePerimeter");
+		graphX.getModel().beginUpdate();
+		try {
+			mxCell tree = graphX.getVertexToCell("tree convex");
+			mxCell star = graphX.getVertexToCell("star convex");
+//			System.out.println(((mxCell)graphX.getEdgesBetween(star, tree)[0]).isEdge());
+			graphX.getModel().remove((graphX.getEdgesBetween(star, tree)[0]));
+		} finally {
+			graphX.getModel().endUpdate();
+		}
+		System.out.println(edgeSet(graphX));
+		System.out.println(graphT.edgeSet());
+		assertEquals(vertexSet(graphX).toString(),
+				new TreeSet<String>(graphT.vertexSet()).toString());
+		Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
+		edgesT.addAll(graphT.edgeSet());
+		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
+	}
+	
 	/**
 	 * return all vertices
 	 */
