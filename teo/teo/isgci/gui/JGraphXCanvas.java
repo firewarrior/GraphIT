@@ -16,6 +16,7 @@ import teo.isgci.db.Algo.NamePref;
 import teo.isgci.gc.GraphClass;
 import teo.isgci.problem.Problem;
 import teo.isgci.util.JGraphTXAdapter;
+import teo.isgci.util.Latex2JHtml;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
@@ -39,16 +40,17 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	}
 	
 	/**
-     * Set all nodes to their prefered names.
+     * Set all nodes to their prefered names and writes the Latex-Label
      */
     public void setNamingPref(NamePref pref) {
+    	Latex2JHtml converter = new Latex2JHtml();
     	namingPref = pref;
     	adapter.getModel().beginUpdate();
     	try {
     		for (Object o : adapter.getChildCells(adapter.getDefaultParent(), true, false)) {
     			if (o instanceof mxCell) {
     				mxCell cell = (mxCell) o;
-    				cell.setValue(Algo.getName(adapter.getCellToVertex(cell), namingPref));
+    				cell.setValue(converter.html(Algo.getName(adapter.getCellToVertex(cell), namingPref)));
     				adapter.updateCellSize(cell, true);
     			}
     		}
@@ -89,6 +91,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	    adapter.setConnectableEdges(false);
 	    adapter.setAllowDanglingEdges(false);
 	    adapter.setCellsEditable(false);
+	    adapter.setHtmlLabels(true);
 	    component.setConnectable(false);
 	    setNamingPref(namingPref);
 	    component.setGraph(adapter);
