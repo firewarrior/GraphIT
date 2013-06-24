@@ -10,3 +10,7 @@ Softwareproject University of Konstanz Summer Term 2013
    - Zoom Buttons anbinden
    - Gruppierung von Knoten + ausblenden!
    
+Done:
+   - LaTeX name for vertexes 
+   
+   
