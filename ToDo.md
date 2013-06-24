@@ -11,6 +11,6 @@ Softwareproject University of Konstanz Summer Term 2013
    - Gruppierung von Knoten + ausblenden!
    
 Done:
-   - LaTeX name for vertexes 
+   - LaTeX name for vertexes (Skoell)
    
    
