@@ -29,6 +29,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 import java.io.*;
 import java.util.Collection;
@@ -68,7 +69,7 @@ public class ISGCIMainFrame extends JFrame
     // The menu
     protected JMenuItem miNew, miExport, miExit;
     protected JMenuItem miNaming, miDrawUnproper;
-    protected JCheckBoxMenuItem miInformationBar;
+    protected JCheckBoxMenuItem miInformationBar,miLegend;
     protected JMenuItem miCheckInclusion,miSelectGraphClasses;
     protected JMenuItem miGraphClassInformation,miOpenProblem;
     protected JMenuItem miSmallgraphs, miHelp, miAbout;
@@ -77,7 +78,7 @@ public class ISGCIMainFrame extends JFrame
     
     // Statusleiste
     protected JPanel problem;
-    private boolean showStatus = false,checkStatus = true;
+    private boolean showStatus = false,checkStatus = true,hideLegend = false;;
     protected JButton OpenBoundaryButton,addTab;
     protected JButton zoomIn,zoomOut,zoom;
     private String[] problems = {"None","Recognition","Treewidth","Cliquewidth","Cliquewidth expression",
@@ -89,10 +90,14 @@ public class ISGCIMainFrame extends JFrame
     
     //New added for Graph Browser
 	protected NodeList classesList;
+	protected LegendPanel legend;
 
     // This is where the drawing goes.
     protected JScrollPane drawingPane;
     public ISGCIGraphCanvas graphCanvas;
+    
+    //Global Settings
+    protected Dimension size = new Dimension(800,600);
 
 
     /** Creates the frame.
@@ -125,8 +130,7 @@ public class ISGCIMainFrame extends JFrame
             closeWindow();
         }
         
-        //SetSize for the GUI
-        setSize(800, 600);
+        setSize(size);
         //setMinimumSize(getSize());
         
         //Create JMenu
@@ -144,6 +148,9 @@ public class ISGCIMainFrame extends JFrame
         
         //Adding canvas to main panel
         getContentPane().add(canvas);
+        
+        //Add legend into Canvas
+        createLegend();
      
         registerListeners();
         setLocation(20, 20);
@@ -198,13 +205,11 @@ public class ISGCIMainFrame extends JFrame
         miNaming.addActionListener(this);
         miDrawUnproper.addItemListener(this);
         miCheckInclusion.addActionListener(this);
-        //miDelete.addActionListener(this);
-        //miSelectAll.addActionListener(this);
-        //miOpenProblem.addActionListener(this);
         miSmallgraphs.addActionListener(this);
         miHelp.addActionListener(this);
         miAbout.addActionListener(this);
         miInformationBar.addItemListener(this);
+        miLegend.addItemListener(this);
         miSelectGraphClasses.addActionListener(this);
         miGraphClassInformation.addActionListener(this);
         miOpenProblem.addActionListener(this);
@@ -235,9 +240,12 @@ public class ISGCIMainFrame extends JFrame
         //Tabs
         JTabbedPane tabs = new JTabbedPane();
         
-        tabs.addTab("We are Legend =)", problem);
+        tabs.addTab("GraphIT ruleZ the WorlD !", problem);
         JPanel panel = new JPanel();
-        addTab = new JButton("+");
+        //ImageIcon informationArrow = new ImageIcon("/images/informationarrow.png");
+        JButton click = new JButton("+");
+
+        addTab = click;
         addTab.setOpaque(false); //
         addTab.setBorder(null);
         addTab.setContentAreaFilled(false);
@@ -252,7 +260,6 @@ public class ISGCIMainFrame extends JFrame
 		return tabs;
     }
     
-
     /**
      * Creates the menu system.
      * @return The created JMenuBar
@@ -282,8 +289,9 @@ public class ISGCIMainFrame extends JFrame
                 new JCheckBoxMenuItem("Mark unproper inclusions", true));
         setMenu.add(miInformationBar =
                 new JCheckBoxMenuItem("Hide information bar", true));
+        setMenu.add(miLegend =
+                new JCheckBoxMenuItem("Hide legend", false));
         mainMenuBar.add(setMenu);
-
 
 
         helpMenu = new JMenu("Help");
@@ -313,35 +321,31 @@ public class ISGCIMainFrame extends JFrame
     	JPanel bottomPanel = new JPanel(new BorderLayout(30,30));
     	
     	//Problem
-    	JPanel problemPanel = new JPanel(new GridLayout(2, 1));
-    	JPanel flowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+    	JPanel problemPanel = new JPanel();
     	JPanel checkPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-    	JLabel l_prob = new JLabel("Problem:");
+    	TitledBorder prob = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black),"Problem:");
     	JLabel l_color = new JLabel("Color for");
     	chooseProblem = new JComboBox<String>(problems);
     	
-    	flowPanel.add(l_prob);
     	checkPanel.add(l_color);
     	checkPanel.add(chooseProblem);
-    	problemPanel.add(flowPanel);
     	problemPanel.add(checkPanel);
+    	problemPanel.setBorder(prob);
     	
     	
     	//Zoom
-    	JPanel zoomPanel = new JPanel(new GridLayout(2, 1));
-    	JPanel flowZoomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-    	JPanel zoomButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 0));
-    	JLabel l_zoom = new JLabel("Zoom:");
+    	TitledBorder zoomBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black),"Zoom:");
+    	JPanel zoomPanel = new JPanel();
+    	JPanel zoomButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,0));
     	zoomIn = new JButton("+");
     	zoomOut = new JButton("-");
     	zoom = new JButton("out");
     	
-    	flowZoomPanel.add(l_zoom);
-    	zoomPanel.add(flowZoomPanel);
     	zoomButtonPanel.add(zoomIn);
     	zoomButtonPanel.add(zoomOut);
     	zoomButtonPanel.add(zoom);
     	zoomPanel.add(zoomButtonPanel);
+    	zoomPanel.setBorder(zoomBorder);
     	
     	//Set on bottom Panel
     	bottomPanel.add(problemPanel,BorderLayout.NORTH);
@@ -357,6 +361,15 @@ public class ISGCIMainFrame extends JFrame
         return mainPanel;
     }
    
+    /**
+     * Creates the legend for the different colors
+     * 
+     */
+    protected void createLegend(){
+    	legend = new LegendPanel(this);
+    	graphCanvas.add(legend);
+    }
+
     
     /**
      * Creates the search browser with scrollbars at the bottom and at the
@@ -522,28 +535,7 @@ public class ISGCIMainFrame extends JFrame
         } else if (object == miAbout) {
             JDialog select = new AboutDialog(this);
             select.setLocation(50, 50);
-            select.setVisible(true);
-       
-//        } else if (object == draw) {
-//        	//////////////////////////////////////////////////////////////////////////
-//        	// Drawing Graph
-//        	//////////////////////////////////////////////////////////////////////////
-//        	Cursor oldcursor = this.getCursor();
-//            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//            this.graphCanvas.drawHierarchy(getNodes());
-//            
-//            for (Object o : classesList.getSelectedValues()) {
-//                GraphClass gc = (GraphClass) o;
-//                NodeView v = this.graphCanvas.findNode(gc);
-//                if (v != null)
-//                    v.setNameAndLabel(gc.toString());
-//            }
-//
-//            System.out.println(this.graphCanvas.getSize());
-//            this.graphCanvas.updateBounds();
-//            
-//            setCursor(oldcursor);
-//        	 
+            select.setVisible(true);       	 
         } else if (object == miHelp) {
             loader.showDocument("help.html");
         } else if (object == miSmallgraphs) {
@@ -591,6 +583,15 @@ public class ISGCIMainFrame extends JFrame
 				problem.setPreferredSize(new Dimension(300,200));
 				problem.revalidate();
         		checkStatus = false;
+        	}
+        }else if (object == miLegend){
+        	//Hide Information bar
+        	if(miLegend.getState()){
+        		legend.setVisible(false);
+        		hideLegend = false;
+        	}else{
+        		legend.setVisible(true);
+        		hideLegend = true;
         	}
         }
     }
