@@ -68,13 +68,11 @@ public class GraphUnitTest {
 	 * Test whether
 	 */
 	@Test
-	public void vertexDeletionTest() {
+	public void graphXVertexDeletionTest() {
 		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
 		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
 				graphT, "noLabel=1",
 				"shape=triangle;perimeter=trianglePerimeter");
-		graphT.removeVertex("modular"); // Test if deletion in JGraphT also
-										// occurs in JGraphX
 		graphX.getModel().beginUpdate();
 		try {
 			graphX.getModel().remove("cubical"); // Test if deletion in JGraphX
@@ -88,18 +86,31 @@ public class GraphUnitTest {
 		edgesT.addAll(graphT.edgeSet());
 		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
 	}
-
+	
 	@Test
-	public void vertexAdditionTest() {
+	public void graphTVertexDeletionTest(){
 		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
 		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
 				graphT, "noLabel=1",
 				"shape=triangle;perimeter=trianglePerimeter");
-		graphT.addVertex("foo"); // Test if addition in JGraphT also occurs in
-									// JGraphX
+		graphT.removeVertex("modular"); // Test if deletion in JGraphT also
+										// occurs in JGraphX
+		assertEquals(vertexSet(graphX).toString(),
+				new TreeSet<String>(graphT.vertexSet()).toString());
+		Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
+		edgesT.addAll(graphT.edgeSet());
+		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
+	}
+
+	@Test
+	public void graphXVertexAdditionTest() {
+		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
+		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+				graphT, "noLabel=1",
+				"shape=triangle;perimeter=trianglePerimeter");
 		graphX.getModel().beginUpdate();
 		try {
-			graphX.insertVertex(graphX.getDefaultParent(), null, "Bar", 10, 10,
+			graphX.insertVertex(graphX.getDefaultParent(), null, "fooBar", 10, 10,
 					10, 0); // Test if addition in JGraphX also occurs in
 							// JgraphT
 		} finally {
@@ -111,6 +122,57 @@ public class GraphUnitTest {
 		edgesT.addAll(graphT.edgeSet());
 		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
 	}
+	
+	@Test
+	public void graphTVertexAdditionTest(){
+		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
+		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+				graphT, "noLabel=1",
+				"shape=triangle;perimeter=trianglePerimeter");
+		graphT.addVertex("foo"); // Test if addition in JGraphT also occurs in
+		// JGraphX
+		assertEquals(vertexSet(graphX).toString(),
+				new TreeSet<String>(graphT.vertexSet()).toString());
+		Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
+		edgesT.addAll(graphT.edgeSet());
+		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
+	}
+	
+	@Test
+	public void graphXEdgeAdditionTest(){
+		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
+		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+				graphT, "noLabel=1",
+				"shape=triangle;perimeter=trianglePerimeter");
+		graphX.getModel().beginUpdate();
+		try {
+			mxCell modular = graphX.getVertexToCell("modular");
+			mxCell cubical = graphX.getVertexToCell("cubical");
+			graphX.insertEdge(graphX.getDefaultParent(), null, "", modular, cubical);
+		} finally {
+			graphX.getModel().endUpdate();
+		}
+		assertEquals(vertexSet(graphX).toString(),
+				new TreeSet<String>(graphT.vertexSet()).toString());
+		Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
+		edgesT.addAll(graphT.edgeSet());
+		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
+	}
+	
+	@Test
+	public void graphTEdgeAdditionTest(){
+		ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
+		JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+				graphT, "noLabel=1",
+				"shape=triangle;perimeter=trianglePerimeter");
+		graphT.addEdge("modular", "cubical");
+		assertEquals(vertexSet(graphX).toString(),
+				new TreeSet<String>(graphT.vertexSet()).toString());
+		Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
+		edgesT.addAll(graphT.edgeSet());
+		assertEquals(edgesT.toString(), edgeSet(graphX).toString());
+	}
+	
 
 	/**
 	 * return all vertices
