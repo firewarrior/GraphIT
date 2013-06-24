@@ -31,7 +31,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
     private Algo.NamePref namingPref = Algo.NamePref.BASIC;
     private Problem problem;
-    private Set<Set<GraphClass>> vertexes;
+    private List<String> vertexNames;
+    private List<GraphClass> graphClassList;
 
 	public JGraphXCanvas() {
 		component.addMouseListener(this);
@@ -77,6 +78,16 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     public void drawGraph(Collection<GraphClass> classes) {
         SimpleDirectedGraph<Set<GraphClass>, DefaultEdge> g = Algo.createHierarchySubgraph(classes);
         setGraph(g);
+        
+        //Maybe needed for Filter-Function in Dialogs (see GraphCanvas)
+        graphClassList = new ArrayList<GraphClass>();
+        for (GraphClass gc : classes)
+        	graphClassList.add(gc);
+            
+    }
+    
+    public List<GraphClass> getGraphClassList(){
+    	return graphClassList;
     }
 	
     public void setGraph(Graph<Set<GraphClass>, DefaultEdge> graph) {
@@ -96,9 +107,24 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	    adapter.setCellsEditable(false);
 	    adapter.setHtmlLabels(true);
 	    component.setConnectable(false);
+	    vertexNames = safeNames(graph.vertexSet());
 	    setNamingPref(namingPref);
 	    component.setGraph(adapter);
-	    vertexes = graph.vertexSet();
+	}
+
+    
+    /*
+     * Saves the vertex-names of the drawn graph
+     */
+    
+	private List<String> safeNames(Set<Set<GraphClass>> vertexSet) {
+		List<String> result = new ArrayList<String>();
+        for (Set<GraphClass> ver : vertexSet) {
+            for (GraphClass gc : ver)
+                    result.add(gc.toString());
+        }
+        
+        return result;
 	}
 
 	@Override
@@ -145,13 +171,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		
 	}
 	
-	public List<String> getNames() {
-        List<String> result = new ArrayList<String>();
-        for (Set<GraphClass> ver : vertexes) {
-            for (GraphClass gc : ver)
-                    result.add(gc.toString());
-        }
-        return result;
+	public List<String> getNames() { 
+        return vertexNames;
     }
 
 }

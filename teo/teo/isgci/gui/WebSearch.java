@@ -150,7 +150,7 @@ public class WebSearch extends JTextField implements Iterator {
     public boolean setListDataSearch(ISGCIMainFrame parent, NodeList list) {
         String text = getText();
         if (text.length() == 0) {
-            list.setListData(parent.graphCanvas.getClasses());
+            list.setListData(parent.getxCanvas().getGraphClassList());
         } else {
             boolean error = false;
             try {
