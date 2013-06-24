@@ -4,6 +4,7 @@ GraphIT
 Softwareproject University of Konstanz Summer Term 2013
 
 Überarbeitung ISGCI:
+   - Tooltips
    - Color for Problem
    - draw Dialoge (find Realtion | Boundary/OpenClass)
    - Zoom Buttons anbinden
