@@ -29,7 +29,7 @@ public class NamingDialog extends JDialog implements ActionListener {
         super(parent, "Naming preference", true);
         this.parent = parent;
         group = new ButtonGroup();
-        Algo.NamePref mode = parent.graphCanvas.getNamingPref();
+        Algo.NamePref mode = parent.getxCanvas().getNamingPref();
         LatexGraphics latex = ISGCIMainFrame.latex;
         Container contents = getContentPane();
 
@@ -109,7 +109,7 @@ public class NamingDialog extends JDialog implements ActionListener {
                 pref = Algo.NamePref.FORBIDDEN;
             else if (c == derivedBox.getModel())
                 pref = Algo.NamePref.DERIVED;
-            parent.graphCanvas.setNamingPref(pref);
+            parent.getxCanvas().setNamingPref(pref);
             closeDialog();
         }
     }

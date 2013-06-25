@@ -11,42 +11,54 @@
 package teo.isgci.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.*;
-import java.awt.geom.AffineTransform;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Set;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JViewport;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 
-import java.io.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 import teo.isgci.db.DataSet;
-import teo.isgci.problem.*;
 import teo.isgci.gc.ForbiddenClass;
 import teo.isgci.gc.GraphClass;
-
-import java.awt.Color;
-import org.jgrapht.*;
-import org.jgrapht.graph.SimpleDirectedGraph;
-import teo.isgci.grapht.*;
-import teo.isgci.util.LessLatex;
+import teo.isgci.grapht.GAlg;
+import teo.isgci.grapht.Inclusion;
 import teo.isgci.xml.GraphMLWriter;
 
 /*import teo.isgci.gc.GraphClass;
@@ -95,6 +107,7 @@ public class ISGCIMainFrame extends JFrame
     // This is where the drawing goes.
     protected JScrollPane drawingPane;
     public ISGCIGraphCanvas graphCanvas;
+    private JGraphXCanvas xCanvas;
     
     //Global Settings
     protected Dimension size = new Dimension(800,600);
@@ -435,7 +448,9 @@ public class ISGCIMainFrame extends JFrame
         drawingPane.getHorizontalScrollBar().setUnitIncrement(100);
         drawingPane.getVerticalScrollBar().setUnitIncrement(100);
         
-        return drawingPane;
+        xCanvas = new JGraphXCanvas();
+        
+        return xCanvas.getComponent();
     }
 
 
@@ -567,6 +582,11 @@ public class ISGCIMainFrame extends JFrame
         }
     }
 
+    public JGraphXCanvas getxCanvas() {
+        return xCanvas;
+    }
+
+
     public void itemStateChanged(ItemEvent event) {
         Object object = event.getSource();
 
@@ -608,7 +628,9 @@ public class ISGCIMainFrame extends JFrame
 	@Override
 	public void keyReleased(KeyEvent e) {
 		search.setListDataSearch(this, classesList);
-	}    
+	}
+	
+	
 	
 }
 

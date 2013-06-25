@@ -103,7 +103,7 @@ public class ZoomDemo implements ActionListener {
 		
 		mxGraphView view = component.getGraph().getView();
 		int compLen = component.getWidth();
-		int viewLen = (int)view.getGraphBounds().getWidth();
-		view.setScale((double)compLen/viewLen * view.getScale());
+		double viewLen = view.getGraphBounds().getWidth();
+		view.setScale(compLen/viewLen * view.getScale());
 	}
 }

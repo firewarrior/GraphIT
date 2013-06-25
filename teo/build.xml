@@ -210,7 +210,7 @@
 	 index="false"> <!-- otherwise Class-Path doesn't work -->
       <manifest>
 	 <attribute name="Main-Class" value="teo.Loader"/>
-	 <attribute name="Class-Path" value="jgrapht.jar"/>
+	 <attribute name="Class-Path" value="jgrapht.jar jgraphx.jar"/>
       </manifest>
       <fileset dir="${build.classes.dir}">
 	 <include name="teo/**"/>
@@ -245,6 +245,11 @@
 	 signedjar="${web.dir}/jgrapht.jar"
 	 keystore="${data.dir}/keystore"
 	 storepass="graphclasses.org"/>
+	<!--<signjar alias="jgraphx"
+	jar="${jgraphx.jar}"
+	signedjar="${web.dir}/jgraphx.jar"
+	keystore="${data.dir}/keystore"
+		 storepass="graphclasses.org"/> -->
    <!-- <signjar alias="isgci"
 	 jar="${isgci.jar}"
 	 keystore="${data.dir}/keystore"
