@@ -48,7 +48,7 @@ public class OpenProblemDialog extends JDialog
     protected JCheckBox fullBoundary;
     protected NodeList npList, openList, pList;
     protected ListGroup lists;
-    protected Problem problem;
+    protected Problem problem = DataSet.getProblem("Recognition");
     protected JButton closeButton, showButton, drawButton;
     private String[] problems = {"Recognition","Treewidth","Cliquewidth","Cliquewidth expression",
 			 "Weighted independent set","Independent set","Weighted clique","Clique",
@@ -165,6 +165,10 @@ public class OpenProblemDialog extends JDialog
         closeButton.addActionListener(this);
         pack();
         setSize(700, 300);
+        
+        initListOpen();
+        initListsBoundary();
+        initListsMinMax();
     }
 
 
