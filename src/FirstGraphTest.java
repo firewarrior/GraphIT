@@ -29,7 +29,7 @@ public class FirstGraphTest {
 
         System.out.println(g);
         
-        JGraphXModelAdapter<String, DefaultEdge> graph = new JGraphXModelAdapter<>(g);
+        JGraphXModelAdapter<String, DefaultEdge> graph = new JGraphXModelAdapter<String, DefaultEdge>(g);
         graph.setAutoSizeCells(true);
 		graph.setCellsResizable(true);
         for (Object o : graph.getChildCells(graph.getDefaultParent(), true, false)) {

@@ -12,7 +12,7 @@ import com.mxgraph.swing.mxGraphComponent;
 public class Demo {
 
     public static void main(String[] args) throws InterruptedException {
-        ListenableGraph<String, DefaultEdge> graph = new ListenableDirectedGraph<>(
+        ListenableGraph<String, DefaultEdge> graph = new ListenableDirectedGraph<String, DefaultEdge>(
                 DefaultEdge.class);
         String s1 = "0,2 Colorable";
         String s2 = "PURE-2-DIR";
