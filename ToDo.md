@@ -6,7 +6,8 @@ Softwareproject University of Konstanz Summer Term 2013
 Überarbeitung ISGCI:
    - Tooltips
    - Color for Problem
-   - draw Dialoge (find Realtion | Boundary/OpenClass)
+   - Zeichnen aus dem InclusionResultDialog heraus (NullPointer)
+   - Zeichnen aus dem OpenProblemDialog heraus (NullPoiner)
    - Zoom Buttons anbinden
    - Gruppierung von Knoten + ausblenden!
    - Bug in Draw-Dialog, Filterfunction throws Exception
