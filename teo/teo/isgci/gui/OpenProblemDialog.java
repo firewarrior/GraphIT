@@ -269,7 +269,7 @@ inP:
             closeDialog();
             
             //Load information into informationbar
-			List<GraphClass> names = parent.graphCanvas.getClasses();
+			List<GraphClass> names = parent.getxCanvas().getGraphClassList();
         	if (!names.isEmpty()) {
         		Collections.sort(names, new LessLatex());
         		parent.classesList.setListData(names);

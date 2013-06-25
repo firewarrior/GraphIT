@@ -29,21 +29,21 @@ public class FirstGraphTest {
 
         System.out.println(g);
         
-        JGraphXModelAdapter<String, DefaultEdge> graph = new JGraphXModelAdapter<>(g);
-        graph.setAutoSizeCells(true);
-		graph.setCellsResizable(true);
-        for (Object o : graph.getChildCells(graph.getDefaultParent(), true, false)) {
-			graph.updateCellSize(o, true);
-		}
+        //JGraphXModelAdapter<String, DefaultEdge> graph = new JGraphXModelAdapter<>(g);
+//        graph.setAutoSizeCells(true);
+//		graph.setCellsResizable(true);
+//        for (Object o : graph.getChildCells(graph.getDefaultParent(), true, false)) {
+//			graph.updateCellSize(o, true);
+//		}
         
         
 //        mxHierarchicalLayout m = new mxHierarchicalLayout(graph);
 //		m.execute(graph.getDefaultParent());
-		mxGraphComponent graphComponent = new mxGraphComponent(graph);
-		JFrame frame = new JFrame("First test");
-		frame.getContentPane().add(graphComponent);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+		//mxGraphComponent graphComponent = new mxGraphComponent(graph);
+//		JFrame frame = new JFrame("First test");
+//		frame.getContentPane().add(graphComponent);
+//        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        frame.pack();
+//        frame.setVisible(true);
     }
 }

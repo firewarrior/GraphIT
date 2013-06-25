@@ -52,6 +52,8 @@ import javax.swing.border.TitledBorder;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
+import com.mxgraph.model.mxCell;
+
 import teo.isgci.db.DataSet;
 import teo.isgci.gc.ForbiddenClass;
 import teo.isgci.gc.GraphClass;
@@ -400,10 +402,12 @@ public class ISGCIMainFrame extends JFrame
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if ( e.getClickCount() == 2 ) {
-					  NodeView view = graphCanvas.findNode(
-	                            classesList.getSelectedNode());
-					  graphCanvas.markOnly(view);
-					  graphCanvas.centerNode(view);
+//					  NodeView view = graphCanvas.findNode(
+//	                            classesList.getSelectedNode());
+//					  graphCanvas.markOnly(view);
+//					  graphCanvas.centerNode(view);
+					mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());
+					xCanvas.getComponent().getGraph().setSelectionCell(vertex);
 				}
 			}
 			@Override

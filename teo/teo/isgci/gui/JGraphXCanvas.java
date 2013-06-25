@@ -1,5 +1,6 @@
 package teo.isgci.gui;
 
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -38,6 +39,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	public JGraphXCanvas() {
 		component.addMouseListener(this);
 		component.addMouseWheelListener(this);
+		component.setPreferredSize(new Dimension(800, 600));
+		component.setSize(component.getPreferredSize());
 	}
 	
 	public void setProblem(Problem problem)  {
@@ -170,5 +173,17 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	public List<String> getNames() { 
         return vertexNames;
     }
+
+	public mxCell findNode(GraphClass selectedNode) {
+		for(Object o : adapter.getChildCells(adapter.getDefaultParent(), true, false)){
+			if(o instanceof mxCell){
+				mxCell v = (mxCell) o;
+				if(adapter.getCellToVertex(v).contains(selectedNode)){
+					return v;
+				}
+			}
+		}
+		return null;
+	}
 
 }
