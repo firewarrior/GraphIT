@@ -15,6 +15,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -39,6 +42,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -102,7 +106,7 @@ public class ISGCIMainFrame extends JFrame
     
     //New added for Graph Browser
 	protected NodeList classesList;
-	protected LegendPanel legend;
+	protected LegendPanel legend = new LegendPanel();
 
     // This is where the drawing goes.
     protected JScrollPane drawingPane;
@@ -153,18 +157,41 @@ public class ISGCIMainFrame extends JFrame
         setLayout(new BorderLayout());
         
         //Add canvas panel to main panel
-        JPanel canvas = new JPanel(new BorderLayout());
-        canvas.add(createCanvasPanel(),BorderLayout.CENTER);
-        
-        //Add tabbed menu to canvas
-        canvas.add(createStatus(),BorderLayout.EAST); //<-----
+//        JPanel canvas = new JPanel(new BorderLayout());
+        JLayeredPane canvas = new JLayeredPane();
+        canvas.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        JComponent graphCanvas = createCanvasPanel();
+        graphCanvas.setPreferredSize(new Dimension(800, 600));
+        canvas.setLayer(graphCanvas, JLayeredPane.DEFAULT_LAYER);
+        canvas.setLayer(legend, JLayeredPane.PALETTE_LAYER);
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.fill = GridBagConstraints.BOTH;
+        canvas.add(graphCanvas, c);
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 0;
+        c.weighty = 0;
+        c.anchor = GridBagConstraints.LAST_LINE_END;
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(0, 0, 25, 25);
+        canvas.add(legend, c);
         
         //Adding canvas to main panel
-        getContentPane().add(canvas);
+        getContentPane().add(canvas, BorderLayout.CENTER);
         
-        //Add legend into Canvas
-        createLegend();
-     
+        //Add tabbed menu to canvas
+        getContentPane().add(createStatus(),BorderLayout.EAST); //<-----
+        
+        
         registerListeners();
         setLocation(20, 20);
         pack();
@@ -375,16 +402,6 @@ public class ISGCIMainFrame extends JFrame
     }
    
     /**
-     * Creates the legend for the different colors
-     * 
-     */
-    protected void createLegend(){
-    	legend = new LegendPanel(this);
-    	graphCanvas.add(legend);
-    }
-
-    
-    /**
      * Creates the search browser with scrollbars at the bottom and at the
      * right.
      * @return the panel
@@ -403,7 +420,7 @@ public class ISGCIMainFrame extends JFrame
 			public void mouseClicked(MouseEvent e) {
 				if ( e.getClickCount() == 2 ) {
 //					  NodeView view = graphCanvas.findNode(
-//	                            classesList.getSelectedNode());
+//	                   Set<GraphClass>         classesList.getSelectedNode());
 //					  graphCanvas.markOnly(view);
 //					  graphCanvas.centerNode(view);
 					mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());
