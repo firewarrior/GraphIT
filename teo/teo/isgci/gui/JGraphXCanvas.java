@@ -31,6 +31,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
     private Algo.NamePref namingPref = Algo.NamePref.BASIC;
     private Problem problem;
+    private Latex2JHtml converter = new Latex2JHtml();
     private List<String> vertexNames;
     private List<GraphClass> graphClassList;
 
@@ -47,7 +48,6 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
      * Set all nodes to their prefered names and writes the Latex-Label
      */
     public void setNamingPref(NamePref pref) {
-    	Latex2JHtml converter = new Latex2JHtml();
     	namingPref = pref;
     	adapter.getModel().beginUpdate();
     	try {
@@ -78,12 +78,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     public void drawGraph(Collection<GraphClass> classes) {
         SimpleDirectedGraph<Set<GraphClass>, DefaultEdge> g = Algo.createHierarchySubgraph(classes);
         setGraph(g);
-        
         //Maybe needed for Filter-Function in Dialogs (see GraphCanvas)
-        graphClassList = new ArrayList<GraphClass>();
-        for (GraphClass gc : classes)
-        	graphClassList.add(gc);
-            
+        graphClassList = new ArrayList<GraphClass>(classes);
     }
     
     public List<GraphClass> getGraphClassList(){
