@@ -16,6 +16,5 @@ Done:
    - LaTeX name for vertexes (Skoell)
    - Find in drawing (Skoell)
    
-Probleme mit Unit Tests:
-   - Entferen von Kanten in JGraphX wirft Fehler, dass Knoten nicht existieren (sie existieren aber)
-   - Ein Beispiel, in dem das Entfernen einer Kante in JGraphX nicht an JGraphT weitergeleitet wird
+JUnitTests:
+   - Keine Fehler
