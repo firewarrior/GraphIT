@@ -6,7 +6,6 @@ Softwareproject University of Konstanz Summer Term 2013
 Überarbeitung ISGCI:
    - Tooltips auf Nodes
    - Kontexmenu auf Nodes
-   - Auf Rechtecke umstellen
    - Margins im GraphCanvas
    - Margins, Minimalgrößen, Layout
    - Relayout, Restore Graph Buttons sowie Funktionalität
