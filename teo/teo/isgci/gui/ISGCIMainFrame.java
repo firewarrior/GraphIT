@@ -420,7 +420,7 @@ public class ISGCIMainFrame extends JFrame
 			public void mouseClicked(MouseEvent e) {
 				if ( e.getClickCount() == 2 ) {
 //					  NodeView view = graphCanvas.findNode(
-//	                   Set<GraphClass>         classesList.getSelectedNode());
+//	                  	classesList.getSelectedNode());
 //					  graphCanvas.markOnly(view);
 //					  graphCanvas.centerNode(view);
 					mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());

@@ -551,7 +551,7 @@ public class InclusionResultDialog extends JDialog implements ActionListener {
         } else if (source == drawButton) {
             Cursor oldcursor = parent.getCursor();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            parent.graphCanvas.drawHierarchy(Algo.nodesBetween(upper, lower));
+            parent.getxCanvas().drawGraph(Algo.nodesBetween(upper, lower));
 
             NodeView node1 = parent.graphCanvas.findNode(
                     DataSet.getClass(nodeName1));
@@ -564,7 +564,7 @@ public class InclusionResultDialog extends JDialog implements ActionListener {
             
             setCursor(oldcursor);
             closeDialog();
-            parent.graphCanvas.repaint();
+//            parent.graphCanvas.repaint();
             
             //Load information into informationbar
 			List<GraphClass> names = parent.getxCanvas().getGraphClassList();

@@ -267,7 +267,7 @@ inP:
         if (source == drawButton) {
             Cursor oldcursor = parent.getCursor();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            parent.graphCanvas.drawHierarchy(
+            parent.getxCanvas().drawGraph(
                     getNodes(lists.getSelectedNode()));
             setCursor(oldcursor);
             closeDialog();
