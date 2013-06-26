@@ -121,7 +121,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     		for (Object o : adapter.getChildCells(adapter.getDefaultParent(), true, false)) {
     			if (o instanceof mxCell) {
     				mxCell cell = (mxCell) o;
-    				cell.setValue(converter.html(Algo.getName(adapter.getCellToVertex(cell), namingPref)));
+    				cell.setValue(Utility.getShortName(converter.html(Algo.getName(adapter.getCellToVertex(cell), namingPref))));
     				adapter.updateCellSize(cell, true);
     			}
     		}
