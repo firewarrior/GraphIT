@@ -498,7 +498,7 @@ public class ISGCIMainFrame extends JFrame
         drawingPane.getHorizontalScrollBar().setUnitIncrement(100);
         drawingPane.getVerticalScrollBar().setUnitIncrement(100);
         
-        xCanvas = new JGraphXCanvas();
+        xCanvas = new JGraphXCanvas(this);
         
         return xCanvas.getComponent();
     }

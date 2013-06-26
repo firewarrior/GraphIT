@@ -23,6 +23,7 @@ import teo.isgci.problem.Complexity;
 import teo.isgci.problem.Problem;
 import teo.isgci.util.JGraphTXAdapter;
 import teo.isgci.util.Latex2JHtml;
+import teo.isgci.util.Utility;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
@@ -48,11 +49,22 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     public static final Color COLOR_INTERMEDIATE = SColor.brighter(Color.red);
     public static final Color COLOR_UNKNOWN = Color.white;
 
-	public JGraphXCanvas() {
+    
+    private NodePopup nodePopup;
+    private EdgePopup edgePopup;
+    
+	public JGraphXCanvas(ISGCIMainFrame parent) {
 		component.addMouseListener(this);
 		component.addMouseWheelListener(this);
 		component.setPreferredSize(new Dimension(800, 600));
 		component.setSize(component.getPreferredSize());
+		component.setToolTips(true);
+		component.getGraphControl().addMouseListener(this);
+		
+		nodePopup = new NodePopup(parent);
+        edgePopup = new EdgePopup(parent);
+        component.add(nodePopup);
+        component.add(edgePopup);
 	}
 	
 	/**
@@ -246,8 +258,23 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		if(e.getButton() == MouseEvent.BUTTON3){
+			Object o = component.getCellAt(e.getX(), e.getY());
+			if(o != null){
+				if(o instanceof mxCell){
+					mxCell cell = (mxCell) o;
+					if(cell.isVertex()){
+						nodePopup.setNode(adapter.getCellToVertex(cell), (String) cell.getValue());
+						nodePopup.show(component, e.getX(), e.getY());
+						System.out.println(cell.getValue());
+					}
+					else if(cell.isEdge()){
+						edgePopup.setEdgeNodes(adapter.getCellToVertex((mxCell)cell.getSource()), (String) cell.getSource().getValue(), adapter.getCellToVertex((mxCell) cell.getTarget()), (String) cell.getTarget().getValue());
+						edgePopup.show(component, e.getX(), e.getY());
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -271,6 +298,16 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	/*
+	 * Renames the vertex with the given name
+	 */
+	public void renameNode(Set<GraphClass> view, String fullname) {
+		adapter.getVertexToCell(view).setValue(converter.html(Utility.getShortName(fullname)));
+		adapter.updateCellSize(adapter.getVertexToCell(view), true);
+		adapter.refresh();
 		
 	}
 }
