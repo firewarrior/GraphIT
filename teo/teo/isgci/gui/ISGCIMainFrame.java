@@ -95,7 +95,7 @@ public class ISGCIMainFrame extends JFrame
     // Statusleiste
     protected JPanel problem;
     private boolean showStatus = false,checkStatus = true,hideLegend = false;;
-    protected JButton OpenBoundaryButton,addTab;
+    protected JButton OpenBoundaryButton,addTab,relayoutButton,restoreLayButton;
     protected JButton zoomIn,zoomOut,zoom;
     private String[] problems = {"None","Recognition","Treewidth","Cliquewidth","Cliquewidth expression",
 			 "Weighted independent set","Independent set","Weighted clique","Clique",
@@ -257,6 +257,8 @@ public class ISGCIMainFrame extends JFrame
         search.addKeyListener(this);
         addTab.addActionListener(this);
         chooseProblem.addActionListener(this);
+        restoreLayButton.addActionListener(this);
+        relayoutButton.addActionListener(this);
      
         
     }
@@ -348,29 +350,72 @@ public class ISGCIMainFrame extends JFrame
     
     
     protected JPanel createInformationPanel(){
-    	JPanel mainPanel = new JPanel(new BorderLayout());
+    	JPanel mainPanel = new JPanel(new GridBagLayout());    	
+    	GridBagConstraints c = new GridBagConstraints();
     	
     	//Search Panel
-    	JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));   	
+        c.gridx = 0;
+        c.gridy = 0;
+        c.insets = new Insets(10,0,5,0);
+        c.fill = GridBagConstraints.HORIZONTAL;
+    	
     	search = new WebSearch();
-    	search.setPreferredSize(new Dimension(280, 20));
     	search.setText("Search...");
-    	searchPanel.add(search);
+    	mainPanel.add(search,c);
+    	
+    	//List Panel
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridheight = 2;
+        c.weighty = 1;
+        c.fill = GridBagConstraints.BOTH; 
+        mainPanel.add(createSearchBrowser(),c);
         
-    	//Bottom Panel
-    	JPanel bottomPanel = new JPanel(new BorderLayout(30,30));
+        //Set Back the values
+        c.gridheight = 1;
+        c.weighty = 0;
+        
+        //Layouting Graph
+        JPanel lay = new JPanel(new GridBagLayout());
+        GridBagConstraints cLayout = new GridBagConstraints();
+        TitledBorder layBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black),"Layouting:");
+        lay.setBorder(layBorder);
+        
+        cLayout.insets = new Insets(5, 15, 5, 15);
+        cLayout.gridx = 0;
+        cLayout.gridy = 1;
+        cLayout.fill = GridBagConstraints.HORIZONTAL;  
+        restoreLayButton = new JButton("Restore Graph");
+        lay.add(restoreLayButton,cLayout);
+        
+        
+        cLayout.gridx = 0;
+        cLayout.gridy = 2;
+        cLayout.fill = GridBagConstraints.HORIZONTAL;  
+        relayoutButton = new JButton("Relayout Graph");
+        lay.add(relayoutButton,cLayout);
+
+        
+        c.gridx = 0;
+        c.gridy = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(lay,c);
     	
     	//Problem
-    	JPanel problemPanel = new JPanel();
-    	JPanel checkPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        JPanel probPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,10,10));
     	TitledBorder prob = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black),"Problem:");
     	JLabel l_color = new JLabel("Color for");
     	chooseProblem = new JComboBox<String>(problems);
+    	probPanel.setBorder(prob);
+    	probPanel.add(l_color);
+    	probPanel.add(chooseProblem);
     	
-    	checkPanel.add(l_color);
-    	checkPanel.add(chooseProblem);
-    	problemPanel.add(checkPanel);
-    	problemPanel.setBorder(prob);
+    	//Problem Panel add to MainPanel
+        c.gridx = 0;
+        c.gridy = 4;
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+    	mainPanel.add(probPanel,c);
     	
     	
     	//Zoom
@@ -387,17 +432,12 @@ public class ISGCIMainFrame extends JFrame
     	zoomPanel.add(zoomButtonPanel);
     	zoomPanel.setBorder(zoomBorder);
     	
-    	//Set on bottom Panel
-    	bottomPanel.add(problemPanel,BorderLayout.NORTH);
-    	bottomPanel.add(zoomPanel,BorderLayout.CENTER);
-    	JPanel space = new JPanel();
-    	space.setPreferredSize(new Dimension(280,10));
-    	bottomPanel.add(space,BorderLayout.SOUTH);
-    	
-        //Set on Main Panel
-        mainPanel.add(searchPanel,BorderLayout.PAGE_START);
-        mainPanel.add(createSearchBrowser(280,380), BorderLayout.CENTER);
-        mainPanel.add(bottomPanel,BorderLayout.SOUTH);
+    	//Zoom Panel add to MainPanel
+        c.gridx = 0;
+        c.gridy = 5;
+        c.fill = GridBagConstraints.HORIZONTAL;
+    	mainPanel.add(zoomPanel,c);
+    
         return mainPanel;
     }
    
@@ -406,26 +446,17 @@ public class ISGCIMainFrame extends JFrame
      * right.
      * @return the panel
      */
-    protected JPanel createSearchBrowser(int width,int height){
-    	JPanel searchBrowser = new JPanel();
-  
+    protected JScrollPane createSearchBrowser(){
         classesList = new NodeList(latex);
         classesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroller = new JScrollPane(classesList);
-        scroller.setPreferredSize(new Dimension(width, height));
-        searchBrowser.add(scroller);
         //Mouselistener for double click
         classesList.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if ( e.getClickCount() == 2 ) {
-//					  NodeView view = graphCanvas.findNode(
-//	                  	classesList.getSelectedNode());
-//					  graphCanvas.markOnly(view);
-//					  graphCanvas.centerNode(view);
-					mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());
-					xCanvas.getComponent().getGraph().setSelectionCell(vertex);
-				}
+				mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());
+				xCanvas.getComponent().getGraph().setSelectionCell(vertex);
+				
 			}
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -449,7 +480,7 @@ public class ISGCIMainFrame extends JFrame
 			}
 		});
         
-		return searchBrowser;
+		return scroller;
     }
 
 
@@ -578,6 +609,10 @@ public class ISGCIMainFrame extends JFrame
             JDialog open=new OpenProblemDialog(this);
             open.setLocation(50, 50);
             open.setVisible(true);
+        } else if(object == restoreLayButton){
+        	
+        } else if(object == relayoutButton){
+         
         } else if(object == chooseProblem){
         	//////////////////////////////////////////////////////////////////////////
         	// Choose Problem and color graph
