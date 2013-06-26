@@ -172,7 +172,7 @@ public class GraphClassSelectionDialog extends JDialog
         		Collections.sort(names, new LessLatex());
         		parent.classesList.setListData(names);
         	}
-        	parent.problem.revalidate();
+        	parent.informationPanel.revalidate();
         	
             
         } else if (source == search) {

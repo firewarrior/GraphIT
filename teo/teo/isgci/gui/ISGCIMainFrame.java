@@ -57,6 +57,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.view.mxGraphView;
 
 import teo.isgci.db.DataSet;
 import teo.isgci.gc.ForbiddenClass;
@@ -93,10 +94,10 @@ public class ISGCIMainFrame extends JFrame
     protected WebSearch search;
     
     // Statusleiste
-    protected JPanel problem;
+    protected JPanel informationPanel;
     private boolean showStatus = false,checkStatus = true,hideLegend = false;;
     protected JButton OpenBoundaryButton,addTab;
-    protected JButton zoomIn,zoomOut,zoom;
+    protected JButton zoomIn,zoomOut,zoomToFit;
     private String[] problems = {"None","Recognition","Treewidth","Cliquewidth","Cliquewidth expression",
 			 "Weighted independent set","Independent set","Weighted clique","Clique",
 			 "Domination","Colourability","Clique cover","3-Colourability","Cutwidth",
@@ -253,6 +254,9 @@ public class ISGCIMainFrame extends JFrame
         miSelectGraphClasses.addActionListener(this);
         miGraphClassInformation.addActionListener(this);
         miOpenProblem.addActionListener(this);
+        zoomIn.addActionListener(this);
+        zoomOut.addActionListener(this);
+        zoomToFit.addActionListener(this);
         
         search.addKeyListener(this);
         addTab.addActionListener(this);
@@ -271,22 +275,22 @@ public class ISGCIMainFrame extends JFrame
     protected JTabbedPane createStatus() {
     	
     	//Insert InformationPanel
-    	problem = createInformationPanel();
+    	informationPanel = createInformationPanel();
     	
     	//At beginning Settings everytime checked
-        problem.setPreferredSize(new Dimension(0,0));
+        informationPanel.setPreferredSize(new Dimension(0,0));
     	
     	
         //Tabs
         JTabbedPane tabs = new JTabbedPane();
         
-        tabs.addTab("GraphIT ruleZ the WorlD !", problem);
+        tabs.addTab("GraphIT ruleZ the WorlD !", informationPanel);
         JPanel panel = new JPanel();
         //ImageIcon informationArrow = new ImageIcon("/images/informationarrow.png");
-        JButton click = new JButton("+");
 
-        addTab = click;
-        addTab.setOpaque(false); //
+        addTab = new JButton("◀");
+        addTab.setFont(new Font( Font.SANS_SERIF, Font.BOLD, 20 ));
+        addTab.setOpaque(true); //
         addTab.setBorder(null);
         addTab.setContentAreaFilled(false);
         addTab.setFocusPainted(false);
@@ -294,7 +298,7 @@ public class ISGCIMainFrame extends JFrame
         addTab.setFocusable(false);
         panel.add(addTab);
         
-        tabs.setTabComponentAt(0,panel );
+        tabs.setTabComponentAt(0,addTab );
         tabs.setTabPlacement(JTabbedPane.LEFT);
         
 		return tabs;
@@ -379,11 +383,11 @@ public class ISGCIMainFrame extends JFrame
     	JPanel zoomButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,0));
     	zoomIn = new JButton("+");
     	zoomOut = new JButton("-");
-    	zoom = new JButton("out");
+    	zoomToFit = new JButton("fit");
     	
     	zoomButtonPanel.add(zoomIn);
     	zoomButtonPanel.add(zoomOut);
-    	zoomButtonPanel.add(zoom);
+    	zoomButtonPanel.add(zoomToFit);
     	zoomPanel.add(zoomButtonPanel);
     	zoomPanel.setBorder(zoomBorder);
     	
@@ -588,16 +592,28 @@ public class ISGCIMainFrame extends JFrame
 				//Come Up
 				if(showStatus == false){
 					showStatus = true;
-					problem.setPreferredSize(new Dimension(300,200));
-			        problem.revalidate();
+					addTab.setText("▶");
+					informationPanel.setPreferredSize(new Dimension(300,200));
+			        informationPanel.revalidate();
 				
 			    //Come down
 				} else{
 					showStatus = false;
-					problem.setPreferredSize(new Dimension(0,0));
-					problem.revalidate();
+					addTab.setText("◀");
+					informationPanel.setPreferredSize(new Dimension(0,0));
+					informationPanel.revalidate();
 				}
 			}      	
+        } else if (object == zoomIn) {
+            xCanvas.getComponent().zoomIn();
+        } else if (object == zoomOut) {
+            xCanvas.getComponent().zoomOut();
+        } else if (object == zoomToFit) {
+            mxGraphView view = xCanvas.getComponent().getGraph().getView();
+            int compLen = xCanvas.getComponent().getWidth();
+            double viewLen = view.getGraphBounds().getWidth();
+            view.setScale(compLen/viewLen * view.getScale());
+            xCanvas.getComponent().zoom(0.99);
         }
     }
 
@@ -615,12 +631,12 @@ public class ISGCIMainFrame extends JFrame
         }else if (object == miInformationBar){
         	//Hide Information bar
         	if(miInformationBar.getState()){
-				problem.setPreferredSize(new Dimension(0,0));
-				problem.revalidate();
+				informationPanel.setPreferredSize(new Dimension(0,0));
+				informationPanel.revalidate();
         		checkStatus = true;
         	}else{
-				problem.setPreferredSize(new Dimension(300,200));
-				problem.revalidate();
+				informationPanel.setPreferredSize(new Dimension(300,200));
+				informationPanel.revalidate();
         		checkStatus = false;
         	}
         }else if (object == miLegend){

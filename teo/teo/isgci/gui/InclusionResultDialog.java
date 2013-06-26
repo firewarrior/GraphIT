@@ -572,7 +572,7 @@ public class InclusionResultDialog extends JDialog implements ActionListener {
         		Collections.sort(names, new LessLatex());
         		parent.classesList.setListData(names);
         	}
-        	parent.problem.revalidate();
+        	parent.informationPanel.revalidate();
         	
         } else if (source == refButton) {
             parent.loader.showDocument("classes/refs00.html");

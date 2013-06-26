@@ -79,6 +79,7 @@ public class LegendPanel extends JPanel {
 		c.gridy = 4;
 		c.insets = labelInsets;
 		add(unknown, c);
+		setOpaque(false);
 	}
 
 	// Testing
