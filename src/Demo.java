@@ -12,7 +12,7 @@ import com.mxgraph.swing.mxGraphComponent;
 public class Demo {
 
     public static void main(String[] args) throws InterruptedException {
-        ListenableGraph<String, DefaultEdge> graph = new ListenableDirectedGraph<>(
+        ListenableGraph<String, DefaultEdge> graph = new ListenableDirectedGraph<String, DefaultEdge>(
                 DefaultEdge.class);
         String s1 = "0,2 Colorable";
         String s2 = "PURE-2-DIR";
@@ -37,12 +37,12 @@ public class Demo {
         graph.addEdge(s5, s6);
         graph.addEdge(s5, s7);
 
-        System.out.println(graph.vertexSet());
-        System.out.println(graph.edgeSet());
+//        System.out.println(graph.vertexSet());
+//        System.out.println(graph.edgeSet());
 
         JGraphTXAdapter<String, DefaultEdge> g = new JGraphTXAdapter<String, DefaultEdge>(
                 graph, "noLabel=1",
-                "shape=triangle;perimeter=trianglePerimeter");
+                "shape=ellipse;perimeter=ellipsePerimeter");
 
         g.setCellsResizable(true);
         g.setCellsEditable(true);
@@ -54,18 +54,18 @@ public class Demo {
             g.updateCellSize(vertex, true);
         }
 
-        for (Object vertex : g
-                .getChildCells(g.getDefaultParent(), true, false)) {
-            System.out.println(((mxCell) vertex).getValue());
-        }
-        System.out.println("test");
+//        for (Object vertex : g
+//                .getChildCells(g.getDefaultParent(), true, false)) {
+//            System.out.println(((mxCell) vertex).getValue());
+//        }
+//        System.out.println("test");
 
-        for (Object vertex : g
-                .getChildCells(g.getDefaultParent(), false, true)) {
-            System.out.println("edges");
-            System.out.println(((mxCell) vertex).getSource() + " "
-                    + ((mxCell) vertex).getTarget());
-        }
+//        for (Object vertex : g
+//                .getChildCells(g.getDefaultParent(), false, true)) {
+//            System.out.println("edges");
+//            System.out.println(((mxCell) vertex).getSource() + " "
+//                    + ((mxCell) vertex).getTarget());
+//        }
 
         mxHierarchicalLayout layout = new mxHierarchicalLayout(g);
         layout.execute(g.getDefaultParent());
@@ -81,54 +81,34 @@ public class Demo {
 
         Thread.sleep(5000);
 
-        // g.getModel().beginUpdate();
-        // try {
-        // graph.addVertex("fghjkl");
-        // graph.addEdge(s7, "fghjkl");
-        // // for (Object vertex : g.getChildCells(g.getDefaultParent(), true,
-        // false)) {
-        // // g.updateCellSize(vertex, true);
-        // // }
-        // }
-        // finally {
-        // g.getModel().endUpdate();
-        // }
-        //
-        //
-        // g.getModel().beginUpdate();
-        // try {
-        // g.removeCells(new Object[]{g.getVertexToCell(s3)});
-        // }
-        // finally {
-        // g.getModel().endUpdate();
-        // }
-        //
-        // g.getModel().beginUpdate();
-        // try {
-        // g.removeCells(new Object[]{g.getEdgeToCell(graph.getEdge(s1, s2))});
-        // }
-        // finally {
-        // g.getModel().endUpdate();
-        // }
-        //
-        // g.getModel().beginUpdate();
-        // try {
-        // graph.removeVertex(s5);
-        // }
-        // finally {
-        // g.getModel().endUpdate();
-        // }
-        //
-        // g.getModel().beginUpdate();
-        // try {
-        // graph.removeEdge(graph.getEdge(s1, s4));
-        // }
-        // finally {
-        // g.getModel().endUpdate();
-        // }
-        component.zoomIn();
+        graph.addVertex("Test");
         Thread.sleep(2000);
-        component.zoomOut();
+        
+        graph.addEdge(s7, "Test");
+        for (Object vertex : g.getChildCells(g.getDefaultParent(), true, false)) {
+        	g.updateCellSize(vertex, true);
+        }
+        layout.execute(g.getDefaultParent());
+        Thread.sleep(2000);
+       
+        g.removeCells(new Object[]{g.getVertexToCell(s3)});
+        Thread.sleep(2000);
+        
+        g.removeCells(new Object[]{g.getEdgeToCell(graph.getEdge(s1, s2))});
+        Thread.sleep(2000);
+        
+        g.getModel().beginUpdate();
+        try{
+        graph.removeVertex(s5);
+        } finally{
+        	g.getModel().endUpdate();
+        }
+        Thread.sleep(2000);
+        
+        graph.removeEdge(graph.getEdge(s1, s4));
+        Thread.sleep(2000);
+         
+        layout.execute(g.getDefaultParent());
         System.out.println("Ende");
     }
 }
