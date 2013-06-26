@@ -582,7 +582,7 @@ public class ISGCIMainFrame extends JFrame
         	//////////////////////////////////////////////////////////////////////////
         	// Choose Problem and color graph
         	//////////////////////////////////////////////////////////////////////////
-            this.graphCanvas.setProblem(DataSet.getProblem((String)chooseProblem.getSelectedItem()));
+            this.getxCanvas().setProblem(DataSet.getProblem((String)chooseProblem.getSelectedItem()));
         } else if(object == addTab){
         	if(checkStatus == true){
 				//Come Up
