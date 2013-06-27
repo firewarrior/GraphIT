@@ -23,7 +23,7 @@ import teo.isgci.util.Utility;
 
 public class NodePopup extends JPopupMenu implements ActionListener {
 	private ISGCIMainFrame parent;
-	private JMenuItem deleteItem, infoItem;
+	private JMenuItem deleteSub, deleteSup, infoItem;
 	private JMenu nameItem;
     private Set<GraphClass> view;
 	private String latexName;
@@ -35,7 +35,11 @@ public class NodePopup extends JPopupMenu implements ActionListener {
         //deleteItem = new JMenuItem("Delete");
         add(infoItem = new JMenuItem("Information"));
         add(nameItem = new JMenu("Change name"));
+        add(deleteSub = new JMenuItem("Hide subclasses"));
+        add(deleteSup = new JMenuItem("Hide superclasses"));
         infoItem.addActionListener(this);
+        deleteSub.addActionListener(this);
+        deleteSup.addActionListener(this);
     }
 
     public void setNode(Set<GraphClass> set, String latexName) {
@@ -46,6 +50,7 @@ public class NodePopup extends JPopupMenu implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == infoItem) {
+        	System.out.println("info");
         	Latex2JHtml converter = new Latex2JHtml();
         	
         	for(GraphClass gc : view){
@@ -61,7 +66,16 @@ public class NodePopup extends JPopupMenu implements ActionListener {
         	}
         	
             
-        } else if (event.getActionCommand().startsWith(CHANGENAME)) {
+        } 
+        else if(source == deleteSub){
+        	//TODO: Hide subclasses
+        	System.out.println("Hide subclasses");
+        }
+        else if(source == deleteSup){
+        	//TODO: Hide superclasses
+        	System.out.println("Hide superclasses");
+        }
+        else if (event.getActionCommand().startsWith(CHANGENAME)) {
             String fullname = event.getActionCommand().substring(
                     CHANGENAME.length());
             
