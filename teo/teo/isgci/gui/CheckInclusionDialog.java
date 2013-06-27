@@ -47,64 +47,89 @@ public class CheckInclusionDialog extends JDialog
         super(parent, "Find Relation", false);
         this.parent = parent;
 
-        JPanel mainPanel = new JPanel(new BorderLayout(20,20));
-        JPanel gridTop = new JPanel(new GridLayout(1,2,20,0));
-        JPanel gridMid = new JPanel(new GridLayout(1,2,20,0));
-        JPanel flowBottom = new JPanel(new FlowLayout(FlowLayout.CENTER,250,10));
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
         
-        //GridFirst
-        JPanel gridFirst = new JPanel(new GridLayout(2, 1));
-        gridFirst.setPreferredSize(new Dimension(0, 60));
+        //Global Margin
+        c.insets = new Insets(5, 10, 5, 10);
         
+        //First Label
         JLabel l_first = new JLabel("First Class:");
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(l_first,c);
+       
+        //First Search
         firstSearch = new WebSearch();
-        
-        gridFirst.add(l_first);
-        gridFirst.add(firstSearch);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(firstSearch,c);
         
         //First List
         firstList = new NodeList(parent.latex);
         firstList.setListData(DataSet.getClasses());
         firstList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroller = new JScrollPane(firstList);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.fill = GridBagConstraints.BOTH;
+        mainPanel.add(scroller,c);
         
-        //GridSecond
-        JPanel gridSecond = new JPanel(new GridLayout(2, 1));
-        gridSecond.setPreferredSize(new Dimension(0, 60));
+        //Set to Null
+        c.weighty = 0;
+        c.weightx = 0;
         
+        //Second Label
         JLabel l_second = new JLabel("Second Class:");
-        secondSearch = new WebSearch();
+        c.gridx = 1;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(l_second,c);
         
-        gridSecond.add(l_second);
-        gridSecond.add(secondSearch);
+        //Second Search
+        secondSearch = new WebSearch();
+        c.gridx = 1;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(secondSearch,c);
         
         //Second List
         secondList = new NodeList(parent.latex);
         secondList.setListData(DataSet.getClasses());
         secondList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroller2 = new JScrollPane(secondList);
+        c.gridx = 1;
+        c.gridy = 2;
+        c.weighty = 1;
+        c.weightx = 1;
+        c.fill = GridBagConstraints.BOTH;
+        mainPanel.add(scroller2,c);
         
-        //Bottom
+        //Set to Null
+        c.weighty = 0;
+        c.weightx = 0;
+        
+        //Button Globale Settings
+        c.insets = new Insets(5, 80, 5, 80);
+        c.fill = 0;
+        
+        //Find Relation Button
         inclusionCheckButton = new JButton("Find Relation");
+        c.gridx = 0;
+        c.gridy = 3;
+        mainPanel.add(inclusionCheckButton,c);
+        
+        //Cancel Button
         cancelButton = new JButton("Close");
-        flowBottom.add(inclusionCheckButton);
-        flowBottom.add(cancelButton);
-        
-        //Set Panels on Main Panel
-        gridTop.add(gridFirst);
-        gridTop.add(gridSecond);
-        
-        gridMid.add(scroller);
-        gridMid.add(scroller2);
-             
-        
-        mainPanel.add(gridTop,BorderLayout.NORTH);
-        mainPanel.add(gridMid,BorderLayout.CENTER);
-        mainPanel.add(flowBottom,BorderLayout.SOUTH);
-        
-        this.add(mainPanel);
+        c.gridx = 1;
+        c.gridy = 3;
+        mainPanel.add(cancelButton,c);
   
-
+        this.add(mainPanel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         addListeners();
         handleButtons();

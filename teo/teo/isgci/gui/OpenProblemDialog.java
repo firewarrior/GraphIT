@@ -64,115 +64,129 @@ public class OpenProblemDialog extends JDialog
 
         lists = new ListGroup(3);
         JScrollPane scroller;
-        Dimension listdim = new Dimension(150, 150);
 
+        //MainPanel for the Dialog
         Container contents = getContentPane();
-        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        contents.setLayout(gridbag);
+        contents.setLayout(new GridBagLayout());
+        c.insets = new Insets(5, 10, 5, 10);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.insets = new Insets(0, 5, 0, 5);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.WEST;
-        c.fill = GridBagConstraints.BOTH;
+        //Select Label
         JLabel label = new JLabel("Select:", JLabel.LEFT);
-        gridbag.setConstraints(label, c);
-        contents.add(label);
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        contents.add(label,c);
         
-        //FlowLayouts for the Top Panel
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel top2 = new JPanel(new FlowLayout(FlowLayout.CENTER,85,0));
-        
+        //CheckBox with the different Problems
         chooseProblem = new JComboBox<String>(problems);
-        chooseProblem.addActionListener(this);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        contents.add(chooseProblem,c);
+        
+        //Remove anchor
+        c.anchor = GridBagConstraints.CENTER;
+        
+        //CheckBox
         fullBoundary = new JCheckBox("List all boundary classes");
-        fullBoundary.addItemListener(this);
-        top2.add(fullBoundary);
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        contents.add(fullBoundary,c);
         
-        top.add(chooseProblem);
-        top.add(top2);
-        
-        c.insets = new Insets(0, 0, 0, 0);
-        gridbag.setConstraints(top, c);
-        contents.add(top);
-        
-
-        //---- NPC/open/P labels ----
+        //Set to Null
         c.gridwidth = 1;
-        c.insets = new Insets(0, 5, 0, 0);
+        
+        //---- NPC/open/P labels ----
         label = new JLabel("Minimal (co)NP-complete:", JLabel.LEFT);
-        gridbag.setConstraints(label, c);
-        contents.add(label);
+        c.gridx = 0;
+        c.gridy = 2;
+        contents.add(label,c);
 
         label = new JLabel("Open:", JLabel.LEFT);
-        gridbag.setConstraints(label, c);
-        contents.add(label);
+        c.gridx = 1;
+        c.gridy = 2;
+        contents.add(label,c);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
         label = new JLabel("Maximal P:", JLabel.LEFT);
-        gridbag.setConstraints(label, c);
-        contents.add(label);
+        c.gridx = 2;
+        c.gridy = 2;
+        contents.add(label,c);
 
         //---- NPC/open/P classes ----
-        c.insets = new Insets(0, 5, 5, 5);
+        //Globale Setting
+        c.weightx = 1;
+        c.weighty = 1;
         c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = 1;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+        
+        // The classes
         npList = new NodeList(ISGCIMainFrame.latex);
         scroller = new JScrollPane(npList);
-        scroller.setPreferredSize(listdim);
-        lists.add(npList);
-        npList.addListSelectionListener(this);
-        gridbag.setConstraints(scroller, c);
-        contents.add(scroller);
+        c.gridx = 0;
+        c.gridy = 3;
+        contents.add(scroller,c);
 
         openList = new NodeList(ISGCIMainFrame.latex);
         scroller = new JScrollPane(openList);
-        scroller.setPreferredSize(listdim);
-        lists.add(openList);
-        openList.addListSelectionListener(this);
-        gridbag.setConstraints(scroller, c);
-        contents.add(scroller);
+        c.gridx = 1;
+        c.gridy = 3;
+        contents.add(scroller,c);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
         pList = new NodeList(ISGCIMainFrame.latex);
         scroller = new JScrollPane(pList);
-        scroller.setPreferredSize(listdim);
-        lists.add(pList);
-        pList.addListSelectionListener(this);
-        gridbag.setConstraints(scroller, c);
-        contents.add(scroller);
+        c.gridx = 2;
+        c.gridy = 3;
+        contents.add(scroller,c);
+        
+        //Set to Null
+        c.weightx = 0;
+        c.weighty = 0;
+        c.fill = GridBagConstraints.NONE;
 
-        JPanel buttonPanel = new JPanel();
+        //Button Panel with FlowLayout
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 60, 5));
         drawButton = new JButton("Draw");
         showButton = new JButton("Class info");
         closeButton = new JButton("Close");
         buttonPanel.add(drawButton);
         buttonPanel.add(showButton);
         buttonPanel.add(closeButton);
-        c.insets = new Insets(5, 0, 5, 0);
-        c.fill = GridBagConstraints.BOTH;
-        c.weighty = 0.0;
-        gridbag.setConstraints(buttonPanel, c);
-        contents.add(buttonPanel);
-        handleButtons();
 
-        drawButton.addActionListener(this);
-        showButton.addActionListener(this);
-        closeButton.addActionListener(this);
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 3;
+        contents.add(buttonPanel,c);
+        
+        lists.add(npList);
+        lists.add(openList);
+        lists.add(pList);
+        
+        handleButtons();
         pack();
         setSize(700, 300);
         
+        registerListener();
         initListOpen();
         initListsBoundary();
         initListsMinMax();
     }
 
 
-    protected void closeDialog() {
+    private void registerListener() {
+        chooseProblem.addActionListener(this);
+        fullBoundary.addItemListener(this);
+        npList.addListSelectionListener(this);
+        openList.addListSelectionListener(this);
+        pList.addListSelectionListener(this);
+        drawButton.addActionListener(this);
+        showButton.addActionListener(this);
+        closeButton.addActionListener(this);
+		
+	}
+
+
+	protected void closeDialog() {
         setVisible(false);
         dispose();
     }
@@ -267,7 +281,7 @@ inP:
         if (source == drawButton) {
             Cursor oldcursor = parent.getCursor();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            parent.graphCanvas.drawHierarchy(
+            parent.getxCanvas().drawGraph(
                     getNodes(lists.getSelectedNode()));
             setCursor(oldcursor);
             closeDialog();

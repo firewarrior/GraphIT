@@ -17,15 +17,16 @@ import javax.swing.*;
 import org.jgrapht.graph.DefaultEdge;
 import teo.isgci.db.DataSet;
 import teo.isgci.gc.GraphClass;
+import teo.isgci.util.Latex2JHtml;
 import teo.isgci.util.Utility;
 
 
 public class NodePopup extends JPopupMenu implements ActionListener {
-    ISGCIMainFrame parent;
-    JMenuItem deleteItem, infoItem;
-    JMenu nameItem;
-    NodeView<Set<GraphClass>,DefaultEdge> view;
-
+	private ISGCIMainFrame parent;
+	private JMenuItem deleteItem, infoItem;
+	private JMenu nameItem;
+    private Set<GraphClass> view;
+	private String latexName;
     private static String CHANGENAME = "Name: ";
 
     public NodePopup(ISGCIMainFrame parent) {
@@ -37,30 +38,44 @@ public class NodePopup extends JPopupMenu implements ActionListener {
         infoItem.addActionListener(this);
     }
 
-    public void setNode(NodeView n) {
-        view = n;
+    public void setNode(Set<GraphClass> set, String latexName) {
+        view = set;
+        this.latexName = latexName;
     }
 
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == infoItem) {
-            JDialog d = new GraphClassInformationDialog(
-                    parent, DataSet.getClass(view.getFullName()));
-            d.setLocation(50, 50);
-            d.pack();
-            d.setSize(800, 600);
-            d.setVisible(true);
+        	Latex2JHtml converter = new Latex2JHtml();
+        	
+        	for(GraphClass gc : view){
+        		if(converter.html(gc.toString()).equals(latexName)){
+        			JDialog d = new GraphClassInformationDialog(
+                    parent, DataSet.getClass(gc.toString()));
+        			d.setLocation(50, 50);
+        			d.pack();
+        			d.setSize(800, 600);
+        			d.setVisible(true);
+        			break;
+        		}
+        	}
+        	
+            
         } else if (event.getActionCommand().startsWith(CHANGENAME)) {
             String fullname = event.getActionCommand().substring(
                     CHANGENAME.length());
-            view.setNameAndLabel(fullname);
-            parent.graphCanvas.updateBounds();
-            parent.graphCanvas.repaint();
+            
+            //for(GraphClass gc : view){
+            	//if(gc.toString().equals(fullname)){
+            		parent.getxCanvas().renameNode(view, fullname);
+            		//break;
+            //	}
+            //}
         }
     }
     
     public void show(Component orig, int x, int y) {
-        Set<GraphClass> gcs = view.getNode();
+    	Set<GraphClass> gcs = view;
         int i = 0;
 
         nameItem.removeAll();
