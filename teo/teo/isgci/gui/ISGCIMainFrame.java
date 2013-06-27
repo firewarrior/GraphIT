@@ -450,6 +450,7 @@ public class ISGCIMainFrame extends JFrame
         classesList = new NodeList(latex);
         classesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroller = new JScrollPane(classesList);
+        xCanvas.setSearchClasses(classesList);
         //Mouselistener for double click
         classesList.addMouseListener(new MouseListener() {
 			@Override

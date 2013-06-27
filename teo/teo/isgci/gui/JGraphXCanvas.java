@@ -52,6 +52,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     
     private NodePopup nodePopup;
     private EdgePopup edgePopup;
+	private NodeList searchClassesList;
     
 	public JGraphXCanvas(ISGCIMainFrame parent) {
 		component.addMouseListener(this);
@@ -275,6 +276,23 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 				}
 			}
 		}
+		else if(e.getButton() == MouseEvent.BUTTON1){
+			Object o = component.getCellAt(e.getX(), e.getY());
+			System.out.println(o);
+			if(o != null){
+				if(o instanceof mxCell){
+					mxCell cell = (mxCell) o;
+					if(cell.isVertex()){
+						for(GraphClass gc : adapter.getCellToVertex(cell)){
+							if(Utility.getShortName(converter.html(gc.toString())).equals((String)cell.getValue())){
+								searchClassesList.setSelectedValue(gc, true);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -308,6 +326,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		adapter.getVertexToCell(view).setValue(converter.html(Utility.getShortName(fullname)));
 		adapter.updateCellSize(adapter.getVertexToCell(view), true);
 		adapter.refresh();
+		
+	}
+
+	public void setSearchClasses(NodeList classesList) {
+		searchClassesList = classesList;
 		
 	}
 }
