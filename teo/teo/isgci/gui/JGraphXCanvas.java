@@ -265,12 +265,12 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 					mxCell cell = (mxCell) o;
 					if(cell.isVertex()){
 						nodePopup.setNode(adapter.getCellToVertex(cell), (String) cell.getValue());
-						nodePopup.show(component, e.getX(), e.getY());
+						nodePopup.show(component, e.getX() - component.getHorizontalScrollBar().getValue(), e.getY() - component.getVerticalScrollBar().getValue());
 						System.out.println(cell.getValue());
 					}
 					else if(cell.isEdge()){
 						edgePopup.setEdgeNodes(adapter.getCellToVertex((mxCell)cell.getSource()), (String) cell.getSource().getValue(), adapter.getCellToVertex((mxCell) cell.getTarget()), (String) cell.getTarget().getValue());
-						edgePopup.show(component, e.getX(), e.getY());
+						edgePopup.show(component, e.getX() - component.getHorizontalScrollBar().getValue(), e.getY() - component.getVerticalScrollBar().getValue());
 					}
 				}
 			}
