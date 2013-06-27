@@ -292,7 +292,7 @@ inP:
         		Collections.sort(names, new LessLatex());
         		parent.classesList.setListData(names);
         	}
-        	parent.problem.revalidate();
+        	parent.informationPanel.revalidate();
         } else if (source == showButton) {
             JDialog info = new GraphClassInformationDialog(
                     parent, lists.getSelectedNode());

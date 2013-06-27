@@ -175,7 +175,7 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
     }
 
     /**
-     * * returns the associated vertex for a given mxCell. returns
+     * returns the associated vertex for a given mxCell. returns
      * <code>null</code> if the vertex is invalid.
      * 
      * @return the associated vertex
@@ -195,7 +195,7 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
     }
 
     /**
-     * * returns the associated mxCell for a given edge. returns
+     * returns the associated mxCell for a given edge. returns
      * <code>null</code> if the edge is invalid.
      * 
      * @return the associated vertex
