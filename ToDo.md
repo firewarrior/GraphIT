@@ -16,6 +16,7 @@ Softwareproject University of Konstanz Summer Term 2013
    - Suchbox
    - Probleme in ScrollPane
    - Layout spacing vergrößern
+   - Mark unpropperInclusions
    
 Done:
    - LaTeX name for vertexes
