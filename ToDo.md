@@ -4,6 +4,8 @@ GraphIT
 Softwareproject University of Konstanz Summer Term 2013
 
 Überarbeitung ISGCI:
+
+TODO:
    - Margins im GraphCanvas
    - Margins, Minimalgrößen, Layout
    - Relayout, Restore Graph Buttons sowie Funktionalität
@@ -18,7 +20,7 @@ Softwareproject University of Konstanz Summer Term 2013
    - Layout spacing vergrößern
    - Mark unpropperInclusions
    
-Done:
+DONE:
    - LaTeX name for vertexes
    - Find in drawing
    - Zoom Buttons anbinden
@@ -30,6 +32,4 @@ Done:
    - Ausblenden von Knoten!
    - Color for Problem
    
-Probleme mit Unit Tests:
-   - Entferen von Kanten in JGraphX wirft Fehler, dass Knoten nicht existieren (sie existieren aber)
-   - Ein Beispiel, in dem das Entfernen einer Kante in JGraphX nicht an JGraphT weitergeleitet wird
+PROBLEM:
