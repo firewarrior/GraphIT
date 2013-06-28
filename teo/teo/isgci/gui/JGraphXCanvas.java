@@ -172,6 +172,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     	
     	if(layout == null)
     		layout = new mxHierarchicalLayout(adapter);
+    	layout.setInterRankCellSpacing(200);
 	    layout.execute(adapter.getDefaultParent());
     	adapter.refresh();
     }
