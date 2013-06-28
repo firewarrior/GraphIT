@@ -4,17 +4,32 @@ GraphIT
 Softwareproject University of Konstanz Summer Term 2013
 
 Überarbeitung ISGCI:
-   - Tooltips
-   - Color for Problem
-   - Zeichnen aus dem InclusionResultDialog heraus (NullPointer)
-   - Zeichnen aus dem OpenProblemDialog heraus (NullPoiner)
+
+TODO:
+   - Margins im GraphCanvas
+   - Margins, Minimalgrößen, Layout
+   - Relayout, Restore Graph Buttons sowie Funktionalität
+   - Latexdarstellung fixen
+   - Auf markierte Klasse zentrieren
+   - Panning
+   - Export
+   - Legende aktualisieren
+   - "Hide Information Bar" -> "Show Information Bar" analog Legende
+   - Suchbox
+   - Probleme in ScrollPane
+   - Layout spacing vergrößern
+   - Mark unpropperInclusions
+   
+DONE:
+   - LaTeX name for vertexes
+   - Find in drawing
    - Zoom Buttons anbinden
-   - Gruppierung von Knoten + ausblenden!
-   - Bug in Draw-Dialog, Filterfunction throws Exception
+   - Tooltips auf Nodes
+   - Kontexmenu auf Nodes
+   - Kürzen der Namen im Graph
+   - Bidirektionale Verbindung: Selektion im Graph und Infopanel
+   - draw Dialoge (find Realtion | Boundary/OpenClass)
+   - Ausblenden von Knoten!
+   - Color for Problem
    
-Done:
-   - LaTeX name for vertexes (Skoell)
-   - Find in drawing (Skoell)
-   
-JUnitTests:
-   - Keine Fehler
+PROBLEM:
