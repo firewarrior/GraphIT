@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.awt.Component;
 import javax.swing.*;
-import javax.swing.event.*;
 import teo.isgci.gc.GraphClass;
 
 

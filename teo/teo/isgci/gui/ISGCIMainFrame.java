@@ -95,7 +95,7 @@ public class ISGCIMainFrame extends JFrame
     
     // Statusleiste
     protected JPanel informationPanel;
-    private boolean showStatus = false,checkStatus = true,hideLegend = false;;
+    private boolean showStatus = false,checkStatus = true;
     protected JButton OpenBoundaryButton,addTab,relayoutButton,restoreLayButton;
     protected JButton zoomIn,zoomOut,zoomToFit;
     private String[] problems = {"None","Recognition","Treewidth","Cliquewidth","Cliquewidth expression",
@@ -454,7 +454,6 @@ public class ISGCIMainFrame extends JFrame
         classesList = new NodeList(latex);
         classesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroller = new JScrollPane(classesList);
-        xCanvas.setSearchClasses(classesList);
         //Mouselistener for double click
         classesList.addMouseListener(new MouseListener() {
 			@Override
@@ -658,7 +657,6 @@ public class ISGCIMainFrame extends JFrame
         return xCanvas;
     }
 
-
     public void itemStateChanged(ItemEvent event) {
         Object object = event.getSource();
 
@@ -681,10 +679,8 @@ public class ISGCIMainFrame extends JFrame
         	//Hide Information bar
         	if(miLegend.getState()){
         		legend.setVisible(false);
-        		hideLegend = false;
         	}else{
         		legend.setVisible(true);
-        		hideLegend = true;
         	}
         }
     }
@@ -692,19 +688,16 @@ public class ISGCIMainFrame extends JFrame
     //Needed for interactive Search
 	@Override
 	public void keyTyped(KeyEvent e) {
-
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {}
+	public void keyPressed(KeyEvent e) {
+	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		search.setListDataSearch(this, classesList);
 	}
-	
-	
-	
 }
 
 /* EOF */

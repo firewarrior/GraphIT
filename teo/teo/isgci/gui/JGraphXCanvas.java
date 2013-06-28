@@ -40,16 +40,17 @@ import com.mxgraph.view.mxGraph;
 
 public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     
+	/** JGraphX Components*/
 	private mxGraphComponent component = new mxGraphComponent(new mxGraph());
 	private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
 	private mxHierarchicalLayout layout;
 
-	
+	/** ISGCI Components*/
+	ISGCIMainFrame parent;
     private Algo.NamePref namingPref = Algo.NamePref.BASIC;
     private Problem problem;
     private Collection<GraphClass> classes;
     private List<String> vertexNames;
-    //private List<GraphClass> graphClassList;
     
     private Latex2JHtml converter = new Latex2JHtml();
     
@@ -60,12 +61,15 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     public static final Color COLOR_INTERMEDIATE = SColor.brighter(Color.red);
     public static final Color COLOR_UNKNOWN = Color.white;
 
-    
     private NodePopup nodePopup;
     private EdgePopup edgePopup;
-	private NodeList searchClassesList;
     
+    /*
+     * Constructor
+     */
 	public JGraphXCanvas(ISGCIMainFrame parent) {
+		this.parent = parent;
+		
 		component.addMouseListener(this);
 		component.addMouseWheelListener(this);
 		component.setPreferredSize(new Dimension(800, 600));
@@ -97,7 +101,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
      * @param edgeStyle Style for vertices
      * @param vertexStyle Style for edges
      */
-    public void setGraph(Graph<Set<GraphClass>, DefaultEdge> graph, String edgeStyle, String vertexStyle) {
+    private void setGraph(Graph<Set<GraphClass>, DefaultEdge> graph, String edgeStyle, String vertexStyle) {
 	    adapter = new JGraphTXAdapter<Set<GraphClass>, DefaultEdge>(graph, edgeStyle + ";noLabel=1", vertexStyle){
 	    	
 			@Override
@@ -123,7 +127,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	    
 	    adapter.setCellsMovable(false);
 	    adapter.setCellsDeletable(false);
-	    adapter.setCellsResizable(true);
+	    adapter.setCellsResizable(false);
 	    adapter.setAutoSizeCells(true);
 	    adapter.setCellsDisconnectable(false);
 	    adapter.setCellsSelectable(true);
@@ -133,16 +137,17 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	    adapter.setHtmlLabels(true);
 	    component.setConnectable(false);
 	    
-	    vertexNames = safeNames(graph.vertexSet());
 	    setNamingPref(namingPref);
 	    
 	    component.setGraph(adapter);
+	    component.refresh();
+	    vertexNames = safeNames(graph.vertexSet());
 	}
     
     /**
      * Sets alls attributes for the given graph and adds it to the canvas
      */
-    public void setGraph(Graph<Set<GraphClass>, DefaultEdge> graph) {
+    private void setGraph(Graph<Set<GraphClass>, DefaultEdge> graph) {
     	setGraph(graph, null, null);
     }
 	
@@ -164,6 +169,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     	finally {
     		adapter.getModel().endUpdate();
     	}
+    	
     	if(layout == null)
     		layout = new mxHierarchicalLayout(adapter);
 	    layout.execute(adapter.getDefaultParent());
@@ -181,6 +187,15 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
         }
         
         return result;
+	}
+	
+	/**
+	 * Renames the vertex with the given name
+	 */
+	public void renameNode(Set<GraphClass> view, String fullname) {
+		adapter.getVertexToCell(view).setValue(converter.html(Utility.getShortName(fullname)));
+		adapter.updateCellSize(adapter.getVertexToCell(view), true);
+		adapter.refresh();
 	}
 
 	/**
@@ -346,6 +361,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
         }
         component.refresh();
 	}
+	
 
 	/* Getter Methodes */
 
@@ -358,7 +374,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     }
     
     public List<GraphClass> getGraphClassList(){
-    	return new ArrayList<GraphClass>(classes);
+    	Set<GraphClass> gcl = new HashSet<GraphClass>();
+    	for(GraphClass gc : classes) {
+    		gcl.addAll(DataSet.getEquivalentClasses(gc));
+    	}
+    	return new ArrayList<GraphClass>(gcl);
     }
     
 	public List<String> getNames() { 
@@ -410,7 +430,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 					if(cell.isVertex()){
 						for(GraphClass gc : adapter.getCellToVertex(cell)){
 							if(Utility.getShortName(converter.html(gc.toString())).equals((String)cell.getValue())){
-								searchClassesList.setSelectedValue(gc, true);
+								parent.classesList.setSelectedValue(gc, true);
 								break;
 							}
 						}
@@ -443,18 +463,4 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	/*
-	 * Renames the vertex with the given name
-	 */
-	public void renameNode(Set<GraphClass> view, String fullname) {
-		adapter.getVertexToCell(view).setValue(converter.html(Utility.getShortName(fullname)));
-		adapter.updateCellSize(adapter.getVertexToCell(view), true);
-		adapter.refresh();
-	}
-
-	public void setSearchClasses(NodeList classesList) {
-		searchClassesList = classesList;
-	}
-	
 }
