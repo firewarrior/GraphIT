@@ -8,16 +8,14 @@ Softwareproject University of Konstanz Summer Term 2013
 TODO:
    - Margins im GraphCanvas
    - Margins, Minimalgrößen, Layout
-   - Relayout, Restore Graph Buttons sowie Funktionalität
    - Latexdarstellung fixen
    - Auf markierte Klasse zentrieren
    - Panning
    - Export
    - Legende aktualisieren
    - "Hide Information Bar" -> "Show Information Bar" analog Legende
-   - Suchbox
+   - Suchbox Fokus
    - Probleme in ScrollPane
-   - Layout spacing vergrößern
    - Mark unpropperInclusions
    
 DONE:
@@ -31,5 +29,7 @@ DONE:
    - draw Dialoge (find Realtion | Boundary/OpenClass)
    - Ausblenden von Knoten!
    - Color for Problem
+   - Layout spacing vergrößern
+   - Relayout, Restore Graph Buttons sowie Funktionalität
    
 PROBLEM:
