@@ -87,7 +87,28 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
      * @param vertexStyle Style for edges
      */
     public void setGraph(Graph<Set<GraphClass>, DefaultEdge> graph, String edgeStyle, String vertexStyle) {
-	    adapter = new JGraphTXAdapter<Set<GraphClass>, DefaultEdge>(graph, edgeStyle + ";noLabel=1", vertexStyle);
+	    adapter = new JGraphTXAdapter<Set<GraphClass>, DefaultEdge>(graph, edgeStyle + ";noLabel=1", vertexStyle){
+	    	
+			@Override
+			public String getToolTipForCell(Object arg0){
+				if(arg0 instanceof mxCell){
+					Latex2JHtml converter = new Latex2JHtml();				
+					mxCell cell = (mxCell) arg0;
+					
+					if(cell.isVertex()){
+						Set<GraphClass> gcs = this.getCellToVertex(cell);
+						for(GraphClass gc : gcs){
+							if(Utility.getShortName(converter.html(gc.toString())).equals((String)cell.getValue())){
+								return "<html>"+converter.html(gc.toString())+"</html>";
+							}
+						
+						}
+					}
+				}
+				return null;
+				
+			}
+		};
 	    
 	    adapter.setCellsMovable(false);
 	    adapter.setCellsDeletable(false);
@@ -328,11 +349,10 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		adapter.getVertexToCell(view).setValue(converter.html(Utility.getShortName(fullname)));
 		adapter.updateCellSize(adapter.getVertexToCell(view), true);
 		adapter.refresh();
-		
 	}
 
 	public void setSearchClasses(NodeList classesList) {
 		searchClassesList = classesList;
-		
 	}
+	
 }
