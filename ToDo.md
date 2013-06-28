@@ -10,9 +10,6 @@ Softwareproject University of Konstanz Summer Term 2013
    - Latexdarstellung fixen
    - Auf markierte Klasse zentrieren
    - Panning
-   - Color for Problem
-   - draw Dialoge (find Realtion | Boundary/OpenClass)
-   - Ausblenden von Knoten!
    - Export
    - Legende aktualisieren
    - "Hide Information Bar" -> "Show Information Bar" analog Legende
@@ -28,6 +25,9 @@ Done:
    - Kontexmenu auf Nodes
    - Kürzen der Namen im Graph
    - Bidirektionale Verbindung: Selektion im Graph und Infopanel
+   - draw Dialoge (find Realtion | Boundary/OpenClass)
+   - Ausblenden von Knoten!
+   - Color for Problem
    
 Probleme mit Unit Tests:
    - Entferen von Kanten in JGraphX wirft Fehler, dass Knoten nicht existieren (sie existieren aber)
