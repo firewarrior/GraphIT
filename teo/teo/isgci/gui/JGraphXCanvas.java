@@ -76,6 +76,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
         SimpleDirectedGraph<Set<GraphClass>, DefaultEdge> g = Algo.createHierarchySubgraph(classes);
         graphClassList = new ArrayList<GraphClass>(classes);
         setGraph(g);
+        if(problem != null)
+        	setComplexityColors();
     }
 
     /**
