@@ -4,14 +4,10 @@ GraphIT
 Softwareproject University of Konstanz Summer Term 2013
 
 Überarbeitung ISGCI:
-   - Tooltips auf Nodes
-   - Kontexmenu auf Nodes
    - Margins im GraphCanvas
    - Margins, Minimalgrößen, Layout
    - Relayout, Restore Graph Buttons sowie Funktionalität
-   - Kürzen der Namen im Graph
    - Latexdarstellung fixen
-   - Bidirektionale Verbindung: Selektion im Graph und Infopanel
    - Auf markierte Klasse zentrieren
    - Panning
    - Color for Problem
@@ -25,9 +21,13 @@ Softwareproject University of Konstanz Summer Term 2013
    - Layout spacing vergrößern
    
 Done:
-   - LaTeX name for vertexes (Skoell)
-   - Find in drawing (Skoell)
+   - LaTeX name for vertexes
+   - Find in drawing
    - Zoom Buttons anbinden
+   - Tooltips auf Nodes
+   - Kontexmenu auf Nodes
+   - Kürzen der Namen im Graph
+   - Bidirektionale Verbindung: Selektion im Graph und Infopanel
    
 Probleme mit Unit Tests:
    - Entferen von Kanten in JGraphX wirft Fehler, dass Knoten nicht existieren (sie existieren aber)
