@@ -615,9 +615,10 @@ public class ISGCIMainFrame extends JFrame
             open.setLocation(50, 50);
             open.setVisible(true);
         } else if(object == restoreLayButton){
+        	getxCanvas().restoreGraph();
         	
         } else if(object == relayoutButton){
-         
+        	getxCanvas().executeLayout();
         } else if(object == chooseProblem){
         	//////////////////////////////////////////////////////////////////////////
         	// Choose Problem and color graph
@@ -650,7 +651,7 @@ public class ISGCIMainFrame extends JFrame
             double viewLen = view.getGraphBounds().getWidth();
             view.setScale(compLen/viewLen * view.getScale());
             xCanvas.getComponent().zoom(0.99);
-        }
+        } 
     }
 
     public JGraphXCanvas getxCanvas() {
@@ -662,6 +663,7 @@ public class ISGCIMainFrame extends JFrame
         Object object = event.getSource();
 
         if (object == miDrawUnproper) {
+        	/*TODO: Update drawUnproper to JGraphX*/
             graphCanvas.setDrawUnproper(
                     ((JCheckBoxMenuItem) object).getState());
         }else if (object == miInformationBar){

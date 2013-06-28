@@ -8,6 +8,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +18,13 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import teo.isgci.db.Algo;
+import teo.isgci.db.DataSet;
 import teo.isgci.db.Algo.NamePref;
 import teo.isgci.gc.GraphClass;
+import teo.isgci.grapht.BFSWalker;
+import teo.isgci.grapht.GraphWalker;
+import teo.isgci.grapht.Inclusion;
+import teo.isgci.grapht.RevBFSWalker;
 import teo.isgci.problem.Complexity;
 import teo.isgci.problem.Problem;
 import teo.isgci.util.JGraphTXAdapter;
@@ -36,11 +42,16 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     
 	private mxGraphComponent component = new mxGraphComponent(new mxGraph());
 	private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
+	private mxHierarchicalLayout layout;
+
+	
     private Algo.NamePref namingPref = Algo.NamePref.BASIC;
     private Problem problem;
-    private Latex2JHtml converter = new Latex2JHtml();
+    private Collection<GraphClass> classes;
     private List<String> vertexNames;
-    private List<GraphClass> graphClassList;
+    //private List<GraphClass> graphClassList;
+    
+    private Latex2JHtml converter = new Latex2JHtml();
     
     /** Colours for different complexities */
     public static final Color COLOR_LIN = Color.green;
@@ -74,7 +85,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	 */
     public void drawGraph(Collection<GraphClass> classes) {
         SimpleDirectedGraph<Set<GraphClass>, DefaultEdge> g = Algo.createHierarchySubgraph(classes);
-        graphClassList = new ArrayList<GraphClass>(classes);
+        this.classes = classes;
         setGraph(g);
         if(problem != null)
         	setComplexityColors();
@@ -153,8 +164,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     	finally {
     		adapter.getModel().endUpdate();
     	}
-    	
-    	mxHierarchicalLayout layout = new mxHierarchicalLayout(adapter);
+    	if(layout == null)
+    		layout = new mxHierarchicalLayout(adapter);
 	    layout.execute(adapter.getDefaultParent());
     	adapter.refresh();
     }
@@ -243,6 +254,98 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		adapter.setCellStyles(mxConstants.STYLE_FILLCOLOR, mxHtmlColor.getHexColorString(COLOR_NPC), npcomplete.toArray());
 	}
 	
+	
+	/*Hide Sub and Superclasses*/
+	
+	/**
+	 * Executes the hirarchical Layout on the actual Graph
+	 */
+	public void executeLayout() {
+		adapter.getModel().beginUpdate();
+		try{
+			if(layout != null)
+				layout.execute(adapter.getDefaultParent());
+			component.refresh();
+		} finally {
+			adapter.getModel().endUpdate();
+		}
+	}
+	
+	/**
+	 * Restores the last drawn graph
+	 */
+	public void restoreGraph() {
+		if(classes != null)
+			drawGraph(classes);
+	}
+	
+	/**
+	 * Hides all subclasses of the given node
+	 * @param currNode
+	 */
+	public void hideSubClasses(Set<GraphClass> currNode){
+        final Set<GraphClass> result = new HashSet<GraphClass>();
+        GraphClass tmp = currNode.iterator().next();
+		
+		new BFSWalker<GraphClass,Inclusion>(DataSet.inclGraph,
+                tmp, null, GraphWalker.InitCode.DYNAMIC) {
+            public void visit(GraphClass v) {
+            	result.add(v);
+                super.visit(v);
+            }
+        }.run();
+        
+        final Set<mxCell> nodes = new HashSet<mxCell>();
+        for(GraphClass gc : result) {
+        	if(currNode.contains(gc))
+        		continue;
+        	nodes.add(findNode(gc));
+        }
+        
+        adapter.getModel().beginUpdate();
+        try{
+        	adapter.setCellsDeletable(true);
+            adapter.removeCells(nodes.toArray());
+        } finally {
+        	adapter.setCellsDeletable(false);
+        	adapter.getModel().endUpdate();
+        }
+        component.refresh();
+	}
+	
+	/**
+	 * hides all superclasses of the given node
+	 * @param currNode
+	 */
+	public void hideSuperClasses(Set<GraphClass> currNode){
+		final Set<GraphClass> result = new HashSet<GraphClass>();
+        GraphClass tmp = currNode.iterator().next();
+		
+        new RevBFSWalker<GraphClass,Inclusion>( DataSet.inclGraph,
+                tmp, null, GraphWalker.InitCode.DYNAMIC) {
+            public void visit(GraphClass v) {
+                result.add(v);
+                super.visit(v);
+            }
+        }.run();
+        
+        final Set<mxCell> nodes = new HashSet<mxCell>();
+        for(GraphClass gc : result) {
+        	if(currNode.contains(gc))
+        		continue;
+        	nodes.add(findNode(gc));
+        }
+        
+        adapter.getModel().beginUpdate();
+        try{
+        	adapter.setCellsDeletable(true);
+            adapter.removeCells(nodes.toArray());
+        } finally {
+        	adapter.setCellsDeletable(false);
+        	adapter.getModel().endUpdate();
+        }
+        component.refresh();
+	}
 
 	/* Getter Methodes */
 
@@ -255,10 +358,9 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     }
     
     public List<GraphClass> getGraphClassList(){
-    	return graphClassList;
+    	return new ArrayList<GraphClass>(classes);
     }
     
-	
 	public List<String> getNames() { 
         return vertexNames;
     }

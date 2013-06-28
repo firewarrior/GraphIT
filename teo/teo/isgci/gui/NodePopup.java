@@ -15,6 +15,8 @@ import java.awt.event.*;
 import java.util.Set;
 import javax.swing.*;
 import org.jgrapht.graph.DefaultEdge;
+
+import sun.io.Converters;
 import teo.isgci.db.DataSet;
 import teo.isgci.gc.GraphClass;
 import teo.isgci.util.Latex2JHtml;
@@ -51,7 +53,7 @@ public class NodePopup extends JPopupMenu implements ActionListener {
         Object source = event.getSource();
         if (source == infoItem) {
         	System.out.println("info");
-        	Latex2JHtml converter = new Latex2JHtml();
+            Latex2JHtml converter = new Latex2JHtml();
         	
         	for(GraphClass gc : view){
         		if(converter.html(gc.toString()).equals(latexName)){
@@ -68,12 +70,10 @@ public class NodePopup extends JPopupMenu implements ActionListener {
             
         } 
         else if(source == deleteSub){
-        	//TODO: Hide subclasses
-        	System.out.println("Hide subclasses");
+        	parent.getxCanvas().hideSubClasses(view);
         }
         else if(source == deleteSup){
-        	//TODO: Hide superclasses
-        	System.out.println("Hide superclasses");
+        	parent.getxCanvas().hideSuperClasses(view);
         }
         else if (event.getActionCommand().startsWith(CHANGENAME)) {
             String fullname = event.getActionCommand().substring(

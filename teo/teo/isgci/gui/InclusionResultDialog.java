@@ -553,6 +553,7 @@ public class InclusionResultDialog extends JDialog implements ActionListener {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             parent.getxCanvas().drawGraph(Algo.nodesBetween(upper, lower));
 
+            /*Most likely no longer needed*/
             NodeView node1 = parent.graphCanvas.findNode(
                     DataSet.getClass(nodeName1));
             NodeView node2 = parent.graphCanvas.findNode(

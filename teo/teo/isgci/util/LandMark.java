@@ -12,19 +12,15 @@ package teo.isgci.util;
 
 import java.io.*;
 import java.util.*;
-import java.net.URL;
 import java.awt.image.BufferedImage;
 import java.awt.Dimension;
 import javax.imageio.ImageIO;
-import org.xml.sax.InputSource;
-import gnu.getopt.Getopt;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import teo.isgci.grapht.*;
 import teo.isgci.gui.*;
 import teo.isgci.xml.*;
 import teo.isgci.gc.*;
 import teo.isgci.db.*;
-import teo.isgci.problem.*;
 import teo.Loader;
 
 public class LandMark {
@@ -74,6 +70,7 @@ public class LandMark {
 
         //---- Create the map
         parent.graphCanvas.drawHierarchy(landmarks);
+        parent.getxCanvas().drawGraph(landmarks);
         // reverse order so n is last in case it is one of the landmarks
         for (int i = landmarks.size()-1; i >= 0; i--) {
             GraphClass gc = landmarks.get(i);

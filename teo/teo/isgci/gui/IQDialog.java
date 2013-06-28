@@ -157,8 +157,9 @@ public class IQDialog extends JDialog
         } else if (source == newButton) {
             Cursor oldcursor = parent.getCursor();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            parent.graphCanvas.drawHierarchy(getNodes());
+            parent.getxCanvas().drawGraph(getNodes());
             
+            /*Reference to old Canvas maybe not needed*/
             for (Object o : classesList.getSelectedValues()) {
                 GraphClass gc = (GraphClass) o;
                 NodeView v = parent.graphCanvas.findNode(gc);
