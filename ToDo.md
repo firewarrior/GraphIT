@@ -6,6 +6,7 @@ Softwareproject University of Konstanz Summer Term 2013
 Überarbeitung ISGCI:
 
 TODO:
+   - ZootToFit an vertikale Höhe anpassen
    - Margins im GraphCanvas
    - Margins, Minimalgrößen, Layout
    - Latexdarstellung fixen
@@ -33,3 +34,4 @@ DONE:
    - Relayout, Restore Graph Buttons sowie Funktionalität
    
 PROBLEM:
+
