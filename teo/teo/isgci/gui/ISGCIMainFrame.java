@@ -290,7 +290,7 @@ public class ISGCIMainFrame extends JFrame
         JPanel panel = new JPanel();
         //ImageIcon informationArrow = new ImageIcon("/images/informationarrow.png");
 
-        addTab = new JButton("?");
+        addTab = new JButton(Character.valueOf('\u25C4').toString());
         addTab.setFont(new Font( Font.SANS_SERIF, Font.BOLD, 20 ));
         addTab.setOpaque(true); //
         addTab.setBorder(null);
@@ -628,14 +628,14 @@ public class ISGCIMainFrame extends JFrame
 				//Come Up
 				if(showStatus == false){
 					showStatus = true;
-					addTab.setText("?");
+					addTab.setText(Character.valueOf('\u25BA').toString());
 					informationPanel.setPreferredSize(new Dimension(300,200));
 			        informationPanel.revalidate();
 				
 			    //Come down
 				} else{
 					showStatus = false;
-					addTab.setText("?");
+					addTab.setText(Character.valueOf('\u25C4').toString());
 					informationPanel.setPreferredSize(new Dimension(0,0));
 					informationPanel.revalidate();
 				}
