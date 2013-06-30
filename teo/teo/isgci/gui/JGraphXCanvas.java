@@ -8,7 +8,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +30,6 @@ import teo.isgci.problem.Complexity;
 import teo.isgci.problem.Problem;
 import teo.isgci.util.JGraphTXAdapter;
 import teo.isgci.util.Latex2JHtml;
-import teo.isgci.util.LessLatex;
 import teo.isgci.util.Utility;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
@@ -304,7 +302,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		for(Object o : adapter.getChildCells(adapter.getDefaultParent(), false, true)){
 			if(o instanceof mxCell){
 				mxCell e = (mxCell) o;
-				if(getProperness(e)){
+				if(!getProperness(e)){
 					unpropperEdges.add(e);
 				}
 			}
@@ -317,13 +315,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
      * Checks the appropriate properness of the given edge.
      */
     private boolean getProperness(mxCell edge) {
-    	Set<GraphClass> tmp = adapter.getCellToVertex((mxCell) edge.getSource());
-    	GraphClass src = Algo.getGraphClass(tmp, namingPref);
+    	Set<GraphClass> src = adapter.getCellToVertex((mxCell) edge.getSource());
+    	Set<GraphClass> dst = adapter.getCellToVertex((mxCell) edge.getTarget());
     	
-    	tmp = adapter.getCellToVertex((mxCell) edge.getTarget());
-    	GraphClass dst = Algo.getGraphClass(tmp, namingPref);
-    	
-        List<Inclusion> path = GAlg.getPath(DataSet.inclGraph, src, dst);
+        List<Inclusion> path = GAlg.getPath(DataSet.inclGraph, 
+        		src.iterator().next(), dst.iterator().next());
         return (Algo.isPathProper(path)  ||
                 Algo.isPathProper(Algo.makePathProper(path)));
     }

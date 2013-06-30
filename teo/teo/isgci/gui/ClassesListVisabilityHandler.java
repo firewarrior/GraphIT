@@ -5,15 +5,12 @@ import java.awt.Component;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import teo.isgci.gc.GraphClass;
-import teo.isgci.gui.NodeList.NodeListCellRenderer;
 
 public class ClassesListVisabilityHandler implements
 		ListSelectionListener, ListCellRenderer<GraphClass> {
