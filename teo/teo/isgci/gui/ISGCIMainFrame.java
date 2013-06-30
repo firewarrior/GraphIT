@@ -674,8 +674,16 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		} else if (object == zoomToFit) {
 			mxGraphView view = xCanvas.getComponent().getGraph().getView();
 			int compLen = xCanvas.getComponent().getWidth();
+			int compHeight = xCanvas.getComponent().getHeight();
 			double viewLen = view.getGraphBounds().getWidth();
-			view.setScale(compLen / viewLen * view.getScale());
+			double viewHeight = view.getGraphBounds().getHeight();
+			
+			if(viewLen / compLen < viewHeight /compHeight){
+				view.setScale(compHeight / viewHeight * view.getScale());
+			} else {
+				view.setScale(compLen / viewLen * view.getScale());
+			}
+			//Little Hack to fit exactly
 			xCanvas.getComponent().zoom(0.99);
 		}
 	}

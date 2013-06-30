@@ -222,9 +222,9 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
      * Set coloring for problem p and repaint.
      */
     public void setProblem(Problem p) {
-    	if(adapter != null){
-    		if (problem != p) {
-    			problem = p;
+    	if (problem != p) {
+    		problem = p;
+    		if(adapter != null){
     			setComplexityColors();
     			adapter.refresh();
     		}
