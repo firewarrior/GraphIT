@@ -14,7 +14,6 @@ TODO:
    - Export
    - Suchbox Fokus
    - Probleme in ScrollPane
-   - Mark unpropperInclusions
    - JGraphXCanvas ist nicht Java 1.6 kompatibel
    
 DONE:
@@ -33,6 +32,7 @@ DONE:
    - ZootToFit an vertikale Höhe anpassen
    - "Hide Information Bar" -> "Show Information Bar" analog Legende
    - Legende aktualisieren
+   - Mark unpropperInclusions
    
 PROBLEM:
 
