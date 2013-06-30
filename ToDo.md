@@ -6,15 +6,12 @@ Softwareproject University of Konstanz Summer Term 2013
 Überarbeitung ISGCI:
 
 TODO:
-   - ZootToFit an vertikale Höhe anpassen
    - Margins im GraphCanvas
    - Margins, Minimalgrößen, Layout
    - Latexdarstellung fixen
    - Auf markierte Klasse zentrieren
    - Panning
    - Export
-   - Legende aktualisieren
-   - "Hide Information Bar" -> "Show Information Bar" analog Legende
    - Suchbox Fokus
    - Probleme in ScrollPane
    - Mark unpropperInclusions
@@ -32,6 +29,9 @@ DONE:
    - Color for Problem
    - Layout spacing vergrößern
    - Relayout, Restore Graph Buttons sowie Funktionalität
+   - ZootToFit an vertikale Höhe anpassen
+   - "Hide Information Bar" -> "Show Information Bar" analog Legende
+   - Legende aktualisieren
    
 PROBLEM:
 
