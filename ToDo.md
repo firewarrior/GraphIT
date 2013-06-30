@@ -15,6 +15,7 @@ TODO:
    - Suchbox Fokus
    - Probleme in ScrollPane
    - Mark unpropperInclusions
+   - JGraphXCanvas ist nicht Java 1.6 kompatibel
    
 DONE:
    - LaTeX name for vertexes
