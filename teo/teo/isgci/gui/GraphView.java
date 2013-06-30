@@ -144,7 +144,6 @@ public class GraphView<V,E> {
         for (E e : graph.edgeSet()) {
             if (!isVirtual(graph.getEdgeSource(e))) {
                 EdgeView<V,E> v = new EdgeView<V,E>(this, e);
-                /*The Method setProperness dosen't do anything...*/
                 if (parent instanceof GraphCanvas)
                     ((GraphCanvas) parent).setProperness(v);
                 eViews.add(v);

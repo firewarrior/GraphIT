@@ -23,6 +23,7 @@ import teo.isgci.db.DataSet;
 import teo.isgci.db.Algo.NamePref;
 import teo.isgci.gc.GraphClass;
 import teo.isgci.grapht.BFSWalker;
+import teo.isgci.grapht.GAlg;
 import teo.isgci.grapht.GraphWalker;
 import teo.isgci.grapht.Inclusion;
 import teo.isgci.grapht.RevBFSWalker;
@@ -53,6 +54,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     private Problem problem;
     private Collection<GraphClass> classes;
     private List<String> vertexNames;
+    private boolean drawUnpropper = true;
     
     private Latex2JHtml converter = new Latex2JHtml();
     
@@ -95,6 +97,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
         setGraph(g);
         if(problem != null)
         	setComplexityColors();
+        setUnpropperEdges();
     }
 
     /**
@@ -150,9 +153,9 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
      * Sets alls attributes for the given graph and adds it to the canvas
      */
     private void setGraph(Graph<Set<GraphClass>, DefaultEdge> graph) {
-    	setGraph(graph, null, null);
+   		setGraph(graph, null, null);
     }
-	
+    
 	/**
      * Set all nodes to their prefered names and writes the Latex-Label
      */
@@ -272,6 +275,59 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		adapter.setCellStyles(mxConstants.STYLE_FILLCOLOR, mxHtmlColor.getHexColorString(COLOR_NPC), npcomplete.toArray());
 	}
 	
+	
+	/* Mark unpropper inclusions*/
+	
+	/**
+     * Set unpropperInclusions and refresh
+     */
+    public void setUnpropper(boolean drawUnpropper) {
+    	if (this.drawUnpropper != drawUnpropper) {
+    		this.drawUnpropper = drawUnpropper;
+    		if(adapter != null){
+    			setUnpropperEdges();
+    			adapter.refresh();
+    		}
+    	}
+    }
+    
+    /*
+     * Draws the appropriate ending of the edge 
+     */
+    private void setUnpropperEdges() {
+    	if(!drawUnpropper){
+    		adapter.setCellStyles(mxConstants.STYLE_STARTARROW, mxConstants.NONE, 
+    				adapter.getChildCells(adapter.getDefaultParent(), false, true));
+    		return;
+    	}
+    	List<Object> unpropperEdges = new LinkedList<>();
+		for(Object o : adapter.getChildCells(adapter.getDefaultParent(), false, true)){
+			if(o instanceof mxCell){
+				mxCell e = (mxCell) o;
+				if(getProperness(e)){
+					unpropperEdges.add(e);
+				}
+			}
+		}
+		adapter.setCellStyles(mxConstants.STYLE_STARTARROW, mxConstants.ARROW_DIAMOND,
+				unpropperEdges.toArray());
+	}
+
+	/*
+     * Checks the appropriate properness of the given edge.
+     */
+    private boolean getProperness(mxCell edge) {
+    	Set<GraphClass> tmp = adapter.getCellToVertex((mxCell) edge.getSource());
+    	GraphClass src = Algo.getGraphClass(tmp, namingPref);
+    	
+    	tmp = adapter.getCellToVertex((mxCell) edge.getTarget());
+    	GraphClass dst = Algo.getGraphClass(tmp, namingPref);
+    	
+        List<Inclusion> path = GAlg.getPath(DataSet.inclGraph, src, dst);
+        return (Algo.isPathProper(path)  ||
+                Algo.isPathProper(Algo.makePathProper(path)));
+    }
+    
 	
 	/*Hide Sub and Superclasses*/
 	

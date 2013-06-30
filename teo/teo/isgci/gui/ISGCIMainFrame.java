@@ -643,9 +643,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		} else if (object == relayoutButton) {
 			getxCanvas().executeLayout();
 		} else if (object == chooseProblem) {
-			// ////////////////////////////////////////////////////////////////////////
-			// Choose Problem and color graph
-			// ////////////////////////////////////////////////////////////////////////
 			this.getxCanvas()
 					.setProblem(
 							DataSet.getProblem((String) chooseProblem
@@ -696,9 +693,8 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		Object object = event.getSource();
 
 		if (object == miDrawUnproper) {
-			/* TODO: Update drawUnproper to JGraphX */
-			graphCanvas
-					.setDrawUnproper(((JCheckBoxMenuItem) object).getState());
+			getxCanvas().setUnpropper(((JCheckBoxMenuItem) object).getState());
+//			graphCanvas.setDrawUnproper(((JCheckBoxMenuItem) object).getState());
 		} else if (object == miInformationBar) {
 			// Hide Information bar
 			if (miInformationBar.getState()) {
