@@ -510,16 +510,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 	 * @return the panel
 	 */
 	protected JComponent createCanvasPanel() {
-		graphCanvas = new ISGCIGraphCanvas(this);
-		drawingPane = new JScrollPane(graphCanvas,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
-		drawingPane.getHorizontalScrollBar().setUnitIncrement(100);
-		drawingPane.getVerticalScrollBar().setUnitIncrement(100);
-
 		xCanvas = new JGraphXCanvas(this);
-
 		return xCanvas.getComponent();
 	}
 
@@ -640,7 +631,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 			open.setVisible(true);
 		} else if (object == restoreLayButton) {
 			getxCanvas().restoreGraph();
-
 		} else if (object == relayoutButton) {
 			getxCanvas().executeLayout();
 		} else if (object == chooseProblem) {

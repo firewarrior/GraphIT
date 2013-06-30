@@ -14,6 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
@@ -39,6 +42,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxHtmlColor;
+import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 
 public class JGraphXCanvas implements MouseListener, MouseWheelListener {
@@ -78,6 +82,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		component.addMouseWheelListener(this);
 		component.setPreferredSize(new Dimension(800, 600));
 		component.setSize(component.getPreferredSize());
+		component.setBorder(BorderFactory.createEmptyBorder());
 		component.setToolTips(true);
 		component.getGraphControl().addMouseListener(this);
 		
