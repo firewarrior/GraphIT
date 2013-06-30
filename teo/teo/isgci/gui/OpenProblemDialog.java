@@ -56,11 +56,13 @@ public class OpenProblemDialog extends JDialog
 			 "Hamiltonian cycle","Hamiltonian path","Weighted feedback vertex set",
 			 "Feedback vertex set"};
     protected JComboBox<String> chooseProblem;
+    protected Dimension minSize = new Dimension(547,269);
 
 
     public OpenProblemDialog(ISGCIMainFrame parent) {
         super(parent, "Boundary/Open classes", false);
         this.parent = parent;
+        this.setMinimumSize(minSize);
 
         lists = new ListGroup(3);
         JScrollPane scroller;

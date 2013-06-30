@@ -18,6 +18,8 @@ import teo.isgci.util.LessLatex;
 
 import java.io.IOException;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -41,12 +43,14 @@ public class GraphClassSelectionDialog extends JDialog
     protected ISGCIMainFrame parent;
     protected NodeList classesList;
     protected JCheckBox superCheck, subCheck;
-    protected JButton addButton, removeButton, newButton, cancelButton;
+    protected JButton newButton, cancelButton;
     protected WebSearch search;
+    protected Dimension minSize = new Dimension(328,292);
 
     public GraphClassSelectionDialog(ISGCIMainFrame parent) {
         super(parent, "Select Graph Classes", false);
         this.parent = parent;
+        this.setMinimumSize(minSize);
 
         Container contents = getContentPane();
         GridBagLayout gridbag = new GridBagLayout();
@@ -104,14 +108,10 @@ public class GraphClassSelectionDialog extends JDialog
         gridbag.setConstraints(subCheck, c);
         contents.add(subCheck);
 
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,60,0));
         newButton = new JButton("New drawing");
-        addButton = new JButton("Add to drawing");
-        removeButton = new JButton("Remove from drawing");
-        cancelButton = new JButton("Cancel");
+        cancelButton = new JButton("Close");
         buttonPanel.add(newButton);
-        //buttonPanel.add(addButton);
-        //buttonPanel.add(removeButton);
         buttonPanel.add(cancelButton);
         c.insets = new Insets(5, 0, 5, 0);
         c.fill = GridBagConstraints.BOTH;
@@ -128,8 +128,6 @@ public class GraphClassSelectionDialog extends JDialog
 
     protected void addListeners() {
         newButton.addActionListener(this);
-        addButton.addActionListener(this);
-        removeButton.addActionListener(this);
         cancelButton.addActionListener(this);
     }
 
@@ -152,7 +150,6 @@ public class GraphClassSelectionDialog extends JDialog
         } else if (source == newButton) {
             Cursor oldcursor = parent.getCursor();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//            parent.graphCanvas.drawHierarchy(getNodes());
             parent.getxCanvas().drawGraph(getNodes());
             
             /*Reference to old Canvas maybe not needed*/

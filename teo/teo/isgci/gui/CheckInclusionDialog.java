@@ -40,12 +40,15 @@ public class CheckInclusionDialog extends JDialog
     protected JButton inclusionCheckButton;
     protected WebSearch firstSearch, secondSearch;
     
+    protected Dimension minSize = new Dimension(511,288);
+    
     /** Create and display the dialog
      * @param parent the parent of the dialog
      */
     public CheckInclusionDialog(ISGCIMainFrame parent) {
         super(parent, "Find Relation", false);
         this.parent = parent;
+        this.setMinimumSize(minSize);
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();

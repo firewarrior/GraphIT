@@ -122,6 +122,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 
 	// Global Settings
 	protected Dimension size = new Dimension(800, 600);
+	protected Dimension minSize = new Dimension(530, 455);
 
 	/**
 	 * Creates the frame.
@@ -163,7 +164,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		}
 
 		setSize(size);
-		// setMinimumSize(getSize());
+		setMinimumSize(minSize);
 
 		// Create JMenu
 		setJMenuBar(createMenus());
@@ -694,7 +695,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 
 		if (object == miDrawUnproper) {
 			getxCanvas().setUnpropper(((JCheckBoxMenuItem) object).getState());
-//			graphCanvas.setDrawUnproper(((JCheckBoxMenuItem) object).getState());
 		} else if (object == miInformationBar) {
 			// Hide Information bar
 			if (miInformationBar.getState()) {

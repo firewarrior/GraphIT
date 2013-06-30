@@ -11,6 +11,7 @@
 package teo.isgci.gui;
 
 import java.awt.event.*;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -21,12 +22,14 @@ import teo.isgci.db.*;
 
 public class AboutDialog extends JDialog implements ActionListener {
     protected ISGCIMainFrame parent;
-    protected JButton okButton;
+    protected JButton closeButton;
+    protected Dimension minSize = new Dimension(491,257);
 
 
     public AboutDialog(ISGCIMainFrame parent) {
         super(parent, "About ISGCI", true);
         this.parent = parent;
+        this.setMinimumSize(minSize);
 
         Insets insetsZero = new Insets(0,0,0,0);
         Insets insetsTopMargin = new Insets(10,0,0,0);
@@ -79,12 +82,12 @@ public class AboutDialog extends JDialog implements ActionListener {
         content.add(label3);
         
         c.insets = new Insets(10, 0, 5, 0);
-        okButton = new JButton(" OK ");
-        gridbag.setConstraints(okButton, c);
-        content.add(okButton);
+        closeButton = new JButton("Close");
+        gridbag.setConstraints(closeButton, c);
+        content.add(closeButton);
 
 
-        okButton.addActionListener(this);
+        closeButton.addActionListener(this);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         pack();
     }
@@ -97,7 +100,7 @@ public class AboutDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
-        if (source == okButton) {
+        if (source == closeButton) {
             closeDialog();
         }
     }

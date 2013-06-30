@@ -40,7 +40,7 @@ public class ExportDialog extends JDialog implements ActionListener {
     protected JLabel title;
     protected JPanel cardPanel;
     protected CardLayout cardLayout;
-    protected JButton backButton, nextButton, cancelButton;
+    protected JButton backButton, nextButton, closeButton;
 
     /* Format items */
     protected ButtonGroup formats;
@@ -55,10 +55,14 @@ public class ExportDialog extends JDialog implements ActionListener {
 
     /* Save location items */
     protected JFileChooser file;
+    
+    /* Minimum Size */
+    protected Dimension minSize = new Dimension(534,425);
 
     public ExportDialog(ISGCIMainFrame parent) {
         super(parent, "Export drawing", true);
         this.parent = parent;
+        this.setMinimumSize(minSize);
 
         Container content = getContentPane();
         JPanel buttonPanel = new JPanel();
@@ -72,11 +76,11 @@ public class ExportDialog extends JDialog implements ActionListener {
 
         backButton = new JButton("< Back");
         nextButton = new JButton("Next >");
-        cancelButton = new JButton("Cancel");
+        closeButton = new JButton("Close");
 
         backButton.addActionListener(this);
         nextButton.addActionListener(this);
-        cancelButton.addActionListener(this);
+        closeButton.addActionListener(this);
 
         buttonPanel.setLayout(new BorderLayout());
         buttonPanel.add(new JSeparator(), BorderLayout.NORTH);
@@ -86,7 +90,7 @@ public class ExportDialog extends JDialog implements ActionListener {
         buttonBox.add(Box.createHorizontalStrut(10));
         buttonBox.add(nextButton);
         buttonBox.add(Box.createHorizontalStrut(30));
-        buttonBox.add(cancelButton);
+        buttonBox.add(closeButton);
         buttonPanel.add(buttonBox, java.awt.BorderLayout.EAST);
 
         title = new JLabel("");
@@ -123,7 +127,7 @@ public class ExportDialog extends JDialog implements ActionListener {
         // Use the JFileChooser buttons instead, to prevent errors when the
         // user clicks Next, but didn't press Return after typing a file name.
         nextButton.setVisible(card != CARD_FILE);
-        cancelButton.setVisible(card != CARD_FILE);
+        closeButton.setVisible(card != CARD_FILE);
     }
 
     /**
@@ -290,9 +294,9 @@ public class ExportDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source == cancelButton)
-            closeDialog();
-        else if (source == nextButton) {
+        if (source == closeButton) {
+            closeDialog();   
+        }else if (source == nextButton) {
             if (current == CARD_FORMAT) {
                 if (radioPS.isSelected())
                     showCard(CARD_PS);

@@ -55,6 +55,7 @@ public class GraphClassInformationDialog extends JDialog
     protected JButton okButton, classButton, inclButton, drawButton;
     protected WebSearch search;
     protected MouseAdapter mouseAdapter;
+    protected Dimension minSize = new Dimension(611,394);
 
     public GraphClassInformationDialog(ISGCIMainFrame parent) {
         this(parent, null);
@@ -64,6 +65,7 @@ public class GraphClassInformationDialog extends JDialog
             GraphClass target) {
         super(parent, "Graph Class Information", false);
         this.parent = parent;
+        this.setMinimumSize(minSize);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         Container contents = getContentPane();
