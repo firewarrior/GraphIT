@@ -8,6 +8,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,7 @@ import teo.isgci.problem.Complexity;
 import teo.isgci.problem.Problem;
 import teo.isgci.util.JGraphTXAdapter;
 import teo.isgci.util.Latex2JHtml;
+import teo.isgci.util.LessLatex;
 import teo.isgci.util.Utility;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
@@ -293,6 +295,9 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 	public void restoreGraph() {
 		if(classes != null)
 			drawGraph(classes);
+		parent.classesHandler.getDeactivated().clear();
+    	parent.informationPanel.revalidate();
+      	parent.informationPanel.repaint();
 	}
 	
 	/**
@@ -312,10 +317,12 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
         }.run();
         
         final Set<mxCell> nodes = new HashSet<mxCell>();
+		List<GraphClass> names = new LinkedList<>();
         for(GraphClass gc : result) {
         	if(currNode.contains(gc))
         		continue;
         	nodes.add(findNode(gc));
+        	names.add(gc);
         }
         
         adapter.getModel().beginUpdate();
@@ -327,6 +334,13 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
         	adapter.getModel().endUpdate();
         }
         component.refresh();
+        
+      //Load information into informationbar
+    	if (!names.isEmpty()) {
+    		parent.classesHandler.addDeactivated(names);
+    	}
+    	parent.informationPanel.revalidate();
+      	parent.informationPanel.repaint();
 	}
 	
 	/**
@@ -346,10 +360,12 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
         }.run();
         
         final Set<mxCell> nodes = new HashSet<mxCell>();
+		List<GraphClass> names = new LinkedList<>();
         for(GraphClass gc : result) {
         	if(currNode.contains(gc))
         		continue;
         	nodes.add(findNode(gc));
+           	names.add(gc);
         }
         
         adapter.getModel().beginUpdate();
@@ -361,6 +377,13 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
         	adapter.getModel().endUpdate();
         }
         component.refresh();
+        
+        //Load information into informationbar
+      	if (!names.isEmpty()) {
+      		parent.classesHandler.addDeactivated(names);
+      	}
+      	parent.informationPanel.revalidate();
+      	parent.informationPanel.repaint();
 	}
 	
 

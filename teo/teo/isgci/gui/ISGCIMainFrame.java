@@ -52,6 +52,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
@@ -110,6 +112,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 
 	// New added for Graph Browser
 	protected NodeList classesList;
+	protected ClassesListVisabilityHandler classesHandler;
 	protected LegendPanel legend = new LegendPanel();
 
 	// This is where the drawing goes.
@@ -141,6 +144,10 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		if (latex == null) {
 			latex = new LatexGraphics();
 			latex.init(loader);
+		}
+		
+		if(classesHandler == null){
+			classesHandler = new ClassesListVisabilityHandler(latex);
 		}
 
 		boolean createMaps = false;
@@ -455,6 +462,8 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 	protected JScrollPane createSearchBrowser() {
 		classesList = new NodeList(latex);
 		classesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		classesList.addListSelectionListener(classesHandler);
+		classesList.setCellRenderer(classesHandler);
 		JScrollPane scroller = new JScrollPane(classesList);
 		// Mouselistener for double click
 		classesList.addMouseListener(new MouseListener() {
