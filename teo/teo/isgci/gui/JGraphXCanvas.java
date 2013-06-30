@@ -52,7 +52,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     private Problem problem;
     private Collection<GraphClass> classes;
     private List<String> vertexNames;
-    private boolean drawUnpropper = true;
+    private boolean drawUnpropper;
     
     private Latex2JHtml converter = new Latex2JHtml();
     
@@ -71,6 +71,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
      */
 	public JGraphXCanvas(ISGCIMainFrame parent) {
 		this.parent = parent;
+		drawUnpropper = parent.miDrawUnproper.isSelected();
 		
 		component.addMouseListener(this);
 		component.addMouseWheelListener(this);
