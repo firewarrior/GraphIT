@@ -67,38 +67,6 @@ public final class Algo {
     }
     
     /**
-     * Return the graphclass to be used for the given set of equivalent classes,
-     * according to the naming preference.
-     */
-    public static GraphClass getGraphClass(Set<GraphClass> equivs, NamePref pref) {
-        GraphClass namer = null;
-
-        for (GraphClass c : equivs) {
-            if (pref == NamePref.FORBIDDEN  &&  c instanceof ForbiddenClass)
-                return c;
-            if (pref == NamePref.DERIVED) {
-                if (c instanceof UnionClass  ||  c instanceof IntersectClass)
-                    return c;
-                if (c instanceof HereditaryClass ||
-                        c instanceof ComplementClass)
-                    namer = c;
-            }
-            if (pref == NamePref.BASIC   &&  !(
-                    c instanceof ForbiddenClass ||
-                    c instanceof UnionClass ||
-                    c instanceof IntersectClass ||
-                    c instanceof HereditaryClass ||
-                    c instanceof ComplementClass))
-                return c;
-            if (namer == null  ||  namer instanceof ForbiddenClass)
-                namer = c;
-        }
-        return namer;
-    }
-
-
-
-    /**
      * Find the subclasses of node and return them ordered by name.
      */
     public static ArrayList<GraphClass> subNodes(GraphClass node) {

@@ -52,8 +52,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
