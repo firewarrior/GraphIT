@@ -32,7 +32,7 @@ DONE:
    - Mark unpropperInclusions
    - Panning
    - Margins, Minimalgrößen, Layout
+   - JGraphXCanvas jetzt Java 1.6 kompatibel
    
 PROBLEM:
-   - JGraphXCanvas ist nicht Java 1.6 kompatibel
-
+   - Nodepopup benutzt sun.io.Converters, das in Java 1.6 nicht vorhanden ist
