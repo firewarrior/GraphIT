@@ -2,8 +2,11 @@ package teo.isgci.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
@@ -43,7 +46,7 @@ import com.mxgraph.util.mxHtmlColor;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 
-public class JGraphXCanvas implements MouseListener, MouseWheelListener {
+public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMotionListener{
     
 	/** JGraphX Components*/
 	private mxGraphComponent component = new mxGraphComponent(new mxGraph());
@@ -70,6 +73,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
     private NodePopup nodePopup;
     private EdgePopup edgePopup;
     
+    private Point startPoint;
+    
     /*
      * Constructor
      */
@@ -78,11 +83,14 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 		
 		component.addMouseListener(this);
 		component.addMouseWheelListener(this);
+		component.addMouseMotionListener(this);
 		component.setPreferredSize(new Dimension(800, 600));
 		component.setSize(component.getPreferredSize());
 		component.setBorder(BorderFactory.createEmptyBorder());
 		component.setToolTips(true);
+		component.setAutoScroll(false);
 		component.getGraphControl().addMouseListener(this);
+		component.getGraphControl().addMouseMotionListener(this);
 		
 		nodePopup = new NodePopup(parent);
         edgePopup = new EdgePopup(parent);
@@ -523,25 +531,45 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		startPoint = e.getLocationOnScreen();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		startPoint = null;
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		Point endPoint = e.getLocationOnScreen();
+		Rectangle current = component.getGraphControl().getVisibleRect();
+		int xNew = endPoint.x - startPoint.x;
+		int yNew = endPoint.y - startPoint.y;
+		int xPan = 0;
+		int yPan = 0;
+		if(current.x - xNew > 0){
+			xPan = current.x - xNew;
+		}
+		if(current.y - yNew > 0){
+			yPan = current.y - yNew;
+		}
+		current.setLocation(xPan, yPan);
+		component.getGraphControl().scrollRectToVisible(current);
+		startPoint = e.getLocationOnScreen();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+
 	}
 }
