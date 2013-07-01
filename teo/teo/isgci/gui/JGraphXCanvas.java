@@ -256,11 +256,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 			return;
 		}
 		
-		List<Object> unknown = new LinkedList<>();
-		List<Object> linear = new LinkedList<>();
-		List<Object> polynomial = new LinkedList<>();
-		List<Object> intermediate = new LinkedList<>();
-		List<Object> npcomplete = new LinkedList<>();
+		List<Object> unknown = new LinkedList<Object>();
+		List<Object> linear = new LinkedList<Object>();
+		List<Object> polynomial = new LinkedList<Object>();
+		List<Object> intermediate = new LinkedList<Object>();
+		List<Object> npcomplete = new LinkedList<Object>();
 		
 		Complexity tmp = Complexity.UNKNOWN;
 		
@@ -312,7 +312,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
     				adapter.getChildCells(adapter.getDefaultParent(), false, true));
     		return;
     	}
-    	List<Object> unpropperEdges = new LinkedList<>();
+    	List<Object> unpropperEdges = new LinkedList<Object>();
 		for(Object o : adapter.getChildCells(adapter.getDefaultParent(), false, true)){
 			if(o instanceof mxCell){
 				mxCell e = (mxCell) o;
@@ -383,7 +383,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
         }.run();
         
         final Set<mxCell> nodes = new HashSet<mxCell>();
-		List<GraphClass> names = new LinkedList<>();
+		List<GraphClass> names = new LinkedList<GraphClass>();
         for(GraphClass gc : result) {
         	if(currNode.contains(gc))
         		continue;
@@ -426,7 +426,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
         }.run();
         
         final Set<mxCell> nodes = new HashSet<mxCell>();
-		List<GraphClass> names = new LinkedList<>();
+		List<GraphClass> names = new LinkedList<GraphClass>();
         for(GraphClass gc : result) {
         	if(currNode.contains(gc))
         		continue;

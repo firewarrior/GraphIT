@@ -20,7 +20,7 @@ import com.mxgraph.view.mxGraphView;
 public class ZoomDemo implements ActionListener {
 
 	private mxGraphComponent component;
-	private ListenableGraph<String, DefaultEdge> graph = new ListenableDirectedGraph<>(
+	private ListenableGraph<String, DefaultEdge> graph = new ListenableDirectedGraph<String, DefaultEdge>(
 			DefaultEdge.class);
 	private JGraphTXAdapter<String, DefaultEdge> g;
 	private JFrame mainFrame = new JFrame("ZoomDemo");
