@@ -267,6 +267,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		zoomToFit.addActionListener(this);
 
 		search.addKeyListener(this);
+		search.addFocusListener(search);
 		addTab.addActionListener(this);
 		chooseProblem.addActionListener(this);
 		restoreLayButton.addActionListener(this);
@@ -369,8 +370,8 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		c.insets = new Insets(10, 0, 5, 0);
 		c.fill = GridBagConstraints.HORIZONTAL;
 
-		search = new WebSearch();
-		search.setText("Search...");
+		search = new WebSearch("Search...");
+//		search.setText("Search...");
 		mainPanel.add(search, c);
 
 		// List Panel
@@ -713,6 +714,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		search.setCustomTextSet(true);
 		search.setListDataSearch(this, classesList);
 	}
 }

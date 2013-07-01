@@ -11,27 +11,36 @@
 
 package teo.isgci.gui;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-//import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import javax.swing.*;
-import teo.isgci.db.*;
-import teo.isgci.gui.ISGCIMainFrame;
-import teo.isgci.gui.MessageDialog;
-import teo.isgci.gui.NodeList;
-import teo.isgci.util.BinaryPredicate;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+
+import teo.isgci.db.DataSet;
 import teo.isgci.util.LessLatex;
-import teo.isgci.util.Utility;
+//import java.awt.*;
 
 
 /**
  * Sucht in der DB nach dem Suchbegriff, der im Konstruktor angegeben wird
  * 
  */
-public class WebSearch extends JTextField implements Iterator {
+public class WebSearch extends JTextField implements Iterator, FocusListener {
     /** die URL, auf der das Script liegt */
     protected static final String wwwurl=
             "http://www.graphclasses.org/search.cgi";
@@ -39,6 +48,8 @@ public class WebSearch extends JTextField implements Iterator {
     protected List<String> ergebnis;
     /** Next element to be given out by nextElement() */
     protected int count;
+	private String emptyText;
+	private boolean customTextSet = false;
 
 
     /**
@@ -76,8 +87,16 @@ public class WebSearch extends JTextField implements Iterator {
         super();
         ergebnis = new ArrayList<String>();
         count = 0;
+        emptyText = "";
     }
-     
+    
+    public WebSearch(String emptyText) {
+    	super(emptyText);
+    	this.emptyText = emptyText;
+    	ergebnis = new ArrayList<String>();
+    	count = 0;
+    	addFocusListener(this);
+    }
 
     public void search(String search, boolean ignoreCase) throws IOException {
         count = 0;
@@ -184,6 +203,33 @@ public class WebSearch extends JTextField implements Iterator {
         if (ergebnis.size() > 1)
             Collections.sort(ergebnis, cmpor);
     }
+
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		if (!customTextSet) {
+			setText("");
+		}
+	}
+
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if (getText().trim().length() == 0) {
+			customTextSet = false;
+			setText(emptyText);
+		}
+	}
+
+
+	public boolean isCustomTextSet() {
+		return customTextSet;
+	}
+
+
+	public void setCustomTextSet(boolean customTextSet) {
+		this.customTextSet = customTextSet;
+	}
 
 }
 
