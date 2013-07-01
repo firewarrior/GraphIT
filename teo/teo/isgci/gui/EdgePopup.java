@@ -50,7 +50,7 @@ public class EdgePopup extends JPopupMenu implements ActionListener {
         	Latex2JHtml converter = new Latex2JHtml();
         	
         	for(GraphClass gc : this.source){
-        		if(converter.html(gc.toString()).equals(srcName)){
+        		if(parent.getxCanvas().createLabel(converter.html(gc.toString())).equals(srcName)){
         			tempsrc = gc.toString();
         			break;
         		}

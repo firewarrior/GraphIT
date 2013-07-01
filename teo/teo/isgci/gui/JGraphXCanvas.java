@@ -128,7 +128,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					if(cell.isVertex()){
 						Set<GraphClass> gcs = this.getCellToVertex(cell);
 						for(GraphClass gc : gcs){
-							if(Utility.getShortName(converter.html(gc.toString())).equals((String)cell.getValue())){
+							if(parent.getxCanvas().createLabel(Utility.getShortName(converter.html(gc.toString()))).equals((String)cell.getValue())){
 								return "<html>"+converter.html(gc.toString())+"</html>";
 							}
 						
@@ -176,7 +176,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
     		for (Object o : adapter.getChildCells(adapter.getDefaultParent(), true, false)) {
     			if (o instanceof mxCell) {
     				mxCell cell = (mxCell) o;
-    				cell.setValue(Utility.getShortName(converter.html(Algo.getName(adapter.getCellToVertex(cell), namingPref))));
+    				cell.setValue(createLabel(Utility.getShortName(converter.html(Algo.getName(adapter.getCellToVertex(cell), namingPref)))));
     				adapter.updateCellSize(cell, true);
     			}
     		}
@@ -209,7 +209,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	 * Renames the vertex with the given name
 	 */
 	public void renameNode(Set<GraphClass> view, String fullname) {
-		adapter.getVertexToCell(view).setValue(converter.html(Utility.getShortName(fullname)));
+		adapter.getVertexToCell(view).setValue(parent.getxCanvas().createLabel(converter.html(Utility.getShortName(fullname))));
 		adapter.updateCellSize(adapter.getVertexToCell(view), true);
 		adapter.refresh();
 	}
@@ -519,7 +519,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					mxCell cell = (mxCell) o;
 					if(cell.isVertex()){
 						for(GraphClass gc : adapter.getCellToVertex(cell)){
-							if(Utility.getShortName(converter.html(gc.toString())).equals((String)cell.getValue())){
+							if(parent.getxCanvas().createLabel(Utility.getShortName(converter.html(gc.toString()))).equals((String)cell.getValue())){
 								parent.classesList.setSelectedValue(gc, true);
 								break;
 							}
@@ -572,5 +572,107 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	@Override
 	public void mouseMoved(MouseEvent e) {
 
+	}
+	
+	public String createLabel(String label){
+
+		String temp = "";
+		boolean co = false;
+		int count = 0;
+		
+		for(int i=0; i<label.length(); i++){
+				//temp += label.charAt(i);
+				//temp += "_";
+			
+			if(co){
+				temp += "&#095";
+			}
+			else{
+				temp += "&#160";
+				count++;
+			}
+			
+			if(i > 3 && (label.substring(i-4,i+1).equals("<sub>") || label.substring(i-4,i+1).equals("<sup>"))){
+					temp = temp.substring(0,temp.length()-5*5);
+					if(count < 5){
+						count = 0;
+					}
+					else{
+						count -= 5;
+					}
+			}
+			else if(i > 4 && (label.substring(i-5,i+1).equals("</sub>") || label.substring(i-5,i+1).equals("</sup>"))){
+				temp = temp.substring(0, temp.length()-6*5);
+				if(count < 6){
+					count = 0;
+				}
+				else{
+					count -= 6;
+				}
+			}
+			
+			if(label.charAt(i) == '(' && i>2){
+				if(label.charAt(i-1) == '-' && label.charAt(i-2) == 'o' && label.charAt(i-3) == 'c'){
+					temp = temp.substring(0,temp.length()-4*5);
+					
+					//temp += "<sub>";
+					//temp += "<span style=\"text-decoration:underlined\">";
+					
+					if(count > 12){
+						temp += "&#160&#160&#160&#160&#160<sub>&#160</sub>";
+						count -= 5;
+					}
+					else if(count > 7){
+						temp += "&#160&#160&#160";
+						count -= 3;
+					}
+					
+					co = true;
+				}
+				/*else {
+					temp = temp.substring(0, temp.length()-1);
+					temp += "l";
+				}*/
+			}
+			
+			if(label.charAt(i) == ')'){
+				if(co){
+				//	temp = temp.substring(0,temp.length()-1);
+				//	temp += "</span>";
+				    temp = temp.substring(0,temp.length()-5);
+					co = false;
+				}
+				/*else{
+					temp = temp.substring(0, temp.length()-1);
+					temp += "l";
+				}*/
+			}
+			
+		}
+	
+		
+		/*if(co){
+			temp += "</span>"; 
+			co = false;
+		}*/
+		
+		System.out.println(temp);
+		System.out.println(label);
+		for(int i=0; i<label.length(); i++){
+			if(label.charAt(i) == '(' && i>2){
+				if(label.charAt(i-1) == '-' && label.charAt(i-2) == 'o' && label.charAt(i-3) == 'c'){
+					label = label.substring(0,i-3) + label.substring(i+1,label.length());
+					co = true;
+				}
+			}
+			if(co && label.charAt(i) == ')'){
+				label = label.substring(0,i) + label.substring(i+1,label.length());
+				co = false;
+			}
+		}
+		
+		
+		
+		return "<p align=\"left\">" + temp + "</p>" + label;
 	}
 }
