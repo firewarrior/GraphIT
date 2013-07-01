@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.border.Border;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -43,7 +42,6 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxHtmlColor;
-import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 
 public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMotionListener{
@@ -222,6 +220,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	 * @return the cell of the node corresponding to the given GraphClass, otherwise null
 	 */
 	public mxCell findNode(GraphClass selectedNode) {
+		if(adapter == null)
+			return null;
 		for(Object o : adapter.getChildCells(adapter.getDefaultParent(), true, false)){
 			if(o instanceof mxCell){
 				mxCell v = (mxCell) o;
