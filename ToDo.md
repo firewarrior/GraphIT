@@ -10,7 +10,6 @@ TODO:
    - Margins, Minimalgrößen, Layout
    - Latexdarstellung fixen
    - Auf markierte Klasse zentrieren
-   - Panning
    - Export
    - Suchbox Fokus
    - Probleme in ScrollPane
@@ -33,6 +32,7 @@ DONE:
    - "Hide Information Bar" -> "Show Information Bar" analog Legende
    - Legende aktualisieren
    - Mark unpropperInclusions
+   - Panning
    
 PROBLEM:
 
