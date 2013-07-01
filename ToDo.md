@@ -7,14 +7,11 @@ Softwareproject University of Konstanz Summer Term 2013
 
 TODO:
    - Margins im GraphCanvas
-   - Margins, Minimalgrößen, Layout
    - Latexdarstellung fixen
    - Auf markierte Klasse zentrieren
-   - Panning
    - Export
    - Suchbox Fokus
    - Probleme in ScrollPane
-   - JGraphXCanvas ist nicht Java 1.6 kompatibel
    
 DONE:
    - LaTeX name for vertexes
@@ -33,6 +30,9 @@ DONE:
    - "Hide Information Bar" -> "Show Information Bar" analog Legende
    - Legende aktualisieren
    - Mark unpropperInclusions
+   - Panning
+   - Margins, Minimalgrößen, Layout
    
 PROBLEM:
+   - JGraphXCanvas ist nicht Java 1.6 kompatibel
 

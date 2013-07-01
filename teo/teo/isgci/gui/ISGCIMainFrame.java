@@ -267,6 +267,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		zoomToFit.addActionListener(this);
 
 		search.addKeyListener(this);
+		search.addFocusListener(search);
 		addTab.addActionListener(this);
 		chooseProblem.addActionListener(this);
 		restoreLayButton.addActionListener(this);
@@ -369,8 +370,8 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		c.insets = new Insets(10, 0, 5, 0);
 		c.fill = GridBagConstraints.HORIZONTAL;
 
-		search = new WebSearch();
-		search.setText("Search...");
+		search = new WebSearch("Search...");
+//		search.setText("Search...");
 		mainPanel.add(search, c);
 
 		// List Panel
@@ -508,16 +509,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 	 * @return the panel
 	 */
 	protected JComponent createCanvasPanel() {
-		graphCanvas = new ISGCIGraphCanvas(this);
-		drawingPane = new JScrollPane(graphCanvas,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
-		drawingPane.getHorizontalScrollBar().setUnitIncrement(100);
-		drawingPane.getVerticalScrollBar().setUnitIncrement(100);
-
 		xCanvas = new JGraphXCanvas(this);
-
 		return xCanvas.getComponent();
 	}
 
@@ -638,7 +630,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 			open.setVisible(true);
 		} else if (object == restoreLayButton) {
 			getxCanvas().restoreGraph();
-
 		} else if (object == relayoutButton) {
 			getxCanvas().executeLayout();
 		} else if (object == chooseProblem) {
@@ -723,6 +714,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		search.setCustomTextSet(true);
 		search.setListDataSearch(this, classesList);
 	}
 }

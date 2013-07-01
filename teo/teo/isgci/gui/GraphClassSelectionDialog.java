@@ -152,14 +152,14 @@ public class GraphClassSelectionDialog extends JDialog
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             parent.getxCanvas().drawGraph(getNodes());
             
-            /*Reference to old Canvas maybe not needed*/
-            for (Object o : classesList.getSelectedValues()) {
-                GraphClass gc = (GraphClass) o;
-                NodeView v = parent.graphCanvas.findNode(gc);
-                if (v != null)
-                    v.setNameAndLabel(gc.toString());
-            }
-            parent.graphCanvas.updateBounds();
+//            /*Reference to old Canvas maybe not needed*/
+//            for (Object o : classesList.getSelectedValues()) {
+//                GraphClass gc = (GraphClass) o;
+//                NodeView v = parent.graphCanvas.findNode(gc);
+//                if (v != null)
+//                    v.setNameAndLabel(gc.toString());
+//            }
+//            parent.graphCanvas.updateBounds();
             
             setCursor(oldcursor);        
             closeDialog();
