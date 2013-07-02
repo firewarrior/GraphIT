@@ -36,3 +36,4 @@ DONE:
 PROBLEM:
    - Nodepopup benutzt sun.io.Converters, das in Java 1.6 nicht vorhanden ist
    - Probleme in ScrollPane
+   - Nullpointer in EdgePopup (information of edge of !P_6,!X:20,!X_8 - free, also information does not popup on vertex) 
