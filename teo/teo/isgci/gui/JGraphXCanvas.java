@@ -674,14 +674,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 			}
 		}
 		
-		
-		return "<font face=\"Lucida Console\" align=\"left\">" + temp +"</font> \n" + 
-		"<font face=\"Lucida Console\" align=\"left\">" + label + "</font>";
-	
-		
-		//return "<span style=\"font-familiy:'Lucida Console';\">hiiii</span>";
-		
-		//return "<p align=\"left\">" + temp + "</p>" + label;
-		
+		if(temp.contains("&#095")){
+			return "<font face=\"Lucida Console\" align=\"left\" valign=\"top\">" + temp +"</font> \n" + 
+					"<font face=\"Lucida Console\" align=\"left\">" + label + "</font>";
+		}
+
+		return "<font face=\"Lucida Console\" align=\"left\">" + label + "</font>";		
 	}
 }
