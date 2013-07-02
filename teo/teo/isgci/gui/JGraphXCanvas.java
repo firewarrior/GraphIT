@@ -506,7 +506,6 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					if(cell.isVertex()){
 						nodePopup.setNode(adapter.getCellToVertex(cell), (String) cell.getValue());
 						nodePopup.show(component, e.getX() - component.getHorizontalScrollBar().getValue(), e.getY() - component.getVerticalScrollBar().getValue());
-						System.out.println(cell.getValue());
 					}
 					else if(cell.isEdge()){
 						edgePopup.setEdgeNodes(adapter.getCellToVertex((mxCell)cell.getSource()), (String) cell.getSource().getValue(), adapter.getCellToVertex((mxCell) cell.getTarget()), (String) cell.getTarget().getValue());
@@ -517,7 +516,6 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 		}
 		else if(e.getButton() == MouseEvent.BUTTON1){
 			Object o = component.getCellAt(e.getX(), e.getY());
-			System.out.println(o);
 			if(o != null){
 				if(o instanceof mxCell){
 					mxCell cell = (mxCell) o;
@@ -622,14 +620,14 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					//temp += "<sub>";
 					//temp += "<span style=\"text-decoration:underlined\">";
 					
-					if(count > 12){
+					/*if(count > 12){
 						temp += "&#160&#160&#160&#160&#160<sub>&#160</sub>";
 						count -= 5;
 					}
 					else if(count > 7){
 						temp += "&#160&#160&#160";
 						count -= 3;
-					}
+					}*/
 					
 					co = true;
 				}
@@ -639,13 +637,13 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 				}*/
 			}
 			
-			if(label.charAt(i) == ')'){
-				if(co){
+			if(co && label.charAt(i) == ')'){
+				//if(co){
 				//	temp = temp.substring(0,temp.length()-1);
 				//	temp += "</span>";
 				    temp = temp.substring(0,temp.length()-5);
 					co = false;
-				}
+				//}
 				/*else{
 					temp = temp.substring(0, temp.length()-1);
 					temp += "l";
@@ -660,23 +658,30 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 			co = false;
 		}*/
 		
-		System.out.println(temp);
-		System.out.println(label);
+
 		for(int i=0; i<label.length(); i++){
 			if(label.charAt(i) == '(' && i>2){
 				if(label.charAt(i-1) == '-' && label.charAt(i-2) == 'o' && label.charAt(i-3) == 'c'){
 					label = label.substring(0,i-3) + label.substring(i+1,label.length());
 					co = true;
+					i -= 4;
 				}
 			}
-			if(co && label.charAt(i) == ')'){
+			else if(co && label.charAt(i) == ')'){
 				label = label.substring(0,i) + label.substring(i+1,label.length());
 				co = false;
+				i -= 1;
 			}
 		}
 		
 		
+		return "<font face=\"Lucida Console\" align=\"left\">" + temp +"</font> \n" + 
+		"<font face=\"Lucida Console\" align=\"left\">" + label + "</font>";
+	
 		
-		return "<p align=\"left\">" + temp + "</p>" + label;
+		//return "<span style=\"font-familiy:'Lucida Console';\">hiiii</span>";
+		
+		//return "<p align=\"left\">" + temp + "</p>" + label;
+		
 	}
 }
