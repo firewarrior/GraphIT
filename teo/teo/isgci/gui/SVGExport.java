@@ -14,6 +14,15 @@ public class SVGExport {
 		"<svg width=\"" + graph.getGraphBounds().getWidth() + "\" height=\""+ graph.getGraphBounds().getHeight() + "\" xmlns=\"http://www.w3.org/2000/svg\" " +
 		  "xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 
+		svg += "<defs>" +
+				"<marker id=\"pfeil\" " +
+			      "viewBox=\"0 0 10 10\" refX=\"10\" refY=\"5\" " +
+			      "markerUnits=\"strokeWidth\" " +
+			      "markerWidth=\"15\" markerHeight=\"15\" " +
+			      "orient=\"auto\"> " +
+			      "<path d=\"M 0,0 l 10,5 l -10,5 z\" /> " +
+			    "</marker></defs>";
+
 		
 		for(Object o : graph.getChildCells(graph.getDefaultParent())){
 			if(o instanceof mxCell){
@@ -25,11 +34,20 @@ public class SVGExport {
 				}
 				else{
 					if(cell.isEdge()){
-						svg+= "<path d=\"M "+geo.getSourcePoint().getX() + ","+ geo.getSourcePoint().getY();
-						for(mxPoint point : geo.getPoints()){
-							svg += " L "+point.getX() +","+ point.getY();
+						
+						boolean first = true;
+						svg+= "<path d=\"";
+						for(mxPoint point : graph.getView().getState(cell).getAbsolutePoints()){
+							if(first){
+								svg += "M "+point.getX() +","+ point.getY();
+								first = false;
+							}
+							else{
+								svg += " L "+point.getX() +","+ point.getY();
+							}
+							
 						}
-						svg += " L "+geo.getTargetPoint().getX() + ","+ geo.getTargetPoint().getY() + " /> \n";
+						svg += "\" fill=\"none\" stroke=\"black\" marker-end=\"url(#pfeil)\" /> \n";
 					}
 				}
 			}
