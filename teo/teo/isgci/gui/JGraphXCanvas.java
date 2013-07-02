@@ -150,7 +150,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	    adapter.setAllowDanglingEdges(false);
 	    adapter.setCellsEditable(false);
 	    adapter.setHtmlLabels(true);
-//	    adapter.setCellsBendable(false);
+	    adapter.setCellsBendable(false);
 	    component.setConnectable(false);
 	    
 	    setNamingPref(namingPref);
