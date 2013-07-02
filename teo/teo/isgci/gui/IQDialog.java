@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Container;
 import java.awt.event.*;
+
 import javax.swing.*;
 import java.util.HashSet;
 import java.util.Collection;
@@ -32,7 +33,7 @@ import java.util.Collection;
  * selection.
  */
 public class IQDialog extends JDialog
-        implements ActionListener {
+        implements ActionListener, KeyListener {
     
     protected ISGCIMainFrame parent;
     protected NodeList classesList;
@@ -67,8 +68,8 @@ public class IQDialog extends JDialog
         gridbag.setConstraints(label, c);
         contents.add(label);
 
-        search = new WebSearch();
-        search.addActionListener(this);
+        search = new WebSearch("Search...");
+        search.addKeyListener(this);
         c.weightx = 1.0;
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -210,6 +211,23 @@ public class IQDialog extends JDialog
         }*/
 
         return result;
+    }
+
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        search.setCustomTextSet(true);
+        search.setListData(parent, classesList);
     }    
 }
 

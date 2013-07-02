@@ -77,7 +77,7 @@ public class GraphClassInformationDialog extends JDialog
         c.insets = new Insets(5, 5, 5, 5);
         
         //---- Search ----
-        search = new WebSearch();
+        search = new WebSearch("Search...");
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 1;
@@ -397,8 +397,8 @@ public class GraphClassInformationDialog extends JDialog
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+	    search.setCustomTextSet(true);
 		search.setListData(parent, classesList);
-		
 	}
 
 }

@@ -64,7 +64,7 @@ public class CheckInclusionDialog extends JDialog
         mainPanel.add(l_first,c);
        
         //First Search
-        firstSearch = new WebSearch();
+        firstSearch = new WebSearch("Search...");
         c.gridx = 0;
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -94,7 +94,7 @@ public class CheckInclusionDialog extends JDialog
         mainPanel.add(l_second,c);
         
         //Second Search
-        secondSearch = new WebSearch();
+        secondSearch = new WebSearch("Search...");
         c.gridx = 1;
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -210,8 +210,13 @@ public class CheckInclusionDialog extends JDialog
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-			firstSearch.setListData(parent, firstList);
-			secondSearch.setListData(parent, secondList);
+	    if (e.getSource() == firstSearch) {
+	        firstSearch.setCustomTextSet(true);
+	        firstSearch.setListData(parent, firstList);
+	    } else if (e.getSource() == secondSearch) {
+	        secondSearch.setCustomTextSet(true);
+	        secondSearch.setListData(parent, secondList);
+	    }
 	}
 
 }
