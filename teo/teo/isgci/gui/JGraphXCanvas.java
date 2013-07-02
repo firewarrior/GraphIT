@@ -128,8 +128,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					if(cell.isVertex()){
 						Set<GraphClass> gcs = this.getCellToVertex(cell);
 						for(GraphClass gc : gcs){
-							if(parent.getxCanvas().createLabel(Utility.getShortName(converter.html(gc.toString()))).equals((String)cell.getValue())){
-								return "<html>"+converter.html(gc.toString())+"</html>";
+							if(JGraphXCanvas.createLabel(Utility.getShortName(converter.html(gc.toString()))).equals((String)cell.getValue())){
+								return "<html>"+JGraphXCanvas.createLabel(converter.html(gc.toString()))+"</html>";
 							}
 						
 						}
@@ -210,7 +210,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	 * Renames the vertex with the given name
 	 */
 	public void renameNode(Set<GraphClass> view, String fullname) {
-		adapter.getVertexToCell(view).setValue(parent.getxCanvas().createLabel(converter.html(Utility.getShortName(fullname))));
+		adapter.getVertexToCell(view).setValue(JGraphXCanvas.createLabel(converter.html(Utility.getShortName(fullname))));
 		adapter.updateCellSize(adapter.getVertexToCell(view), true);
 		adapter.refresh();
 	}
@@ -510,6 +510,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					else if(cell.isEdge()){
 						edgePopup.setEdgeNodes(adapter.getCellToVertex((mxCell)cell.getSource()), (String) cell.getSource().getValue(), adapter.getCellToVertex((mxCell) cell.getTarget()), (String) cell.getTarget().getValue());
 						edgePopup.show(component, e.getX() - component.getHorizontalScrollBar().getValue(), e.getY() - component.getVerticalScrollBar().getValue());
+						System.out.println(component.getGraph().getView().getState(cell).getAbsolutePoints().size());
 					}
 				}
 			}
@@ -521,7 +522,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					mxCell cell = (mxCell) o;
 					if(cell.isVertex()){
 						for(GraphClass gc : adapter.getCellToVertex(cell)){
-							if(parent.getxCanvas().createLabel(Utility.getShortName(converter.html(gc.toString()))).equals((String)cell.getValue())){
+							if(JGraphXCanvas.createLabel(Utility.getShortName(converter.html(gc.toString()))).equals((String)cell.getValue())){
 								parent.classesList.setSelectedValue(gc, true);
 								break;
 							}
@@ -576,7 +577,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 
 	}
 	
-	public String createLabel(String label){
+	static String createLabel(String label){
 
 		String temp = "";
 		boolean co = false;
@@ -675,7 +676,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 		}
 		
 		if(temp.contains("&#095")){
-			return "<font face=\"Lucida Console\" align=\"left\" valign=\"top\">" + temp +"</font> \n" + 
+			return "<font face=\"Lucida Console\" align=\"left\" valign=\"top\">" + temp +"</font> <br>" + 
 					"<font face=\"Lucida Console\" align=\"left\">" + label + "</font>";
 		}
 
