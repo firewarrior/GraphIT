@@ -345,6 +345,9 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	 * Executes the hirarchical Layout on the actual Graph
 	 */
 	public void executeLayout() {
+	    if (adapter == null) {
+	        return;
+	    }
 		adapter.getModel().beginUpdate();
 		try{
 			if(layout != null)

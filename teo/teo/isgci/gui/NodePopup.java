@@ -19,6 +19,7 @@ import org.jgrapht.graph.DefaultEdge;
 import sun.io.Converters;
 import teo.isgci.db.DataSet;
 import teo.isgci.gc.GraphClass;
+import teo.isgci.util.Latex2Html;
 import teo.isgci.util.Latex2JHtml;
 import teo.isgci.util.Utility;
 
@@ -29,6 +30,7 @@ public class NodePopup extends JPopupMenu implements ActionListener {
 	private JMenu nameItem;
     private Set<GraphClass> view;
 	private String latexName;
+    private Latex2Html converter = new Latex2Html("images/");
     private static String CHANGENAME = "Name: ";
 
     public NodePopup(ISGCIMainFrame parent) {
@@ -95,10 +97,10 @@ public class NodePopup extends JPopupMenu implements ActionListener {
         nameItem.removeAll();
         nameItem.setEnabled(gcs.size() != 1);
         JMenuItem[] mItem = new JMenuItem[gcs.size()];
-        //FIXME sort and render latex properly
+        //FIXME sort and render latex overline properly
         for (GraphClass gc : gcs) {
             nameItem.add(mItem[i] = new JMenuItem(
-                    Utility.getShortName(gc.toString())));
+                    /* Utility.getShortName */("<html>" + converter.html(gc.toString())) + "</html>"));
             mItem[i].setActionCommand(CHANGENAME + gc.toString());
             mItem[i].addActionListener(this);
             i++;

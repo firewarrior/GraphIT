@@ -86,7 +86,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 	// The menu
 	protected JMenuItem miNew, miExport, miExit;
 	protected JMenuItem miNaming, miDrawUnproper;
-	protected JCheckBoxMenuItem miInformationBar, miLegend;
+	protected JCheckBoxMenuItem miLegend;
 	protected JMenuItem miCheckInclusion, miSelectGraphClasses;
 	protected JMenuItem miGraphClassInformation, miOpenProblem;
 	protected JMenuItem miSmallgraphs, miHelp, miAbout;
@@ -257,7 +257,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		miSmallgraphs.addActionListener(this);
 		miHelp.addActionListener(this);
 		miAbout.addActionListener(this);
-		miInformationBar.addItemListener(this);
 		miLegend.addItemListener(this);
 		miSelectGraphClasses.addActionListener(this);
 		miGraphClassInformation.addActionListener(this);
@@ -343,8 +342,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		setMenu.add(miNaming = new JMenuItem("Naming preference..."));
 		setMenu.add(miDrawUnproper = new JCheckBoxMenuItem(
 				"Mark unproper inclusions", true));
-		setMenu.add(miInformationBar = new JCheckBoxMenuItem(
-				"Show information bar", false));
 		setMenu.add(miLegend = new JCheckBoxMenuItem("Show legend", true));
 		mainMenuBar.add(setMenu);
 
@@ -684,19 +681,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 
 		if (object == miDrawUnproper) {
 			getxCanvas().setUnpropper(((JCheckBoxMenuItem) object).getState());
-		} else if (object == miInformationBar) {
-			// Hide Information bar
-			if (miInformationBar.getState()) {
-				addTab.setText(Character.valueOf('\u25BA').toString());
-				informationPanel.setPreferredSize(new Dimension(300, 200));
-				informationPanel.revalidate();
-				checkStatus = false;
-			} else {
-				addTab.setText(Character.valueOf('\u25C4').toString());
-				informationPanel.setPreferredSize(new Dimension(0, 0));
-				informationPanel.revalidate();
-				checkStatus = true;
-			}
 		} else if (object == miLegend) {
 			// Hide Information bar
 			legend.setVisible(miLegend.getState());
