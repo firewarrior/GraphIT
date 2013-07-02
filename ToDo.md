@@ -6,12 +6,9 @@ Softwareproject University of Konstanz Summer Term 2013
 Überarbeitung ISGCI:
 
 TODO:
-   - Margins im GraphCanvas
+   - Margins im GraphCanvas (Vll nicht nötig)
    - Latexdarstellung fixen
-   - Auf markierte Klasse zentrieren
    - Export
-   - Suchbox Fokus
-   - Probleme in ScrollPane
    
 DONE:
    - LaTeX name for vertexes
@@ -33,6 +30,9 @@ DONE:
    - Panning
    - Margins, Minimalgrößen, Layout
    - JGraphXCanvas jetzt Java 1.6 kompatibel
+   - Auf markierte Klasse zentrieren
+   - Suchbox Fokus
    
 PROBLEM:
    - Nodepopup benutzt sun.io.Converters, das in Java 1.6 nicht vorhanden ist
+   - Probleme in ScrollPane
