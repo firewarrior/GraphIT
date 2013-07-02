@@ -2,6 +2,7 @@ package teo.isgci.gui;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 
 public class SVGExport {
@@ -21,6 +22,15 @@ public class SVGExport {
 				
 				if(cell.isVertex()){
 					svg += "<rect x=\""+ geo.getX() + "\" y=\""+ geo.getY()+ "\" width=\""+ geo.getWidth()+ "\" height=\""+ geo.getHeight() +"\"  fill=\"none\" stroke=\"black\"/>\n";
+				}
+				else{
+					if(cell.isEdge()){
+						svg+= "<path d=\"M "+geo.getSourcePoint().getX() + ","+ geo.getSourcePoint().getY();
+						for(mxPoint point : geo.getPoints()){
+							svg += " L "+point.getX() +","+ point.getY();
+						}
+						svg += " L "+geo.getTargetPoint().getX() + ","+ geo.getTargetPoint().getY() + " /> \n";
+					}
 				}
 			}
 		}
