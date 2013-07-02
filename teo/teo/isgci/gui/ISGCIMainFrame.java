@@ -26,6 +26,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -462,42 +463,16 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		classesList.addListSelectionListener(classesHandler);
 		classesList.setCellRenderer(classesHandler);
 		JScrollPane scroller = new JScrollPane(classesList);
-		// Mouselistener for double click
-		classesList.addMouseListener(new MouseListener() {
+		// Mouselistener for single click
+		classesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());
 				xCanvas.getComponent().getGraph().setSelectionCell(vertex);
 				xCanvas.getComponent().zoomActual();
 				xCanvas.getComponent().scrollCellToVisible(vertex, true);
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 		});
-
 		return scroller;
 	}
 
