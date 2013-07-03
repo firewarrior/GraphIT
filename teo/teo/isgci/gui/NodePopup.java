@@ -55,10 +55,9 @@ public class NodePopup extends JPopupMenu implements ActionListener {
         Object source = event.getSource();
         if (source == infoItem) {
         	System.out.println("info");
-            Latex2JHtml converter = new Latex2JHtml();
         	
         	for(GraphClass gc : view){
-        		if(JGraphXCanvas.createLabel(converter.html(gc.toString())).equals(latexName)){
+        		if(parent.getxCanvas().getNodeName(gc.toString()).equals(latexName)){
         			JDialog d = new GraphClassInformationDialog(
                     parent, DataSet.getClass(gc.toString()));
         			d.setLocation(50, 50);

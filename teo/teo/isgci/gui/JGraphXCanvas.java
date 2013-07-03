@@ -128,7 +128,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					if(cell.isVertex()){
 						Set<GraphClass> gcs = this.getCellToVertex(cell);
 						for(GraphClass gc : gcs){
-							if(JGraphXCanvas.createLabel(Utility.getShortName(converter.html(gc.toString()))).equals((String)cell.getValue())){
+							if(getNodeName(gc.toString()).equals((String)cell.getValue())){
 								return "<html>"+JGraphXCanvas.createLabel(converter.html(gc.toString()))+"</html>";
 							}
 						
@@ -177,7 +177,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
     		for (Object o : adapter.getChildCells(adapter.getDefaultParent(), true, false)) {
     			if (o instanceof mxCell) {
     				mxCell cell = (mxCell) o;
-    				cell.setValue(createLabel(Utility.getShortName(converter.html(Algo.getName(adapter.getCellToVertex(cell), namingPref)))));
+    				cell.setValue(getNodeName(Algo.getName(adapter.getCellToVertex(cell), namingPref)));
     				adapter.updateCellSize(cell, true);
     			}
     		}
@@ -210,7 +210,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	 * Renames the vertex with the given name
 	 */
 	public void renameNode(Set<GraphClass> view, String fullname) {
-		adapter.getVertexToCell(view).setValue(JGraphXCanvas.createLabel(converter.html(Utility.getShortName(fullname))));
+		adapter.getVertexToCell(view).setValue(getNodeName(fullname));
 		adapter.updateCellSize(adapter.getVertexToCell(view), true);
 		adapter.refresh();
 	}
@@ -522,7 +522,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					mxCell cell = (mxCell) o;
 					if(cell.isVertex()){
 						for(GraphClass gc : adapter.getCellToVertex(cell)){
-							if(JGraphXCanvas.createLabel(Utility.getShortName(converter.html(gc.toString()))).equals((String)cell.getValue())){
+							if(getNodeName(gc.toString()).equals((String)cell.getValue())){
 								parent.classesList.setSelectedValue(gc, true);
 								break;
 							}
@@ -681,5 +681,9 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 		}
 
 		return "<font face=\"Lucida Console\" align=\"left\">" + label + "</font>";		
+	}
+	
+	public String getNodeName(String gcn){
+		return createLabel(converter.html(Utility.getShortName(gcn)));
 	}
 }
