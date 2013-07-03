@@ -686,4 +686,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	public String getNodeName(String gcn){
 		return createLabel(converter.html(Utility.getShortName(gcn)));
 	}
+
+	public JGraphTXAdapter<Set<GraphClass>, DefaultEdge> getAdapter() {
+		return adapter;
+	}
 }

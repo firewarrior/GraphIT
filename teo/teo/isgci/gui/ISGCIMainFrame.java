@@ -563,7 +563,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		} else if (object == miNew) {
 			new ISGCIMainFrame(loader);
 		} else if (object == miExport) {
-			JDialog export = new ExportDialog(this);
+			JDialog export = new ExportDialog(this, xCanvas.getAdapter());
 			export.setLocation(50, 50);
 			export.pack();
 			export.setVisible(true);

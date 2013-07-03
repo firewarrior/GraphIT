@@ -11,6 +11,7 @@
 package teo.isgci.gui;
 
 import java.io.*;
+import java.util.Set;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,7 +24,12 @@ import java.awt.Container;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
+
+import org.jgrapht.graph.DefaultEdge;
+
+import teo.isgci.gc.GraphClass;
 import teo.isgci.grapht.*;
+import teo.isgci.util.JGraphTXAdapter;
 import teo.isgci.xml.GraphMLWriter;
 
 public class ExportDialog extends JDialog implements ActionListener {
@@ -58,12 +64,16 @@ public class ExportDialog extends JDialog implements ActionListener {
     
     /* Minimum Size */
     protected Dimension minSize = new Dimension(534,425);
+    
+    /*JGraphT 2 JGraphX Adapter*/
+    JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
 
-    public ExportDialog(ISGCIMainFrame parent) {
+    public ExportDialog(ISGCIMainFrame parent, JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter) {
         super(parent, "Export drawing", true);
         this.parent = parent;
         this.setMinimumSize(minSize);
-
+        this.adapter = adapter;
+        
         Container content = getContentPane();
         JPanel buttonPanel = new JPanel();
         Box buttonBox = new Box(BoxLayout.X_AXIS);
@@ -428,10 +438,10 @@ public class ExportDialog extends JDialog implements ActionListener {
         
         try {
             out = new OutputStreamWriter(f, "UTF-8");
-            //SVGGraphics g = new SVGGraphics();
+			//SVGGraphics g = new SVGGraphics();
             //parent.graphCanvas.forcePaint(g);
             //outstr = g.getContent();
-            outstr = SVGExport.createExportString(parent.getxCanvas().getComponent().getGraph());
+            outstr = SVGExport.createExportString(parent.getxCanvas().getComponent().getGraph(), adapter);
             //g.dispose();
             out.write(outstr, 0, outstr.length());
         } catch (IOException ex)  {
