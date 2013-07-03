@@ -90,14 +90,25 @@ public class SVGExport {
 
 	private String merge() {
 		String temp = svggraphics.getContent();
-		temp = temp.substring(0, temp.length()-7);
-		temp += svg + "</svg>";
+		String test = "";
+		for(int i=0; i<temp.length(); i++){
+			test += temp.charAt(i);
+			if(test.endsWith("</desc>")){
+				temp = test + svg + temp.substring(i,temp.length());
+				break;
+			}
+		}
+		//temp = temp.substring(0, temp.length()-7);
+		//temp += svg + "</svg>";
 		return temp;
 	}
 
+	/*TODO different Colors:*/
 	private void addNode(mxCell cell) {
 		mxGeometry geo = cell.getGeometry();
-		svg += "<rect x=\""+ geo.getX() + "\" y=\""+ geo.getY()+ "\" width=\""+ geo.getWidth()+ "\" height=\""+ geo.getHeight() +"\"  fill=\"none\" stroke=\"black\"/>\n";		
+		graph.getCellStyle(cell);
+		String color = (String) graph.getCellStyle(cell).get(mxConstants.STYLE_FILLCOLOR);
+		svg += "<rect x=\""+ geo.getX() + "\" y=\""+ geo.getY()+ "\" width=\""+ geo.getWidth()+ "\" height=\""+ geo.getHeight() +"\"  fill=\""+color+"\" stroke=\"black\"/>\n";		
 	}
 
 	private void drawLabel(mxCell cell, Graphics g) {
