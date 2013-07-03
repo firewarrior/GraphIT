@@ -34,27 +34,22 @@ public class SVGExport {
 	}
 	
 	public String createExportString(){
+		copyGraph();
 		latexgraphics = new LatexGraphics();
 		svg = "";
 		Graphics graphics = svggraphics.create();
 		
-		graph = new mxGraph(adapter.getModel());
-		/*mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-    	layout.setInterRankCellSpacing(150);
-	    layout.execute(adapter.getDefaultParent());
-    	graph.refresh();*/
-    	
     	int width = (int) graph.getGraphBounds().getWidth();
     	int height = (int) graph.getGraphBounds().getHeight();
     	
     	graphics.setClip(new Rectangle(width,height));
     	graphics.setFont(latexgraphics.getFont());
+    	
 		
 		for(Object o : graph.getChildCells(graph.getDefaultParent())){
 			if(o instanceof mxCell){
 				mxCell cell = (mxCell) o;
 				if(cell.isVertex()){
-					updateNodeLabel(cell);
 					drawLabel(cell, graphics);
 					addNode(cell);
 					
@@ -68,9 +63,34 @@ public class SVGExport {
 		return merge();
 	}
 
+	private void copyGraph() {
+		graph = new mxGraph();
+		graph.addCells(adapter.getChildCells(adapter.getDefaultParent()));
+		mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+ 
+	    
+		graph.getModel().beginUpdate();
+		
+		for(Object o : graph.getChildCells(graph.getDefaultParent())){
+			if(o instanceof mxCell){
+				mxCell cell = (mxCell) o;
+				if(cell.isVertex()){
+					updateNodeLabel(cell);
+					graph.updateCellSize(cell, true);
+				}
+			}
+		}
+		
+		graph.getModel().endUpdate();
+		
+		layout.setInterRankCellSpacing(150);
+	    layout.execute(graph.getDefaultParent());
+	    graph.refresh();	
+	}
+
 	private String merge() {
 		String temp = svggraphics.getContent();
-		temp = temp.substring(0, temp.length()-6);
+		temp = temp.substring(0, temp.length()-7);
 		temp += svg + "</svg>";
 		return temp;
 	}
@@ -93,7 +113,7 @@ public class SVGExport {
                 
                 int w = latexgraphics.getLatexWidth(g, (String) cell.getValue());
                 latexgraphics.drawLatexString(g, (String) cell.getValue(), (int) geo.getX(),
-                        (int) geo.getY());
+                        (int) (geo.getY()+geo.getHeight()));
            // } else {
                 /*Color c = g.getColor();
                 g.fillOval(r.x, r.y, r.width, r.height);
