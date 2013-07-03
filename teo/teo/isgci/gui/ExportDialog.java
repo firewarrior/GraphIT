@@ -439,10 +439,11 @@ public class ExportDialog extends JDialog implements ActionListener {
         try {
             out = new OutputStreamWriter(f, "UTF-8");
 			//SVGGraphics g = new SVGGraphics();
-            //parent.graphCanvas.forcePaint(g);
-            //outstr = g.getContent();
-            outstr = SVGExport.createExportString(parent.getxCanvas().getComponent().getGraph(), adapter);
-            //g.dispose();
+           // parent.graphCanvas.forcePaint(g);
+            SVGExport export = new SVGExport(adapter);
+            outstr = export.createExportString();
+            //outstr = SVGExport.createExportString(parent.getxCanvas().getComponent().getGraph(), adapter);
+           // g.dispose();
             out.write(outstr, 0, outstr.length());
         } catch (IOException ex)  {
             res = ex;
