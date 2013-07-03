@@ -606,6 +606,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 			getxCanvas().restoreGraph();
 		} else if (object == relayoutButton) {
 			getxCanvas().executeLayout();
+//			getxCanvas().undoManager.undo();
 		} else if (object == chooseProblem) {
 			this.getxCanvas()
 					.setProblem(

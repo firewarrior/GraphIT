@@ -41,7 +41,13 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxHtmlColor;
+import com.mxgraph.util.mxUndoManager;
+import com.mxgraph.util.mxUndoableEdit;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
 import com.mxgraph.view.mxGraph;
 
 public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMotionListener{
@@ -50,6 +56,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	private mxGraphComponent component = new mxGraphComponent(new mxGraph());
 	private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
 	private mxHierarchicalLayout layout;
+	public mxUndoManager undoManager;
 
 	/** ISGCI Components*/
 	ISGCIMainFrame parent;
@@ -136,10 +143,44 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 					}
 				}
 				return null;
-				
 			}
 		};
 	    
+		undoManager = new mxUndoManager();
+		// Adds the command history to the model and view
+		adapter.getModel().addListener(mxEvent.UNDO, undoHandler);
+		adapter.getView().addListener(mxEvent.UNDO, undoHandler);
+		// Keeps the selection in sync with the command history
+		mxIEventListener undoHandler = new mxIEventListener()
+		{
+			@Override
+			public void invoke(Object source, mxEventObject evt)
+			{
+				List<mxUndoableChange> changes = ((mxUndoableEdit) evt
+						.getProperty("edit")).getChanges();
+				adapter.setSelectionCells(adapter
+						.getSelectionCellsForChanges(changes));
+				if(evt.getName().equals(mxEvent.UNDO)){
+					System.out.println("UNDO");
+					List<GraphClass> tmp = parent.classesHandler.getDeactivated();
+					List<Set<GraphClass>> redo = new LinkedList<Set<GraphClass>>();
+					for(Object o : adapter.getSelectionCells()){
+						mxCell cell = (mxCell) o;
+						for(GraphClass gc : tmp) {
+							if(cell.isVertex() && getNodeName(gc.toString()).equals((String)cell.getValue())){
+								Set<GraphClass> gcs = DataSet.getEquivalentClasses(gc);
+								redo.add(gcs);
+								parent.classesHandler.getDeactivated().remove(gcs);
+								break;
+							}
+						}
+					}
+				}
+			}
+		};
+		undoManager.addListener(mxEvent.UNDO, undoHandler);
+		undoManager.addListener(mxEvent.REDO, undoHandler);
+		
 	    adapter.setCellsMovable(false);
 	    adapter.setCellsDeletable(false);
 	    adapter.setCellsResizable(false);
@@ -177,6 +218,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
     		for (Object o : adapter.getChildCells(adapter.getDefaultParent(), true, false)) {
     			if (o instanceof mxCell) {
     				mxCell cell = (mxCell) o;
+    				//cell.setValue(parent.latex.newLabel(getNodeName(Algo.getName(adapter.getCellToVertex(cell), namingPref))));
     				cell.setValue(getNodeName(Algo.getName(adapter.getCellToVertex(cell), namingPref)));
     				adapter.updateCellSize(cell, true);
     			}
@@ -368,6 +410,12 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 		parent.classesHandler.getDeactivated().clear();
     	parent.informationPanel.revalidate();
       	parent.informationPanel.repaint();
+      	mxCell vertex = findNode(parent.classesList.getSelectedNode());
+      	if(vertex != null){
+      		adapter.setSelectionCell(vertex);
+      		component.zoomActual();
+      		component.scrollCellToVisible(vertex, true);
+      	}
 	}
 	
 	/**
@@ -576,6 +624,18 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener, MouseMo
 	public void mouseMoved(MouseEvent e) {
 
 	}
+	
+	protected mxIEventListener undoHandler = new mxIEventListener()
+	{
+		public void invoke(Object source, mxEventObject evt)
+		{
+			undoManager.undoableEditHappened((mxUndoableEdit) evt
+					.getProperty("edit"));
+			if(evt.getName().equals(mxEvent.UNDO)){
+				System.out.println("DO");
+			}
+		}
+	};
 	
 	static String createLabel(String label){
 
