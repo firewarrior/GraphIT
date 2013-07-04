@@ -63,8 +63,8 @@ public class SVGExport {
 			if(o instanceof mxCell){
 				mxCell cell = (mxCell) o;
 				if(cell.isVertex()){
-					drawLabel(cell, graphics);
-					addNode(cell);
+					width = drawLabel(cell, graphics);
+					addNode(cell, width);
 					
 				}
 				else{
@@ -123,7 +123,7 @@ public class SVGExport {
 
 	/*adds node to SVG-String including color*/
 	
-	private void addNode(mxCell cell) {
+	private void addNode(mxCell cell, int width) {
 		mxGeometry geo = cell.getGeometry();
 		graph.getCellStyle(cell);
 		String color = (String) graph.getCellStyle(cell).get(mxConstants.STYLE_FILLCOLOR);
@@ -132,18 +132,19 @@ public class SVGExport {
 			color = "#" + color.substring(2, color.length());
 		}
 		System.out.println(color);
-		svg += "<rect x=\""+ geo.getX() + "\" y=\""+ geo.getY()+ "\" width=\""+ geo.getWidth()+ "\" height=\""+ geo.getHeight() +"\"  fill=\""+color+"\" stroke=\"black\"/>\n";		
+		svg += "<rect x=\""+ geo.getX() + "\" y=\""+ geo.getY()+ "\" width=\""+ (width+10)+ "\" height=\""+ (geo.getHeight()+5) +"\"  fill=\""+color+"\" stroke=\"black\"/>\n";		
 	}
 	
 	
-	/*draws the label for the svg-file*/
+	/*draws the label for the svg-file and returns its width*/
 
-	private void drawLabel(mxCell cell, Graphics g) {
+	private int drawLabel(mxCell cell, Graphics g) {
 		mxGeometry geo = cell.getGeometry();
                 
 		int w = latexgraphics.getLatexWidth(g, (String) cell.getValue());
-        latexgraphics.drawLatexString(g, (String) cell.getValue(), (int) geo.getX(),
-        	(int) (geo.getY()+geo.getHeight()));
+        latexgraphics.drawLatexString(g, (String) cell.getValue(), (int) geo.getX()+5,
+        	(int) (geo.getY()+geo.getHeight()*1/2+8));
+        return w;
 	}
 	
 	
@@ -154,7 +155,7 @@ public class SVGExport {
 		svg+= "<path d=\"";
 		for(mxPoint point : graph.getView().getState(cell).getAbsolutePoints()){
 			if(first){
-				svg += "M "+point.getX() +","+ point.getY();
+				svg += "M "+point.getX() +","+ (point.getY()+5);
 				first = false;
 			}
 			else{
@@ -183,6 +184,8 @@ public class SVGExport {
 				}
 			}
 		}
+		
+		String gclabel = "";
 		
 		for(GraphClass gc : adapter.getCellToVertex(cell2)){
 			if(JGraphXCanvas.createLabel(converter.html(Utility.getShortName(gc.toString()))).equals((String)cell.getValue())){
