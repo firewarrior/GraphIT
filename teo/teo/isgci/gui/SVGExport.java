@@ -77,13 +77,13 @@ public class SVGExport {
 	}
 	
 	
-	/*creates a copy of the graph*/
+	/*creates a copy of the graph including full labels*/
 
 	private void copyGraph() {
 		graph = new mxGraph();
-		graph.addCells(adapter.getChildCells(adapter.getDefaultParent()));
+		graph.addCells(adapter.cloneCells(adapter.getChildCells(adapter.getDefaultParent())));
 		mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
- 
+		
 	    
 		graph.getModel().beginUpdate();
 		
@@ -172,8 +172,19 @@ public class SVGExport {
 	private void updateNodeLabel(mxCell cell) {
 		String temp = "";
 		Latex2JHtml converter = new Latex2JHtml();
+		mxCell cell2 = null;
+		for(Object o : adapter.getChildCells(adapter.getDefaultParent())){
+			if(o instanceof mxCell){
+				cell2 = (mxCell) o;
+				if(cell.isVertex()){
+					if(cell.getValue().equals(cell2.getValue())){
+						break;
+					}
+				}
+			}
+		}
 		
-		for(GraphClass gc : adapter.getCellToVertex(cell)){
+		for(GraphClass gc : adapter.getCellToVertex(cell2)){
 			if(JGraphXCanvas.createLabel(converter.html(Utility.getShortName(gc.toString()))).equals((String)cell.getValue())){
 				cell.setValue(gc.toString());
 				break;
