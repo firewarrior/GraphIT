@@ -190,7 +190,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 						.getSelectionCellsForChanges(changes));
 				if (evt.getName().equals(mxEvent.UNDO)) {
 					System.out.println("UNDO");
-					List<GraphClass> tmp = parent.classesHandler
+					Set<GraphClass> tmp = parent.classesHandler
 							.getDeactivated();
 					System.out.println("Deactivated: " + tmp);
 					List<Set<GraphClass>> redo = new LinkedList<Set<GraphClass>>();
@@ -484,10 +484,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 
 		adapter.getModel().beginUpdate();
 		try {
-			adapter.setCellsDeletable(true);
-			adapter.removeCells(nodes.toArray());
+			for(mxCell node : nodes){
+				if(node != null)
+					adapter.getModel().setVisible(node, false);
+			}
 		} finally {
-			adapter.setCellsDeletable(false);
 			adapter.getModel().endUpdate();
 		}
 		component.refresh();
@@ -528,10 +529,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 
 		adapter.getModel().beginUpdate();
 		try {
-			adapter.setCellsDeletable(true);
-			adapter.removeCells(nodes.toArray());
+			for(mxCell node : nodes){
+				if(node != null)
+					adapter.getModel().setVisible(node, false);
+			}
 		} finally {
-			adapter.setCellsDeletable(false);
 			adapter.getModel().endUpdate();
 		}
 		component.refresh();
