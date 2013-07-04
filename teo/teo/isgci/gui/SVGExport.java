@@ -1,7 +1,5 @@
 package teo.isgci.gui;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.Set;
@@ -17,7 +15,6 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxConstants;
-import com.mxgraph.util.mxHtmlColor;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 
@@ -47,10 +44,15 @@ public class SVGExport {
 	 * @return svg-string
 	 */
 	public String createExportString(){
-		copyGraph();
+		if(adapter == null){
+			return "";
+		}
+		
 		latexgraphics = new LatexGraphics();
 		svg = "";
 		Graphics graphics = svggraphics.create();
+		
+		copyGraph();
 		
     	int width = (int) graph.getGraphBounds().getWidth();
     	int height = (int) graph.getGraphBounds().getHeight();
@@ -63,7 +65,7 @@ public class SVGExport {
 			if(o instanceof mxCell){
 				mxCell cell = (mxCell) o;
 				if(cell.isVertex()){
-					width = drawLabel(cell, graphics);
+					drawLabel(cell, graphics);
 					addNode(cell, width);
 					
 				}
@@ -83,7 +85,6 @@ public class SVGExport {
 		graph = new mxGraph();
 		graph.addCells(adapter.cloneCells(adapter.getChildCells(adapter.getDefaultParent())));
 		mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-		
 	    
 		graph.getModel().beginUpdate();
 		
@@ -92,7 +93,17 @@ public class SVGExport {
 				mxCell cell = (mxCell) o;
 				if(cell.isVertex()){
 					updateNodeLabel(cell);
-					graph.updateCellSize(cell, true);
+					
+					
+					/*for updating cells width*/
+					
+					Graphics g = svggraphics.create();
+		
+			    	g.setFont(latexgraphics.getFont());
+			    	
+					int width = latexgraphics.getLatexWidth(g, (String) cell.getValue());
+					
+					cell.getGeometry().setWidth(width);
 				}
 			}
 		}
@@ -127,24 +138,21 @@ public class SVGExport {
 		mxGeometry geo = cell.getGeometry();
 		graph.getCellStyle(cell);
 		String color = (String) graph.getCellStyle(cell).get(mxConstants.STYLE_FILLCOLOR);
-		System.out.println("-"+color);
 		if(!color.startsWith("#")){
 			color = "#" + color.substring(2, color.length());
 		}
-		System.out.println(color);
-		svg += "<rect x=\""+ geo.getX() + "\" y=\""+ geo.getY()+ "\" width=\""+ (width+10)+ "\" height=\""+ (geo.getHeight()+5) +"\"  fill=\""+color+"\" stroke=\"black\"/>\n";		
+
+		svg += "<rect x=\""+ geo.getX() + "\" y=\""+ geo.getY()+ "\" width=\""+ (geo.getWidth()+10)+ "\" height=\""+ (geo.getHeight()+5) +"\"  fill=\""+color+"\" stroke=\"black\"/>\n";		
 	}
 	
 	
-	/*draws the label for the svg-file and returns its width*/
+	/*draws the label for the svg-file*/
 
-	private int drawLabel(mxCell cell, Graphics g) {
+	private void drawLabel(mxCell cell, Graphics g) {
 		mxGeometry geo = cell.getGeometry();
-                
-		int w = latexgraphics.getLatexWidth(g, (String) cell.getValue());
+        
         latexgraphics.drawLatexString(g, (String) cell.getValue(), (int) geo.getX()+5,
         	(int) (geo.getY()+geo.getHeight()*1/2+8));
-        return w;
 	}
 	
 	
@@ -171,7 +179,6 @@ public class SVGExport {
 	/*updates node-labels to get rid of shortened labels*/
 
 	private void updateNodeLabel(mxCell cell) {
-		String temp = "";
 		Latex2JHtml converter = new Latex2JHtml();
 		mxCell cell2 = null;
 		for(Object o : adapter.getChildCells(adapter.getDefaultParent())){
@@ -185,15 +192,13 @@ public class SVGExport {
 			}
 		}
 		
-		String gclabel = "";
-		
 		for(GraphClass gc : adapter.getCellToVertex(cell2)){
 			if(JGraphXCanvas.createLabel(converter.html(Utility.getShortName(gc.toString()))).equals((String)cell.getValue())){
 				cell.setValue(gc.toString());
 				break;
 			}
-			graph.updateCellSize(cell, true);
 		}
+		graph.updateCellSize(cell, true);
 	}
 	
 }
