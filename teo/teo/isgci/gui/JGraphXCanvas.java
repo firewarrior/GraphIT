@@ -216,6 +216,19 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 					parent.classesList.revalidate();
 					parent.classesList.repaint();
 				}
+				if (evt.getName().equals(mxEvent.REDO)) {
+					System.out.println("REDO");
+					System.out.println(Arrays.toString(adapter.getSelectionCellsForChanges(changes)));
+					for (Object o : adapter.getSelectionCellsForChanges(changes)) {
+						mxCell cell = (mxCell) o;
+						if (cell.isVertex()){
+							Set<GraphClass> gcs = adapter.getCellToVertex(cell);
+							parent.classesHandler.addDeactivated(gcs);
+						}
+					}
+					parent.classesList.revalidate();
+					parent.classesList.repaint();
+				}
 			}
 		};
 		undoManager.addListener(mxEvent.UNDO, undoHandler);

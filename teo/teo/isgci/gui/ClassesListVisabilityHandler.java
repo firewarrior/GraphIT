@@ -2,6 +2,7 @@ package teo.isgci.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class ClassesListVisabilityHandler implements
 		this.latex = latex;
 	}
 
-	public void addDeactivated(List<GraphClass> deactivated) {
+	public void addDeactivated(Collection<GraphClass> deactivated) {
 		if (deactivated == null)
 			return;
 		this.deactivated.addAll(deactivated);

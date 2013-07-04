@@ -97,7 +97,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 	protected JPanel informationPanel;
 	private boolean showStatus = false, checkStatus = true;
 	protected JButton OpenBoundaryButton, addTab, relayoutButton,
-			restoreLayButton;
+			restoreLayButton, undoButton, redoButton;
 	protected JButton zoomIn, zoomOut, zoomToFit;
 	private String[] problems = { "None", "Recognition", "Treewidth",
 			"Cliquewidth", "Cliquewidth expression",
@@ -271,7 +271,8 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		chooseProblem.addActionListener(this);
 		restoreLayButton.addActionListener(this);
 		relayoutButton.addActionListener(this);
-
+		undoButton.addActionListener(this);
+		redoButton.addActionListener(this);
 	}
 
 	/**
@@ -391,16 +392,29 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		lay.setBorder(layBorder);
 
 		cLayout.insets = new Insets(5, 15, 5, 15);
+		
 		cLayout.gridx = 0;
 		cLayout.gridy = 1;
 		cLayout.fill = GridBagConstraints.HORIZONTAL;
-		restoreLayButton = new JButton("Restore Graph");
-		lay.add(restoreLayButton, cLayout);
-
+		undoButton = new JButton("Undo");
+		lay.add(undoButton, cLayout);
+		
+		cLayout.gridx = 1;
+		cLayout.gridy = 1;
+		cLayout.fill = GridBagConstraints.HORIZONTAL;
+		redoButton = new JButton("Redo");
+		lay.add(redoButton, cLayout);
+		
 		cLayout.gridx = 0;
 		cLayout.gridy = 2;
 		cLayout.fill = GridBagConstraints.HORIZONTAL;
-		relayoutButton = new JButton("Relayout Graph");
+		restoreLayButton = new JButton("Restore");
+		lay.add(restoreLayButton, cLayout);
+
+		cLayout.gridx = 1;
+		cLayout.gridy = 2;
+		cLayout.fill = GridBagConstraints.HORIZONTAL;
+		relayoutButton = new JButton("Relayout");
 		lay.add(relayoutButton, cLayout);
 
 		c.gridx = 0;
@@ -604,9 +618,18 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 		} else if (object == restoreLayButton) {
 			getxCanvas().restoreGraph();
 		} else if (object == relayoutButton) {
-//			getxCanvas().executeLayout();
-			if (getxCanvas().undoManager.canUndo()) {
-				getxCanvas().undoManager.undo();
+			getxCanvas().executeLayout();
+		} else if(object == undoButton) {
+			if(getxCanvas().undoManager != null){
+				if (getxCanvas().undoManager.canUndo()) {
+					getxCanvas().undoManager.undo();
+				}
+			}
+		} else if(object == redoButton) {
+			if(getxCanvas().undoManager != null){
+				if (getxCanvas().undoManager.canRedo()) {
+					getxCanvas().undoManager.redo();
+				}
 			}
 		} else if (object == chooseProblem) {
 			this.getxCanvas()
