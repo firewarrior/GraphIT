@@ -2,8 +2,9 @@ package teo.isgci.gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -15,7 +16,7 @@ import teo.isgci.gc.GraphClass;
 public class ClassesListVisabilityHandler implements
 		ListSelectionListener, ListCellRenderer<GraphClass> {
 
-	private List<GraphClass> deactivated = new LinkedList<GraphClass>();
+	private Set<GraphClass> deactivated = new HashSet<GraphClass>();
 	private LatexGraphics latex;
 	
 	public ClassesListVisabilityHandler(LatexGraphics latex){
@@ -28,7 +29,7 @@ public class ClassesListVisabilityHandler implements
 		this.deactivated.addAll(deactivated);
 	}
 
-	public List<GraphClass> getDeactivated() {
+	public Set<GraphClass> getDeactivated() {
 		return deactivated;
 	}
 
