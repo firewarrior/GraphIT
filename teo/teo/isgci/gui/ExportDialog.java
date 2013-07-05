@@ -58,6 +58,9 @@ public class ExportDialog extends JDialog implements ActionListener {
 
     /* GraphML items */
     protected JRadioButton gmlPlain, gmlYed, gmlHtml, gmlLatex; 
+    
+    /* SVG items */
+    protected JCheckBox m_shortLabels, m_relayout;
 
     /* Save location items */
     protected JFileChooser file;
@@ -69,14 +72,14 @@ public class ExportDialog extends JDialog implements ActionListener {
     JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
 
     public ExportDialog(ISGCIMainFrame parent, JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter) {
-        super(parent, "Export drawing", true);
+        super(parent, "Export drawing to SVG", true);
         this.parent = parent;
         this.setMinimumSize(minSize);
         this.adapter = adapter;
         
         Container content = getContentPane();
         JPanel buttonPanel = new JPanel();
-        Box buttonBox = new Box(BoxLayout.X_AXIS);
+        Box buttonBox = new Box(BoxLayout.Y_AXIS);
 
         cardPanel = new JPanel();
         cardPanel.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10))); 
@@ -95,13 +98,17 @@ public class ExportDialog extends JDialog implements ActionListener {
         buttonPanel.setLayout(new BorderLayout());
         buttonPanel.add(new JSeparator(), BorderLayout.NORTH);
 
-        buttonBox.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10))); 
-        buttonBox.add(backButton);
-        buttonBox.add(Box.createHorizontalStrut(10));
-        buttonBox.add(nextButton);
-        buttonBox.add(Box.createHorizontalStrut(30));
-        buttonBox.add(closeButton);
-        buttonPanel.add(buttonBox, java.awt.BorderLayout.EAST);
+        buttonBox.setBorder(new EmptyBorder(new Insets(5, 50, 10, 10))); 
+        //buttonBox.add(backButton);
+        //buttonBox.add(Box.createHorizontalStrut(10));
+        //buttonBox.add(nextButton);
+        //buttonBox.add(Box.createHorizontalStrut(30));
+        //buttonBox.add(closeButton);
+        m_shortLabels = new JCheckBox("Use shortened node labels", true);
+        m_relayout = new JCheckBox("Relayout",false);
+        buttonBox.add(m_shortLabels);
+        buttonBox.add(m_relayout);
+        buttonPanel.add(buttonBox, java.awt.BorderLayout.WEST);
 
         title = new JLabel("");
         Font f = title.getFont();
@@ -120,7 +127,7 @@ public class ExportDialog extends JDialog implements ActionListener {
         cardPanel.add(cardGML(), CARD_GML);
         cardPanel.add(cardFile(), CARD_FILE);
 
-        showCard(CARD_FORMAT);
+        showCard(CARD_FILE);
     }
 
 
@@ -137,7 +144,7 @@ public class ExportDialog extends JDialog implements ActionListener {
         // Use the JFileChooser buttons instead, to prevent errors when the
         // user clicks Next, but didn't press Return after typing a file name.
         nextButton.setVisible(card != CARD_FILE);
-        closeButton.setVisible(card != CARD_FILE);
+        //closeButton.setVisible(card != CARD_FILE);
     }
 
     /**

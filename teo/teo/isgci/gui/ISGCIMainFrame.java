@@ -325,7 +325,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 
 		fileMenu = new JMenu("File");
 		fileMenu.add(miNew = new JMenuItem("New window"));
-		fileMenu.add(miExport = new JMenuItem("Export drawing..."));
+		fileMenu.add(miExport = new JMenuItem("Export drawing to SVG"));
 		fileMenu.add(miExit = new JMenuItem("Exit"));
 		mainMenuBar.add(fileMenu);
 
