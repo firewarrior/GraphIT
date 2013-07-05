@@ -15,7 +15,6 @@ import teo.isgci.db.DataSet;
 import teo.isgci.grapht.*;
 import teo.isgci.util.LessLatex;
 
-import java.io.IOException;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -85,7 +84,7 @@ public class GraphClassSelectionDialog extends JDialog implements
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		c.fill = GridBagConstraints.BOTH;
-		classesList = new NodeList(parent.latex);
+		classesList = new NodeList(ISGCIMainFrame.latex);
 		JScrollPane scroller = new JScrollPane(classesList);
 		gridbag.setConstraints(scroller, c);
 		contents.add(scroller);
@@ -149,17 +148,10 @@ public class GraphClassSelectionDialog extends JDialog implements
 		} else if (source == newButton) {
 			Cursor oldcursor = parent.getCursor();
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			parent.getxCanvas().drawGraph(getNodes());
-
-			// /*Reference to old Canvas maybe not needed*/
-			// for (Object o : classesList.getSelectedValues()) {
-			// GraphClass gc = (GraphClass) o;
-			// NodeView v = parent.graphCanvas.findNode(gc);
-			// if (v != null)
-			// v.setNameAndLabel(gc.toString());
-			// }
-			// parent.graphCanvas.updateBounds();
-
+			Collection<GraphClass> gcl = getNodes();
+			if(!gcl.isEmpty()){
+				parent.getxCanvas().drawGraph(getNodes());
+			}
 			setCursor(oldcursor);
 			closeDialog();
 
