@@ -9,6 +9,7 @@ TODO:
    - Margins im GraphCanvas (Vll nicht nötig)
    - Latexdarstellung fixen
    - Export
+   - In der Seitenleiste verrutscht die DropdownListe für "Color for" nach unten über die Begrenzungslinie
    
 DONE:
    - LaTeX name for vertexes
@@ -32,7 +33,7 @@ DONE:
    - JGraphXCanvas jetzt Java 1.6 kompatibel
    - Auf markierte Klasse zentrieren
    - Suchbox Fokus
+   - sun.io.Converters aus NodePopup entfernt
    
 PROBLEM:
-   - Nodepopup benutzt sun.io.Converters, das in Java 1.6 nicht vorhanden ist
    - Probleme in ScrollPane
