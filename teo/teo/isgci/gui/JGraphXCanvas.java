@@ -135,6 +135,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 			String edgeStyle, String vertexStyle) {
 		adapter = new JGraphTXAdapter<Set<GraphClass>, DefaultEdge>(graph,
 				edgeStyle + ";noLabel=1", vertexStyle) {
+			
+			/* Used for changing ToolTips of vertexes
+			 * (non-Javadoc)
+			 * @see com.mxgraph.view.mxGraph#getToolTipForCell(java.lang.Object)
+			 */
 
 			@Override
 			public String getToolTipForCell(Object arg0) {
@@ -596,6 +601,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 			}
 		}
 	}
+	
+	/* Used to select a vertex or open the context-menu
+	 * (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -703,7 +713,13 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 			}
 		}
 	};
+	
 
+	/**
+	 * creates label for mxCells of JgraphX
+	 * @param label String generated from Latex2JHtml
+	 * @return label as String
+	 */
 	static String createLabel(String label) {
 
 		String temp = "";
