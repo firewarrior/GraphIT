@@ -799,6 +799,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 		 * if(co){ temp += "</span>"; co = false; }
 		 */
 
+		co = false;
+		
 		for (int i = 0; i < label.length(); i++) {
 			if (label.charAt(i) == '(' && i > 2) {
 				if (label.charAt(i - 1) == '-' && label.charAt(i - 2) == 'o'
