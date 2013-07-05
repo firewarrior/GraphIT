@@ -6,11 +6,12 @@ Softwareproject University of Konstanz Summer Term 2013
 Überarbeitung ISGCI:
 
 TODO:
-   - Margins im GraphCanvas (Vll nicht nötig)
-   - Latexdarstellung fixen
-   - Export
-   - In der Seitenleiste verrutscht die DropdownListe für "Color for" nach unten über die Begrenzungslinie
-   - Bug: Redo funktioniert nicht, Beispiel: Zeichne (0,3)-colorable mit Subclasses, Rechtsklick auf die Wurzel, Hide Subclasses, Undo, Redo; dann fehlen nur die Knoten, die Kanten bleiben, durch Zoomen verschwinden die Kanten dann.
+   - svg-Export unpropperInclusions
+   - Redo in classesList
+   - Markierung selektierter Nodes
+   - Knoten Rename: Größenanpassung symmetrisch
+   - Maussymbol beim versuchten Verschieben von Knoten entfernen
+
    
 DONE:
    - LaTeX name for vertexes
@@ -35,6 +36,11 @@ DONE:
    - Auf markierte Klasse zentrieren
    - Suchbox Fokus
    - sun.io.Converters aus NodePopup entfernt
+   - In der Seitenleiste verrutscht die DropdownListe für "Color for" nach unten über die Begrenzungslinie
+   - Margins im GraphCanvas (Vll nicht nötig)
+   - Latexdarstellung fixen
    
 PROBLEM:
    - Probleme in ScrollPane
+   - Redo funktioniert nicht, Beispiel: Zeichne (0,3)-colorable mit Subclasses, Rechtsklick auf die Wurzel, Hide Subclasses, Undo, Redo; dann fehlen nur die Knoten, die Kanten bleiben, durch Zoomen verschwinden die Kanten dann.
+   - Verschieben von Kante: Serializable-Exception

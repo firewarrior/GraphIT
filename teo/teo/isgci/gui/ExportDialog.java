@@ -196,7 +196,7 @@ public class ExportDialog extends JDialog implements ActionListener {
             out = new OutputStreamWriter(f, "UTF-8");
 			//SVGGraphics g = new SVGGraphics();
            // parent.graphCanvas.forcePaint(g);
-            SVGExport export = new SVGExport(adapter, m_shortLabels.isSelected(), m_relayout.isSelected());
+            SVGExport export = new SVGExport(adapter, m_shortLabels.isSelected(), m_relayout.isSelected() && (m_relayout.isEnabled()));
             outstr = export.createExportString();
             //outstr = SVGExport.createExportString(parent.getxCanvas().getComponent().getGraph(), adapter);
            // g.dispose();
