@@ -481,6 +481,8 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());
+				if(vertex == null)
+					return;
 				xCanvas.getComponent().getGraph().setSelectionCell(vertex);
 				xCanvas.getComponent().zoomActual();
 				xCanvas.getComponent().scrollCellToVisible(vertex, true);

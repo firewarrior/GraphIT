@@ -44,6 +44,7 @@ public class ClassesListVisabilityHandler implements
 
 		if (deactivated.contains(node)) {
 			((NodeList) e.getSource()).clearSelection();
+//			((NodeList) e.getSource()).
 		}
 
 	}
