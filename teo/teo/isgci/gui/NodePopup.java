@@ -16,7 +16,6 @@ import java.util.Set;
 import javax.swing.*;
 import org.jgrapht.graph.DefaultEdge;
 
-import sun.io.Converters;
 import teo.isgci.db.DataSet;
 import teo.isgci.gc.GraphClass;
 import teo.isgci.util.Latex2Html;
