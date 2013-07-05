@@ -97,6 +97,7 @@ public class ExportDialog extends JDialog implements ActionListener {
         title.setOpaque(true);
         title.setBackground(Color.darkGray);
         title.setForeground(Color.white);
+        title.setEditable(false);
         title.setBorder(new EmptyBorder(new Insets(10,50,0,10)));
         
         svg_expl = new JTextArea(SVG_EXPL);
@@ -105,6 +106,7 @@ public class ExportDialog extends JDialog implements ActionListener {
         svg_expl.setOpaque(true);
         svg_expl.setBackground(Color.darkGray);
         svg_expl.setForeground(Color.white);
+        svg_expl.setEditable(false);
         svg_expl.setBorder(new EmptyBorder(new Insets(5,50,10,10)));
 
         Box titleBox = new Box(BoxLayout.Y_AXIS);
