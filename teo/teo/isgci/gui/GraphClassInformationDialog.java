@@ -224,7 +224,7 @@ public class GraphClassInformationDialog extends JDialog
         c.weightx = 0; 
         
         //---- Bottom Panel ----
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER,60,0));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.TRAILING, 10, 0));
         
         classButton = new JButton("Class details");
         bottom.add(classButton);
@@ -240,6 +240,8 @@ public class GraphClassInformationDialog extends JDialog
         c.gridy = 3;
         c.gridwidth = 2;
         c.weightx = 1;
+        c.insets = new Insets(5, 5, 5, 0);
+        c.anchor = GridBagConstraints.LAST_LINE_END;
         mainPanel.add(bottom,c);
         
         
