@@ -10,7 +10,7 @@ TODO:
    - Latexdarstellung fixen
    - Export
    - In der Seitenleiste verrutscht die DropdownListe für "Color for" nach unten über die Begrenzungslinie
-   - Bug: Resdo funktioniert nicht, Beispiel: Zeichne (0,3)-colorable mit Subclasses, Rechtsklick auf die Wurzel, Hide Subclasses, Undo, Redo; dann fehlen nur die Knoten, die Kanten bleiben.
+   - Bug: Redo funktioniert nicht, Beispiel: Zeichne (0,3)-colorable mit Subclasses, Rechtsklick auf die Wurzel, Hide Subclasses, Undo, Redo; dann fehlen nur die Knoten, die Kanten bleiben.
    
 DONE:
    - LaTeX name for vertexes
