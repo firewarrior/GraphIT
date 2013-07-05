@@ -41,6 +41,7 @@ import teo.isgci.util.Utility;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxCellMarker;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -58,6 +59,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 	private mxGraphComponent component = new mxGraphComponent(new mxGraph());
 	private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
 	private mxHierarchicalLayout layout;
+	public mxCellMarker highliter = new mxCellMarker(component);
 	public mxUndoManager undoManager;
 
 	/** ISGCI Components */
@@ -110,6 +112,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 	 * @param classes
 	 */
 	public void drawGraph(Collection<GraphClass> classes) {
+		highliter.reset();
 		SimpleDirectedGraph<Set<GraphClass>, DefaultEdge> g = Algo
 				.createHierarchySubgraph(classes);
 		this.classes = classes;
@@ -133,9 +136,10 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 			String edgeStyle, String vertexStyle) {
 		adapter = new JGraphTXAdapter<Set<GraphClass>, DefaultEdge>(graph,
 				edgeStyle + ";noLabel=1", vertexStyle) {
-			
-			/* Used for changing ToolTips of vertexes
-			 * (non-Javadoc)
+
+			/*
+			 * Used for changing ToolTips of vertexes (non-Javadoc)
+			 * 
 			 * @see com.mxgraph.view.mxGraph#getToolTipForCell(java.lang.Object)
 			 */
 
@@ -162,7 +166,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 				return null;
 			}
 		};
-		
+
 		adapter.setCellsMovable(false);
 		adapter.setCellsDeletable(false);
 		adapter.setCellsResizable(false);
@@ -175,10 +179,11 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 		adapter.setHtmlLabels(true);
 		adapter.setCellsBendable(false);
 		component.setConnectable(false);
+		component.setEnabled(false);
 
 		setNamingPref(namingPref);
 		component.setGraph(adapter);
-		
+
 		undoManager = new mxUndoManager();
 		// Adds the command history to the model and view
 		adapter.getModel().addListener(mxEvent.UNDO, undoHandler);
@@ -197,19 +202,25 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 							.getDeactivated();
 					System.out.println("Deactivated: " + tmp);
 					List<Set<GraphClass>> redo = new LinkedList<Set<GraphClass>>();
-					System.out.println(Arrays.toString(adapter.getSelectionCells()));
+					System.out.println(Arrays.toString(adapter
+							.getSelectionCells()));
 					for (Object o : adapter.getSelectionCells()) {
 						mxCell cell = (mxCell) o;
 						for (GraphClass gc : tmp) {
 							if (cell.isVertex()
-									&& getNodeName(gc.toString())
-											.equals((String) cell.getValue())) {
+									&& getNodeName(gc.toString()).equals(
+											(String) cell.getValue())) {
 								Set<GraphClass> gcs = DataSet
 										.getEquivalentClasses(gc);
 								redo.add(gcs);
-								System.out.println("Removing Graphclasses: " + gcs);
+								System.out.println("Removing Graphclasses: "
+										+ gcs);
 								for (GraphClass gcr : gcs) {
-									System.out.println("Removing Graphclass: " + gcr + " Success: " + parent.classesHandler.getDeactivated().remove(
+									System.out.println("Removing Graphclass: "
+											+ gcr
+											+ " Success: "
+											+ parent.classesHandler
+													.getDeactivated().remove(
 															gcr));
 								}
 								break;
@@ -221,10 +232,12 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 				}
 				if (evt.getName().equals(mxEvent.REDO)) {
 					System.out.println("REDO");
-					System.out.println(Arrays.toString(adapter.getSelectionCellsForChanges(changes)));
-					for (Object o : adapter.getSelectionCellsForChanges(changes)) {
+					System.out.println(Arrays.toString(adapter
+							.getSelectionCellsForChanges(changes)));
+					for (Object o : adapter
+							.getSelectionCellsForChanges(changes)) {
 						mxCell cell = (mxCell) o;
-						if (cell.isVertex()){
+						if (cell.isVertex()) {
 							Set<GraphClass> gcs = adapter.getCellToVertex(cell);
 							parent.classesHandler.addDeactivated(gcs);
 						}
@@ -500,8 +513,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 
 		adapter.getModel().beginUpdate();
 		try {
-			for(mxCell node : nodes){
-				if(node != null)
+			for (mxCell node : nodes) {
+				if (node != null)
 					adapter.getModel().setVisible(node, false);
 			}
 		} finally {
@@ -545,8 +558,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 
 		adapter.getModel().beginUpdate();
 		try {
-			for(mxCell node : nodes){
-				if(node != null)
+			for (mxCell node : nodes) {
+				if (node != null)
 					adapter.getModel().setVisible(node, false);
 			}
 		} finally {
@@ -599,62 +612,57 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 			}
 		}
 	}
-	
-	/* Used to select a vertex or open the context-menu
-	 * (non-Javadoc)
+
+	/*
+	 * Used to select a vertex or open the context-menu (non-Javadoc)
+	 * 
 	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 	 */
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getButton() == MouseEvent.BUTTON3) {
-			Object o = component.getCellAt(e.getX(), e.getY());
-			if (o != null) {
-				if (o instanceof mxCell) {
-					mxCell cell = (mxCell) o;
-					if (cell.isVertex()) {
-						nodePopup.setNode(adapter.getCellToVertex(cell),
-								(String) cell.getValue());
-						nodePopup.show(component,
-								e.getX()
-										- component.getHorizontalScrollBar()
-												.getValue(), e.getY()
-										- component.getVerticalScrollBar()
-												.getValue());
-					} else if (cell.isEdge()) {
-						edgePopup.setEdgeNodes(adapter
-								.getCellToVertex((mxCell) cell.getSource()),
-								(String) cell.getSource().getValue(), adapter
-										.getCellToVertex((mxCell) cell
-												.getTarget()), (String) cell
-										.getTarget().getValue());
-						edgePopup.show(component,
-								e.getX()
-										- component.getHorizontalScrollBar()
-												.getValue(), e.getY()
-										- component.getVerticalScrollBar()
-												.getValue());
-						System.out.println(component.getGraph().getView()
-								.getState(cell).getAbsolutePoints().size());
-					}
-				}
-			}
-		} else if (e.getButton() == MouseEvent.BUTTON1) {
-			Object o = component.getCellAt(e.getX(), e.getY());
-			if (o != null) {
-				if (o instanceof mxCell) {
-					mxCell cell = (mxCell) o;
-					if (cell.isVertex()) {
-						for (GraphClass gc : adapter.getCellToVertex(cell)) {
-							if (getNodeName(gc.toString()).equals(
-									(String) cell.getValue())) {
-								parent.classesList.setSelectedValue(gc, true);
-								break;
-							}
+		Object o = component.getCellAt(e.getX(), e.getY());
+		highliter.reset();
+		if (o == null) {
+			return;
+		}
+		if (o instanceof mxCell) {
+			mxCell cell = (mxCell) o;
+			if (cell.isVertex()) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					for (GraphClass gc : adapter.getCellToVertex(cell)) {
+						if (getNodeName(gc.toString()).equals(
+								(String) cell.getValue())) {
+							parent.classesList.setSelectedValue(gc, true);
+							break;
 						}
 					}
+				} else if (e.getButton() == MouseEvent.BUTTON3) {
+					nodePopup.setNode(adapter.getCellToVertex(cell),
+							(String) cell.getValue());
+					nodePopup.show(component, e.getX()
+							- component.getHorizontalScrollBar().getValue(),
+							e.getY()
+									- component.getVerticalScrollBar()
+											.getValue());
+				}
+			} else if (cell.isEdge()) {
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					edgePopup.setEdgeNodes(
+							adapter.getCellToVertex((mxCell) cell.getSource()),
+							(String) cell.getSource().getValue(),
+							adapter.getCellToVertex((mxCell) cell.getTarget()),
+							(String) cell.getTarget().getValue());
+					edgePopup.show(component, e.getX()
+							- component.getHorizontalScrollBar().getValue(),
+							e.getY()
+									- component.getVerticalScrollBar()
+											.getValue());
+					System.out.println(component.getGraph().getView()
+							.getState(cell).getAbsolutePoints().size());
 				}
 			}
+			highliter.highlight(adapter.getView().getState(cell), Color.green);
 		}
 	}
 
@@ -711,11 +719,12 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 			}
 		}
 	};
-	
 
 	/**
 	 * creates label for mxCells of JgraphX
-	 * @param label String generated from Latex2JHtml
+	 * 
+	 * @param label
+	 *            String generated from Latex2JHtml
 	 * @return label as String
 	 */
 	static String createLabel(String label) {
@@ -798,7 +807,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 		 */
 
 		co = false;
-		
+
 		for (int i = 0; i < label.length(); i++) {
 			if (label.charAt(i) == '(' && i > 2) {
 				if (label.charAt(i - 1) == '-' && label.charAt(i - 2) == 'o'

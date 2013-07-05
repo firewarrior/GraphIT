@@ -483,7 +483,8 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 				mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());
 				if(vertex == null)
 					return;
-				xCanvas.getComponent().getGraph().setSelectionCell(vertex);
+//				xCanvas.getComponent().getGraph().setSelectionCell(vertex);
+				xCanvas.highliter.highlight(xCanvas.getComponent().getGraph().getView().getState(vertex), Color.green);
 				xCanvas.getComponent().zoomActual();
 				xCanvas.getComponent().scrollCellToVisible(vertex, true);
 			}
