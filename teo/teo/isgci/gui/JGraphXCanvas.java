@@ -92,8 +92,6 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 		component.addMouseListener(this);
 		component.addMouseWheelListener(this);
 		component.addMouseMotionListener(this);
-		component.setPreferredSize(new Dimension(800, 600));
-		component.setSize(component.getPreferredSize());
 		component.setBorder(BorderFactory.createEmptyBorder());
 		component.setToolTips(true);
 		component.setAutoScroll(false);

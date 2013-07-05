@@ -644,7 +644,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 				if (showStatus == false) {
 					showStatus = true;
 					addTab.setText(Character.valueOf('\u25BA').toString());
-					informationPanel.setPreferredSize(new Dimension(300, 200));
+					informationPanel.setPreferredSize(new Dimension(340, 200));
 					informationPanel.revalidate();
 
 					// Come down
