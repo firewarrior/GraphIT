@@ -25,15 +25,20 @@ public class SVGExport {
 	private LatexGraphics latexgraphics;
 	private String svg;
 	private SVGGraphics svggraphics;
+	private boolean shortLabels, relayout;
 	
 	
 	
 	/**
 	 * Constructor
 	 * @param adapter for JGraphT to JGraphX
+	 * @param c 
+	 * @param shortLa 
 	 */
-	public SVGExport(JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter){
+	public SVGExport(JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter, boolean shortLabels, boolean relayout){
 		this.adapter = adapter;
+		this.shortLabels = shortLabels;
+		this.relayout = relayout;
 		svggraphics = new SVGGraphics();
 	}
 	
@@ -110,9 +115,12 @@ public class SVGExport {
 		
 		graph.getModel().endUpdate();
 		
-		layout.setInterRankCellSpacing(150);
-	    layout.execute(graph.getDefaultParent());
-	    graph.refresh();	
+		if(relayout){
+			layout.setInterRankCellSpacing(150);
+			layout.execute(graph.getDefaultParent());
+			graph.refresh();	
+		}
+		
 	}
 	
 	
@@ -194,7 +202,12 @@ public class SVGExport {
 		
 		for(GraphClass gc : adapter.getCellToVertex(cell2)){
 			if(JGraphXCanvas.createLabel(converter.html(Utility.getShortName(gc.toString()))).equals((String)cell.getValue())){
-				cell.setValue(gc.toString());
+				if(shortLabels){
+					cell.setValue(Utility.getShortName(gc.toString()));
+				}
+				else{
+					cell.setValue(gc.toString());
+				}
 				break;
 			}
 		}
