@@ -2,11 +2,16 @@ package teo.isgci.gui;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.graph.DefaultEdge;
 
+import teo.isgci.db.Algo;
+import teo.isgci.db.DataSet;
 import teo.isgci.gc.GraphClass;
+import teo.isgci.grapht.GAlg;
+import teo.isgci.grapht.Inclusion;
 import teo.isgci.util.JGraphTXAdapter;
 import teo.isgci.util.Latex2JHtml;
 import teo.isgci.util.Utility;
@@ -167,6 +172,19 @@ public class SVGExport {
 	/*adds edges to SVG-String*/
 
 	private void addEdge(mxCell cell) {
+		
+		mxCell cell2 = null;
+		for(Object o : adapter.getChildCells(adapter.getDefaultParent())){
+			if(o instanceof mxCell){
+				cell2 = (mxCell) o;
+				if(cell.isEdge()){
+					if(cell.getValue().equals(cell2.getValue())){
+						break;
+					}
+				}
+			}
+		}
+		
 		boolean first = true;
 		svg+= "<path d=\"";
 		for(mxPoint point : graph.getView().getState(cell).getAbsolutePoints()){
@@ -179,6 +197,11 @@ public class SVGExport {
 			}
 			
 		}
+		if(!getProperness(cell2)){
+			svg += "\" fill=\"none\" stroke=\"black\" marker-end=\"url(#arrow)\" marker-start=\"url(#unproper)\" /> \n";
+			return;
+		}
+		
 		svg += "\" fill=\"none\" stroke=\"black\" marker-end=\"url(#arrow)\" /> \n";
 		
 	}
@@ -212,6 +235,21 @@ public class SVGExport {
 			}
 		}
 		graph.updateCellSize(cell, true);
+	}
+	
+	/*
+	 * Checks the appropriate properness of the given edge.
+	 */
+	private boolean getProperness(mxCell edge) {
+		Set<GraphClass> src = adapter
+				.getCellToVertex((mxCell) edge.getSource());
+		Set<GraphClass> dst = adapter
+				.getCellToVertex((mxCell) edge.getTarget());
+
+		List<Inclusion> path = GAlg.getPath(DataSet.inclGraph, src.iterator()
+				.next(), dst.iterator().next());
+		return (Algo.isPathProper(path) || Algo.isPathProper(Algo
+				.makePathProper(path)));
 	}
 	
 }
