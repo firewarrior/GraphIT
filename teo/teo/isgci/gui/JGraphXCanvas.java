@@ -1,7 +1,6 @@
 package teo.isgci.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -41,7 +40,6 @@ import teo.isgci.util.Utility;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.handler.mxCellMarker;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -59,7 +57,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 	private mxGraphComponent component = new mxGraphComponent(new mxGraph());
 	private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
 	private mxHierarchicalLayout layout;
-	public mxCellMarker highliter = new mxCellMarker(component);
+	public CellHighlighter highliter = new CellHighlighter(component, Color.yellow);
 	public mxUndoManager undoManager;
 
 	/** ISGCI Components */
@@ -180,6 +178,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 		adapter.setCellsBendable(false);
 		component.setConnectable(false);
 		component.setEnabled(false);
+		component.setAntiAlias(true);
 
 		setNamingPref(namingPref);
 		component.setGraph(adapter);
@@ -465,6 +464,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 			component.refresh();
 		} finally {
 			adapter.getModel().endUpdate();
+			highliter.refresh();
 		}
 	}
 
@@ -479,9 +479,9 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 		parent.informationPanel.repaint();
 		mxCell vertex = findNode(parent.classesList.getSelectedNode());
 		if (vertex != null) {
-			adapter.setSelectionCell(vertex);
 			component.zoomActual();
 			component.scrollCellToVisible(vertex, true);
+			highliter.highlight(vertex);
 		}
 	}
 
@@ -611,6 +611,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 				component.zoomOut();
 			}
 		}
+		highliter.refresh();
 	}
 
 	/*
@@ -662,7 +663,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 							.getState(cell).getAbsolutePoints().size());
 				}
 			}
-			highliter.highlight(adapter.getView().getState(cell), Color.green);
+			highliter.highlight(cell);
 		}
 	}
 

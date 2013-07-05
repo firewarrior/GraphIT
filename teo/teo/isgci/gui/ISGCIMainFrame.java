@@ -483,10 +483,9 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 				mxCell vertex = xCanvas.findNode(classesList.getSelectedNode());
 				if(vertex == null)
 					return;
-//				xCanvas.getComponent().getGraph().setSelectionCell(vertex);
-				xCanvas.highliter.highlight(xCanvas.getComponent().getGraph().getView().getState(vertex), Color.green);
 				xCanvas.getComponent().zoomActual();
 				xCanvas.getComponent().scrollCellToVisible(vertex, true);
+				xCanvas.highliter.highlight(vertex);
 			}
 		});
 		return scroller;
@@ -658,8 +657,10 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 			}
 		} else if (object == zoomIn) {
 			xCanvas.getComponent().zoomIn();
+			xCanvas.highliter.refresh();
 		} else if (object == zoomOut) {
 			xCanvas.getComponent().zoomOut();
+			xCanvas.highliter.refresh();
 		} else if (object == zoomToFit) {
 			mxGraphView view = xCanvas.getComponent().getGraph().getView();
 			int compLen = xCanvas.getComponent().getWidth();
@@ -674,6 +675,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 			}
 			//Little Hack to fit exactly
 			xCanvas.getComponent().zoom(0.99);
+			xCanvas.highliter.refresh();
 		}
 	}
 
