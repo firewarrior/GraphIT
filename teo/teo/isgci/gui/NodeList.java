@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.awt.Component;
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import teo.isgci.gc.GraphClass;
 
 

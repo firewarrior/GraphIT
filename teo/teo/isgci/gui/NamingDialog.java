@@ -11,6 +11,8 @@
 package teo.isgci.gui;
 
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -23,11 +25,13 @@ public class NamingDialog extends JDialog implements ActionListener {
     protected ButtonGroup group;
     protected JRadioButton basicBox, derivedBox, forbiddenBox;
     protected JButton okButton, cancelButton;
+    protected Dimension minSize = new Dimension(292,147);
 
 
     public NamingDialog(ISGCIMainFrame parent) {
         super(parent, "Naming preference", true);
         this.parent = parent;
+        this.setMinimumSize(minSize);
         group = new ButtonGroup();
         Algo.NamePref mode = parent.getxCanvas().getNamingPref();
         LatexGraphics latex = ISGCIMainFrame.latex;
@@ -76,9 +80,9 @@ public class NamingDialog extends JDialog implements ActionListener {
         contents.add(label);
 
 
-        JPanel p = new JPanel();
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 0));
         okButton = new JButton("OK");
-        cancelButton = new JButton("Cancel");
+        cancelButton = new JButton("Close");
         p.add(okButton);
         p.add(cancelButton);
         c.insets = new Insets(5, 0, 5, 0);

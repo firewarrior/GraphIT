@@ -65,8 +65,7 @@ public final class Algo {
         }
         return namer.toString();
     }
-
-
+    
     /**
      * Find the subclasses of node and return them ordered by name.
      */

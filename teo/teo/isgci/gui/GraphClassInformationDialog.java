@@ -25,6 +25,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
+
+import org.jgrapht.generate.GridGraphGenerator;
+
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.Collections;
@@ -52,6 +55,7 @@ public class GraphClassInformationDialog extends JDialog
     protected JButton okButton, classButton, inclButton, drawButton;
     protected WebSearch search;
     protected MouseAdapter mouseAdapter;
+    protected Dimension minSize = new Dimension(611,394);
 
     public GraphClassInformationDialog(ISGCIMainFrame parent) {
         this(parent, null);
@@ -61,86 +65,167 @@ public class GraphClassInformationDialog extends JDialog
             GraphClass target) {
         super(parent, "Graph Class Information", false);
         this.parent = parent;
+        this.setMinimumSize(minSize);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         Container contents = getContentPane();
-        Dimension listdim = new Dimension(150, 150);
         
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel mid = new JPanel(new GridLayout(1,2,20,20));
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER,70,10));
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
         
-        //---- Create Top Panel ----
-        search = new WebSearch();
-        search.setText("Search...");
-        search.setPreferredSize(new Dimension(180,25));
-        search.addKeyListener(this);
-        top.add(search);
+        //Global Settings
+        c.insets = new Insets(5, 5, 5, 5);
+        
+        //---- Search ----
+        search = new WebSearch("Search...");
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        mainPanel.add(search,c);
 
-
-        //---- Mid Panel ----
+        //Set to Null
+        c.anchor = GridBagConstraints.CENTER;
+        c.weightx = 0;
+        c.fill = GridBagConstraints.NONE;
+        
         // GraphList
         classesList = new NodeList(parent.latex);
         classesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroller = new JScrollPane(classesList);
-        scroller.setPreferredSize(listdim);
-        scroller.setMinimumSize(listdim);
-        mid.add(scroller);
-
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridheight = 2;
+        c.weightx = 1;
+        c.fill = GridBagConstraints.BOTH;
+        mainPanel.add(scroller,c);
+        
+        //Set to Null
+        c.gridheight = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.weightx = 0;
+        
         //---- Complexity ----
-        JPanel p = new JPanel(new BorderLayout());
-        JPanel problem = new JPanel(new BorderLayout());
-        problem.setPreferredSize(new Dimension(300,292));
+        JPanel problem = new JPanel(new GridBagLayout());
+        GridBagConstraints cc = new GridBagConstraints();
+        
+        //Global Setting
+        cc.weightx = 1;
+        cc.weighty = 1;
+        cc.insets = new Insets(0, 5, 0, 5);
+        
+        //Complexity List
         problems = new JTable(new ProblemsModel());
-        problem.add(problems.getTableHeader(), BorderLayout.NORTH);
-        problem.add(problems, BorderLayout.CENTER);
+        JScrollPane scroller2 = new JScrollPane(problems);
+        
         problems.setShowVerticalLines(false);
         problems.setBorder(
                 BorderFactory.createMatteBorder(0,1,0,1,Color.black));
         
-        p.add(problem,BorderLayout.NORTH);
+        //Titel
+        cc.gridx = 0;
+        cc.gridy = 0;
+        cc.anchor = GridBagConstraints.PAGE_START;
+        
+        problem.add(problems.getTableHeader(), cc);
+        
+        //Set to Null
+        cc.anchor = GridBagConstraints.CENTER;
+      
+        //List
+        cc.gridx = 0;
+        cc.gridy = 1;
+        cc.fill = GridBagConstraints.BOTH;
+        problem.add(scroller2,cc);
+        
+        //Add to Main Panel
+        c.gridx = 1;
+        c.gridy = 1;
+        c.weighty = 1;
+        c.fill = GridBagConstraints.BOTH;
+        mainPanel.add(problem,c);
+        
+        //Set to Null
+        c.fill = GridBagConstraints.NONE;
+        c.weighty = 0;
         
         //---- Sub/super/equ classes ----
-        JPanel grid = new JPanel(new GridLayout(1,3,10,0));
+        JPanel grid = new JPanel(new GridBagLayout());
+        GridBagConstraints cg = new GridBagConstraints();
         
-        JPanel superP = new JPanel(new BorderLayout(0,5));
-        JLabel superLabel = new JLabel("Superclasses:", JLabel.LEFT);
+        //Global Settings
+        cg.anchor = GridBagConstraints.WEST;
+        cg.insets = new Insets(0, 5, 0, 5);
+        
+        JLabel superLabel = new JLabel("Superclasses:");
+        cg.gridx = 0;
+        cg.gridy = 0;
+        grid.add(superLabel,cg);
+        
         supClassesList = new NodeList(parent.latex);
         scroller = new JScrollPane(supClassesList);
-        scroller.setPreferredSize(listdim);
-        scroller.setMinimumSize(listdim);
-        superP.add(superLabel,BorderLayout.NORTH);
-        superP.add(scroller,BorderLayout.CENTER);
+        cg.gridx = 0;
+        cg.gridy = 1;
+        cg.weighty = 1;
+        cg.weightx = 1;
+        cg.fill = GridBagConstraints.BOTH;
+        grid.add(scroller,cg);
         
-        JPanel equP = new JPanel(new BorderLayout(0,5));
-        JLabel equLabel = new JLabel("Equivalent Classes:", JLabel.LEFT);
+        //Set to Null
+        cg.fill = GridBagConstraints.NONE;
+        cg.weighty = 0;
+        cg.weightx = 0;
+        
+        JLabel equLabel = new JLabel("Equivalent Classes:");
+        cg.gridx = 1;
+        cg.gridy = 0;
+        grid.add(equLabel,cg);
+        
         equClassesList = new NodeList(parent.latex);
         scroller = new JScrollPane(equClassesList);
-        scroller.setPreferredSize(listdim);
-        scroller.setMinimumSize(listdim);
-        equP.add(equLabel,BorderLayout.NORTH);
-        equP.add(scroller,BorderLayout.CENTER);
-
-        JPanel subP = new JPanel(new BorderLayout(0,5));
-        JLabel subLabel = new JLabel("Subclasses:", JLabel.LEFT);
+        cg.gridx = 1;
+        cg.gridy = 1;
+        cg.weighty = 1;
+        cg.weightx = 1;
+        cg.fill = GridBagConstraints.BOTH;
+        grid.add(scroller,cg);
+        
+        //Set to Null
+        cg.fill = GridBagConstraints.NONE;
+        cg.weighty = 0;
+        cg.weightx = 0;
+        
+        JLabel subLabel = new JLabel("Subclasses:");
+        cg.gridx = 2;
+        cg.gridy = 0;
+        grid.add(subLabel,cg);
+        
         subClassesList = new NodeList(parent.latex);
         scroller = new JScrollPane(subClassesList);
-        scroller.setPreferredSize(listdim);
-        scroller.setMinimumSize(listdim);
-        subP.add(subLabel,BorderLayout.NORTH);
-        subP.add(scroller,BorderLayout.CENTER);
-
-        //Set to GridLayout
-        grid.add(superP);
-        grid.add(equP);
-        grid.add(subP);
+        cg.gridx = 2;
+        cg.gridy = 1;
+        cg.weighty = 1;
+        cg.weightx = 1;
+        cg.fill = GridBagConstraints.BOTH;
+        grid.add(scroller,cg);
         
-        //Add grid to p Panel
-        p.add(grid, BorderLayout.SOUTH);
-        mid.add(p);
+        //Add grid to MainPanel
+        c.gridx = 1;
+        c.gridy = 2;
+        c.weighty = 1;
+        c.weightx = 1;
+        c.fill = GridBagConstraints.BOTH;
+        mainPanel.add(grid,c);
+        
+        //Set to Null
+        c.fill = GridBagConstraints.NONE;
+        c.weighty = 0;
+        c.weightx = 0; 
         
         //---- Bottom Panel ----
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.TRAILING, 10, 0));
+        
         classButton = new JButton("Class details");
         bottom.add(classButton);
         inclButton = new JButton("Inclusion info");
@@ -150,10 +235,15 @@ public class GraphClassInformationDialog extends JDialog
         okButton = new JButton("Close");
         bottom.add(okButton);
         
-        //---- Main Panel ----
-        mainPanel.add(top,BorderLayout.NORTH);
-        mainPanel.add(mid,BorderLayout.CENTER);
-        mainPanel.add(bottom,BorderLayout.SOUTH);
+        //Set Bottom Panel on Main Panel
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 2;
+        c.weightx = 1;
+        c.insets = new Insets(5, 5, 5, 0);
+        c.anchor = GridBagConstraints.LAST_LINE_END;
+        mainPanel.add(bottom,c);
+        
         
         contents.add(mainPanel);
 
@@ -164,23 +254,9 @@ public class GraphClassInformationDialog extends JDialog
 
 
         classesList.setListData(DataSet.getClasses());
-
-        mouseAdapter = new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    NodeList list = (NodeList) e.getSource();
-                    showNode(list.getSelectedNode());
-                }
-            }
-        };
-        classButton.addActionListener(this);
-        inclButton.addActionListener(this);
-        okButton.addActionListener(this);
-        drawButton.addActionListener(this);
-        classesList.addListSelectionListener(this);
-        supClassesList.addMouseListener(mouseAdapter);
-        equClassesList.addMouseListener(mouseAdapter);
-        subClassesList.addMouseListener(mouseAdapter);
+        
+        //Register the whole Listener
+        registerListener();
 
         if (target != null)
             showNode(target);
@@ -189,7 +265,32 @@ public class GraphClassInformationDialog extends JDialog
     }
 
 
-    /**
+    private void registerListener() {
+    	
+      	 mouseAdapter = new MouseAdapter() {
+             public void mouseClicked(MouseEvent e) {
+                 if (e.getClickCount() == 2) {
+                     NodeList list = (NodeList) e.getSource();
+                     showNode(list.getSelectedNode());
+                 }
+             }
+         };
+         
+        classButton.addActionListener(this);
+        inclButton.addActionListener(this);
+        okButton.addActionListener(this);
+        drawButton.addActionListener(this);
+        classesList.addListSelectionListener(this);
+        search.addKeyListener(this);
+        supClassesList.addMouseListener(mouseAdapter);
+        equClassesList.addMouseListener(mouseAdapter);
+        subClassesList.addMouseListener(mouseAdapter);
+        
+
+		
+	}
+
+	/**
      * Show the information about the given class.
      */
     private void showNode(GraphClass target) {
@@ -298,8 +399,8 @@ public class GraphClassInformationDialog extends JDialog
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+	    search.setCustomTextSet(true);
 		search.setListData(parent, classesList);
-		
 	}
 
 }

@@ -244,11 +244,11 @@ public class ISGCIGraphCanvas extends
         if (v == null)
             return true;
         if (v instanceof NodeView) {
-            nodePopup.setNode((NodeView) v);
+            //nodePopup.setNode((NodeView) v);
             nodePopup.show(this, event.getX(), event.getY());
         }
         if (v instanceof EdgeView) {
-            edgePopup.setEdge((EdgeView) v);
+            //edgePopup.setEdge((EdgeView) v);
             edgePopup.show(this, event.getX(), event.getY());
         }
         return true;

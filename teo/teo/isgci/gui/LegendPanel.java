@@ -1,102 +1,132 @@
 package teo.isgci.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.geom.Rectangle2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
-import teo.isgci.db.DataSet;
+import javax.swing.WindowConstants;
 
 public class LegendPanel extends JPanel {
-	
-	protected ISGCIMainFrame parent;
-	{
+
+	private JLabel linearColor = new JLabel(
+			"<html><div style=\"background-color:" + colorToHexCode(JGraphXCanvas.COLOR_LIN) + ";width:10px;height:10px;border:1px solid #000;\"></div></html>");
+	private JLabel polynomialColor = new JLabel(
+			"<html><div style=\"background-color:" + colorToHexCode(JGraphXCanvas.COLOR_P) + ";width:10px;height:10px;border:1px solid #000;\"></div></html>");
+	private JLabel giCompleteColor = new JLabel(
+			"<html><div style=\"background-color:" + colorToHexCode(JGraphXCanvas.COLOR_INTERMEDIATE) + ";width:10px;height:10px;border:1px solid #000;\"></div></html>");
+	private JLabel npCompleteColor = new JLabel(
+			"<html><div style=\"background-color:" + colorToHexCode(JGraphXCanvas.COLOR_NPC) + ";width:10px;height:10px;border:1px solid #000;\"></div></html>");
+	private JLabel npHardColor = new JLabel(
+			"<html><div style=\"background-color:" + colorToHexCode(JGraphXCanvas.COLOR_NPC) + ";width:10px;height:10px;border:1px solid #000;\"></div></html>");
+	private JLabel coNpCompleteColor = new JLabel(
+			"<html><div style=\"background-color:" + colorToHexCode(JGraphXCanvas.COLOR_NPC) + ";width:10px;height:10px;border:1px solid #000;\"></div></html>");
+	private JLabel openColor = new JLabel(
+			"<html><div style=\"background-color:" + colorToHexCode(JGraphXCanvas.COLOR_UNKNOWN) + ";width:10px;height:10px;border:1px solid #000;\"></div></html>");
+	private JLabel unknownColor = new JLabel(
+			"<html><div style=\"background-color:" + colorToHexCode(JGraphXCanvas.COLOR_UNKNOWN) + ";width:10px;height:10px;border:1px solid #000;\"></div></html>");
+
+	private JLabel linear = new JLabel("Linear");
+	private JLabel polynomial = new JLabel("Polynomial");
+	private JLabel giComplete = new JLabel("GI-complete");
+	private JLabel npComplete = new JLabel("NP-complete");
+	private JLabel npHard = new JLabel("NP-hard");
+	private JLabel coNpComplete = new JLabel("coNP-complete");
+	private JLabel open = new JLabel("Open");
+	private JLabel unknown = new JLabel("Unknown");
+
+	public LegendPanel() {
+//		setLayout(new GridLayout(5, 2));
+		setLayout(new GridBagLayout());
+		setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createTitledBorder("Legend"),
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		GridBagConstraints c = new GridBagConstraints();
+		Insets colorInsets = new Insets(3, 0, 3, 3);
+		Insets labelInsets = new Insets(0, 3, 3, 0);
+		c.gridx = 0;
+		c.gridy = 7;
+		c.insets = colorInsets;
+		c.anchor = GridBagConstraints.LINE_END;
+		add(linearColor, c);
+		c.gridx = 1;
+		c.gridy = 7;
+		c.insets = labelInsets;
+		add(linear, c);
+		c.gridx = 0;
+		c.gridy = 6;
+		c.insets = colorInsets;
+		add(polynomialColor, c);
+		c.gridx = 1;
+		c.gridy = 6;
+		c.insets = labelInsets;
+		add(polynomial, c);
+		c.gridx = 0;
+		c.gridy = 5;
+		c.insets = colorInsets;
+		add(giCompleteColor, c);
+		c.gridx = 1;
+		c.gridy = 5;
+		c.insets = labelInsets;
+		add(giComplete, c);
+		c.gridx = 0;
+		c.gridy = 4;
+		c.insets = colorInsets;
+		add(npCompleteColor, c);
+		c.gridx = 1;
+		c.gridy = 4;
+		c.insets = labelInsets;
+		add(npComplete, c);
+		c.gridx = 0;
+		c.gridy = 3;
+		c.insets = colorInsets;
+		add(npHardColor, c);
+		c.gridx = 1;
+		c.gridy = 3;
+		c.insets = labelInsets;
+		add(npHard, c);
+		c.gridx = 0;
+		c.gridy = 2;
+		c.insets = colorInsets;
+		add(coNpCompleteColor, c);
+		c.gridx = 1;
+		c.gridy = 2;
+		c.insets = labelInsets;
+		add(coNpComplete, c);
+		c.gridx = 0;
+		c.gridy = 1;
+		c.insets = colorInsets;
+		add(openColor, c);
+		c.gridx = 1;
+		c.gridy = 1;
+		c.insets = labelInsets;
+		add(open, c);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = colorInsets;
+		add(unknownColor, c);
+		c.gridx = 1;
+		c.gridy = 0;
+		c.insets = labelInsets;
+		add(unknown, c);
 		setOpaque(false);
 	}
 	
-	public LegendPanel(final ISGCIMainFrame parent) {
-		super();
-		this.parent = parent;
-    	parent.graphCanvas.setLayout(null);
-    	
-    	//Listener for the Legend
-		parent.addComponentListener( new ComponentAdapter() {
-		    @Override
-		    public void componentResized( ComponentEvent e ) {
-				setBounds(parent.drawingPane.getWidth()+parent.drawingPane.getHorizontalScrollBar().getValue()-150, parent.drawingPane.getHeight()+parent.drawingPane.getVerticalScrollBar().getValue()-160, 120, 130);
-		    	revalidate();
-		    }
-		} );
-	
-		//Create Listener to have the Legend everytime at the same playce =)
-		parent.drawingPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-			
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				setBounds(parent.drawingPane.getWidth()+parent.drawingPane.getHorizontalScrollBar().getValue()-150, parent.drawingPane.getHeight()+parent.drawingPane.getVerticalScrollBar().getValue()-160, 120, 130);
-				
-			}
-		});
-		parent.drawingPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-			
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				setBounds(parent.drawingPane.getWidth()+parent.drawingPane.getHorizontalScrollBar().getValue()-150, parent.drawingPane.getHeight()+parent.drawingPane.getVerticalScrollBar().getValue()-160, 120, 130);
-				
-			}
-		});
-			
-		//Create Legend Panel
-		TitledBorder t_legend = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black),"Legend:");
-		setBorder(t_legend);
-		
+	private static String colorToHexCode(Color c) {
+		return String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
 	}
-	
-	
-	public void paintComponent(Graphics g) {
-		//Create the different Colors
-		g.setColor(Color.green);
-		g.fillRect(10, 25, 20, 10);
-		
-		g.setColor(Color.green.darker());
-		g.fillRect(10, 45, 20, 10);
-		
-		g.setColor(Color.red);
-		g.fillRect(10, 65, 20, 10);
-		
-		g.setColor(SColor.brighter(Color.red));
-		g.fillRect(10, 85, 20, 10);
-		
-		g.setColor(Color.white);
-		g.fillRect(10, 105, 20, 10);
-		
-		//Add borders
-		g.setColor(Color.black);
-		g.drawRect(10, 25, 20, 10);
-		g.drawRect(10, 45, 20, 10);
-		g.drawRect(10, 65, 20, 10);
-		g.drawRect(10, 85, 20, 10);
-		g.drawRect(10, 105, 20, 10);
-		
-		//Add Text to the Colors
-		g.drawString("Linear", 40, 35);
-		g.drawString("Polynomial", 40, 55);
-		g.drawString("NP-complete", 40, 75);
-		g.drawString("Intermediate", 40, 95);
-		g.drawString("Unknown", 40, 115);
-		
-		g.setColor(parent.graphCanvas.getBackground());
-	    super.paintComponent(g);
+
+	// Testing
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("Legend");
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frame.add(new LegendPanel());
+		frame.pack();
+		frame.setVisible(true);
 	}
+
 }

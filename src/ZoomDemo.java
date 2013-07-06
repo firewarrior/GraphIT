@@ -65,7 +65,7 @@ public class ZoomDemo implements ActionListener {
 		mxHierarchicalLayout layout = new mxHierarchicalLayout(g);
 		layout.execute(g.getDefaultParent());
 		
-		component = new JGraphXCanvas(g);
+		//component = new JGraphXCanvas(g);
 		mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		JButton zoomToFit = new JButton("Zoom to fit");
 		zoomToFit.addActionListener(this);
