@@ -10,34 +10,41 @@
 
 package teo.isgci.db;
 
-import java.util.*;
-import org.jgrapht.Graph;
-import org.jgrapht.DirectedGraph;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Vector;
+
 import org.jgrapht.graph.SimpleDirectedGraph;
-import teo.isgci.grapht.*;
-import teo.isgci.xml.*;
+
 import teo.isgci.gc.GraphClass;
+import teo.isgci.grapht.GAlg;
+import teo.isgci.grapht.Inclusion;
 import teo.isgci.problem.Problem;
 import teo.isgci.util.LessLatex;
+import teo.isgci.xml.ISGCIReader;
+import teo.isgci.xml.XMLParser;
 
 /**
- * The Database of the information system.
- * inclGraph is the inclusion graph proper.
- * getClassNames() returns a sorted list of all class names.
+ * The Database of the information system. inclGraph is the inclusion graph
+ * proper. getClassNames() returns a sorted list of all class names.
  */
 public final class DataSet {
 
     private static boolean initialized;
-    
+
     private static String date;
     private static String nodecount, edgecount;
 
     /** The inclusion graph */
-    public static SimpleDirectedGraph<GraphClass,Inclusion> inclGraph;
+    public static SimpleDirectedGraph<GraphClass, Inclusion> inclGraph;
     /** Maps classnames to nodes */
-    protected static TreeMap<String,GraphClass> names;
+    protected static TreeMap<String, GraphClass> names;
     /** Maps graphclasses to their SCCs */
-    protected static Map<GraphClass, Set<GraphClass> > sccs;
+    protected static Map<GraphClass, Set<GraphClass>> sccs;
 
     /** Problems */
     public static Vector<Problem> problems;
@@ -49,19 +56,20 @@ public final class DataSet {
         initialized = false;
     }
 
-    /** Load all the data.
+    /**
+     * Load all the data.
      */
     public static void init(teo.Loader loader, String file) {
         if (initialized)
             return;
 
-        inclGraph = new SimpleDirectedGraph<GraphClass,Inclusion>(
+        inclGraph = new SimpleDirectedGraph<GraphClass, Inclusion>(
                 Inclusion.class);
         problems = new Vector<Problem>();
         load(loader, file, inclGraph, problems);
 
         // Gather the classnames
-        names = new TreeMap<String,GraphClass>(new LessLatex());
+        names = new TreeMap<String, GraphClass>(new LessLatex());
         for (GraphClass gclass : inclGraph.vertexSet())
             names.put(gclass.toString(), gclass);
 
@@ -71,13 +79,11 @@ public final class DataSet {
         initialized = true;
     }
 
-
     public static void load(teo.Loader loader, String file,
-            SimpleDirectedGraph<GraphClass,Inclusion> graph,
-            Vector problems) {
+            SimpleDirectedGraph<GraphClass, Inclusion> graph, Vector problems) {
         ISGCIReader gcr = new ISGCIReader(graph, problems);
-        XMLParser xml=new XMLParser(loader.openInputSource(file),
-                gcr, loader.new Resolver());
+        XMLParser xml = new XMLParser(loader.openInputSource(file), gcr,
+                loader.new Resolver());
         xml.parse();
         date = gcr.getDate();
         nodecount = gcr.getNodeCount();
@@ -85,14 +91,12 @@ public final class DataSet {
         relations = gcr.getRelations();
     }
 
-    
     /**
      * Returns the names of the available graphclasses ordered alphabetically.
      */
     public static Set<String> getClassNames() {
         return Collections.unmodifiableSet(names.keySet());
     }
-
 
     /**
      * Returns the nodes of the available graphclasses ordered alphabetically.
@@ -101,14 +105,12 @@ public final class DataSet {
         return Collections.unmodifiableCollection(names.values());
     }
 
-
     /**
      * Return the node in inclGraph belonging to the given classname.
      */
     public static GraphClass getClass(String name) {
         return names.get(name);
     }
-
 
     /**
      * Return the set of classes equivalent to the given one.
@@ -117,30 +119,28 @@ public final class DataSet {
         return sccs.get(gc);
     }
 
-
     /**
      * Return the problem with the given name.
      */
     public static Problem getProblem(String name) {
         for (int i = 0; i < problems.size(); i++)
-            if (name.equals( ((Problem) problems.elementAt(i)).getName() )) {
+            if (name.equals(((Problem) problems.elementAt(i)).getName())) {
                 return (Problem) problems.elementAt(i);
             }
         return null;
     }
-    
+
     public static String getDate() {
         return date;
-    }        
-    
+    }
+
     public static String getNodeCount() {
         return nodecount;
-    }    
-    
+    }
+
     public static String getEdgeCount() {
         return edgecount;
-    }    
-    
+    }
 
 }
 

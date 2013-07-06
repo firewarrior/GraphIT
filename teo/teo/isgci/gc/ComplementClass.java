@@ -8,15 +8,13 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.gc;
-
 
 /**
  * A GraphClass that is a complement of another class.
  */
 public class ComplementClass extends DerivedClass {
-    
+
     /**
      * Creates a new graph class based on <tt>gc</tt>.
      */
@@ -30,19 +28,17 @@ public class ComplementClass extends DerivedClass {
             hereditariness = Hered.INDUCED;
     }
 
-    
     /**
-     * Constructs the name of this class by adding the prefix "co--"
-     * to the name of the base class.
+     * Constructs the name of this class by adding the prefix "co--" to the name
+     * of the base class.
      */
     public void setName() {
         if (getBase() instanceof SetClass)
-            name = "co-("+ getBase().toString() +")";
+            name = "co-(" + getBase().toString() + ")";
         else
-            name = "co--"+ getBase().toString();
+            name = "co--" + getBase().toString();
         nameExplicit = false;
     }
-    
 
     /**
      * Create a complement of this.
@@ -50,7 +46,7 @@ public class ComplementClass extends DerivedClass {
     public GraphClass complement() {
         return getBase();
     }
-    
+
 }
 
 /* EOF */

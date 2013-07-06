@@ -12,11 +12,13 @@ package teo.isgci.grapht;
 
 import java.util.Collections;
 import java.util.Set;
-import org.jgrapht.VertexFactory;
-import teo.isgci.gc.GraphClass;
-import teo.isgci.gc.BaseClass;
 
-public class ISGCIVertexFactory implements VertexFactory<Set<GraphClass> > {
+import org.jgrapht.VertexFactory;
+
+import teo.isgci.gc.BaseClass;
+import teo.isgci.gc.GraphClass;
+
+public class ISGCIVertexFactory implements VertexFactory<Set<GraphClass>> {
     int running;
 
     public ISGCIVertexFactory() {
@@ -24,10 +26,9 @@ public class ISGCIVertexFactory implements VertexFactory<Set<GraphClass> > {
     }
 
     public Set<GraphClass> createVertex() {
-        return Collections.singleton((GraphClass)
-                new VirtualClass("virtual-"+ (++running)) );
+        return Collections.singleton((GraphClass) new VirtualClass("virtual-"
+                + (++running)));
     }
-
 
     class VirtualClass extends BaseClass {
         public VirtualClass(String s) {

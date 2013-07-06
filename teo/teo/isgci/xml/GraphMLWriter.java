@@ -10,12 +10,12 @@
 
 package teo.isgci.xml;
 
-import java.io.Writer;
-import java.util.Date;
 import java.awt.Color;
+import java.io.Writer;
+
+import org.xml.sax.SAXException;
+
 import teo.isgci.util.Latex2JHtml;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
 import teo.sax.XMLWriter;
 
 public class GraphMLWriter {
@@ -36,16 +36,11 @@ public class GraphMLWriter {
     public static final int MODE_YED = 2;
 
     /** XML tags */
-    private static final String XMLDECL =
-        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-    private static final String NS_XSI =
-            "http://www.w3.org/2001/XMLSchema-instance";
-    private static final String NS_SCHEMA =
-            "http://graphml.graphdrawing.org/xmlns";
-    private static final String NS_Y =
-            "http://www.yworks.com/xml/graphml";
-    private static final String NS_YSCHEMA =
-            "http://www.yworks.com/xml/schema/graphml/1.0/ygraphml.xsd";
+    private static final String XMLDECL = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+    private static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
+    private static final String NS_SCHEMA = "http://graphml.graphdrawing.org/xmlns";
+    private static final String NS_Y = "http://www.yworks.com/xml/graphml";
+    private static final String NS_YSCHEMA = "http://www.yworks.com/xml/schema/graphml/1.0/ygraphml.xsd";
     private static final String GRAPHCLASS = "node";
     private static final String ID = "id";
     private static final String INCLUSION = "edge";
@@ -55,13 +50,17 @@ public class GraphMLWriter {
     private static final String ROOT = "graphml";
     private static final String GRAPH = "graph";
 
-
     /**
      * Create a new GraphMLWriter
-     * @param writer where to write to
-     * @param mode what should be written
-     * @param unproper mark unproper inclusions
-     * @param html output labels not in latex but in Java html
+     * 
+     * @param writer
+     *            where to write to
+     * @param mode
+     *            what should be written
+     * @param unproper
+     *            mark unproper inclusions
+     * @param html
+     *            output labels not in latex but in Java html
      */
     public GraphMLWriter(Writer writer, int mode, boolean unproper,
             boolean html) {
@@ -72,7 +71,6 @@ public class GraphMLWriter {
         this.writeUnproper = unproper;
     }
 
-
     public void startDocument() throws SAXException {
         SimpleAttributes atts = new SimpleAttributes();
 
@@ -80,7 +78,7 @@ public class GraphMLWriter {
         writer.forceNSDecl(NS_XSI, "xsi");
         if (mode == MODE_YED) {
             writer.forceNSDecl(NS_Y, "y");
-            writer.forceNSDecl(NS_SCHEMA +" "+ NS_YSCHEMA, "schemaLocation");
+            writer.forceNSDecl(NS_SCHEMA + " " + NS_YSCHEMA, "schemaLocation");
         } else
             writer.forceNSDecl(NS_SCHEMA, "schemaLocation");
         writer.startElement(ROOT);
@@ -107,13 +105,14 @@ public class GraphMLWriter {
         writer.startElement("", GRAPH, "", atts);
         writer.characters("\n");
 
-        writer.dataElement("desc",
-                "ISGCI graph class diagram, generated "+
-                String.format("%1$tF %1$tR", java.util.Calendar.getInstance())+
-                " by http://www.graphclasses.org");
+        writer.dataElement(
+                "desc",
+                "ISGCI graph class diagram, generated "
+                        + String.format("%1$tF %1$tR",
+                                java.util.Calendar.getInstance())
+                        + " by http://www.graphclasses.org");
         writer.characters("\n");
     }
-
 
     public void endDocument() throws SAXException {
         writer.endElement(GRAPH);
@@ -122,12 +121,15 @@ public class GraphMLWriter {
         writer.endDocument();
     }
 
-
     /**
      * Write a node.
-     * @param id id of the node to write
-     * @param label the label of the node
-     * @param color its color
+     * 
+     * @param id
+     *            id of the node to write
+     * @param label
+     *            the label of the node
+     * @param color
+     *            its color
      */
     public void writeNode(String id, String label, Color color)
             throws SAXException {
@@ -141,10 +143,12 @@ public class GraphMLWriter {
             atts.addAttribute("key", "d0");
             writer.startElement("", "data", "", atts);
             writer.startElement(NS_Y, "ShapeNode");
- 
+
             atts.clear();
-            atts.addAttribute("color", String.format("#%1$02X%2$02X%3$02X",
-                    color.getRed(), color.getGreen(), color.getBlue()));
+            atts.addAttribute(
+                    "color",
+                    String.format("#%1$02X%2$02X%3$02X", color.getRed(),
+                            color.getGreen(), color.getBlue()));
             writer.emptyElement(NS_Y, "Fill", "", atts);
 
             atts.clear();
@@ -153,7 +157,7 @@ public class GraphMLWriter {
 
             writer.startElement(NS_Y, "NodeLabel");
             if (html) {
-                writer.characters("<html>"+ converter.html(label) +"</html>");
+                writer.characters("<html>" + converter.html(label) + "</html>");
             } else
                 writer.characters(label);
             writer.endElement(NS_Y, "NodeLabel");
@@ -168,9 +172,13 @@ public class GraphMLWriter {
 
     /**
      * Write an edge
-     * @param from source of the edge (superclass)
-     * @param to destination of the edge (subclass)
-     * @param proper whether the inclusion is proper
+     * 
+     * @param from
+     *            source of the edge (superclass)
+     * @param to
+     *            destination of the edge (subclass)
+     * @param proper
+     *            whether the inclusion is proper
      */
     public void writeEdge(String from, String to, boolean proper)
             throws SAXException {
@@ -189,8 +197,8 @@ public class GraphMLWriter {
 
             atts.clear();
             atts.addAttribute(SUB, "standard");
-            atts.addAttribute(SUPER,
-                    writeUnproper && !proper ? "short" : "none");
+            atts.addAttribute(SUPER, writeUnproper && !proper ? "short"
+                    : "none");
             writer.emptyElement(NS_Y, "Arrows", "", atts);
 
             writer.endElement(NS_Y, "PolyLineEdge");

@@ -9,18 +9,16 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.gc;
-
 
 /**
  * A GraphClass based on another class and adding the isometric-hereditary
  * property.
  */
 public class IsometricHereditaryClass extends HereditaryClass {
-    
+
     /** Creates a new graph class based on <tt>gc</tt>. */
-    public IsometricHereditaryClass(GraphClass gc){
+    public IsometricHereditaryClass(GraphClass gc) {
         super(gc);
         hereditariness = Hered.ISOMETRIC;
     }

@@ -33,24 +33,22 @@ import javax.swing.JTextField;
 
 import teo.isgci.db.DataSet;
 import teo.isgci.util.LessLatex;
+
 //import java.awt.*;
 
-
 /**
- * Sucht in der DB nach dem Suchbegriff, der im Konstruktor angegeben wird
+ * Searches the database for a given search string.
  * 
  */
 public class WebSearch extends JTextField implements Iterator, FocusListener {
-    /** die URL, auf der das Script liegt */
-    protected static final String wwwurl=
-            "http://www.graphclasses.org/search.cgi";
+    /** url to the search script */
+    protected static final String wwwurl = "http://www.graphclasses.org/search.cgi";
     protected static Comparator cmpor = new LessLatex();
     protected List<String> ergebnis;
     /** Next element to be given out by nextElement() */
     protected int count;
-	private String emptyText;
-	private boolean customTextSet = false;
-
+    private String emptyText;
+    private boolean customTextSet = false;
 
     /**
      * initialisiert Suche nach "graph"
@@ -59,70 +57,87 @@ public class WebSearch extends JTextField implements Iterator, FocusListener {
     public static void main(String[] args) {
         // baut testfenster mit eingabefeld auf
         // und schreibt ergebnisse auf die Konsole
-        JFrame frame=new JFrame("testwindow");
+        JFrame frame = new JFrame("testwindow");
         WebSearch w = new WebSearch();
-        w.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    // Source ermitteln
-                    WebSearch source = (WebSearch)e.getSource();
-                    // Suche ausloesen
-                    try {
-                        source.search(e.getActionCommand(),false);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    // DEBUG: nach Suche Elemente auf Konsole ausgeben
-                    for (Object o : source.ergebnis)
-                        System.out.println(o);
-                    // Text loeschen
-                    source.setText("");
-                }});
+        w.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Source ermitteln
+                WebSearch source = (WebSearch) e.getSource();
+                // Suche ausloesen
+                try {
+                    source.search(e.getActionCommand(), false);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                // DEBUG: nach Suche Elemente auf Konsole ausgeben
+                for (Object o : source.ergebnis)
+                    System.out.println(o);
+                // Text loeschen
+                source.setText("");
+            }
+        });
         frame.getContentPane().add(w);
-        frame.setSize(200,50);
-        frame.show();
+        frame.setSize(200, 50);
+        frame.setVisible(true);
     }
-             
-        
-    public WebSearch(){
+
+    /**
+     * Only needed for testing
+     */
+    public WebSearch() {
         super();
         ergebnis = new ArrayList<String>();
         count = 0;
         emptyText = "";
     }
-    
+
+    /**
+     * Creates new text field with standard text.
+     * 
+     * @param emptyText
+     *            default text
+     */
     public WebSearch(String emptyText) {
-    	super(emptyText);
-    	this.emptyText = emptyText;
-    	ergebnis = new ArrayList<String>();
-    	count = 0;
-    	addFocusListener(this);
+        super(emptyText);
+        this.emptyText = emptyText;
+        ergebnis = new ArrayList<String>();
+        count = 0;
+        addFocusListener(this);
     }
 
+    /**
+     * Searches for the given string
+     * 
+     * @param search
+     *            search string
+     * @param ignoreCase
+     *            if search should be case sensitive
+     * @throws IOException
+     */
     public void search(String search, boolean ignoreCase) throws IOException {
         count = 0;
         ergebnis.clear();
 
         String line;
-        String ic=ignoreCase?"yes":"no";
-        String param="?ignorecase="+ic+"&search="+
-                URLEncoder.encode(search, "UTF-8");
-        URLConnection h = new URL(wwwurl+param).openConnection();
-        BufferedReader in= new BufferedReader(
-                new InputStreamReader(h.getInputStream()));
+        String ic = ignoreCase ? "yes" : "no";
+        String param = "?ignorecase=" + ic + "&search="
+                + URLEncoder.encode(search, "UTF-8");
+        URLConnection h = new URL(wwwurl + param).openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(
+                h.getInputStream()));
         while ((line = in.readLine()) != null) {
             ergebnis.add(line);
-            //System.err.print(ergebnis.size());
-            //System.err.println(ergebnis.lastElement());
+            // System.err.print(ergebnis.size());
+            // System.err.println(ergebnis.lastElement());
         }
         if (ergebnis.size() > 1)
             Collections.sort(ergebnis, cmpor);
     }
 
-
     /**
-     * Set the listdata of the given list using the search results.
-     * If the search fails an errorbox is displayed and false is returned.
-     * Otherwise true is returned.
+     * Set the listdata of the given list using the search results. If the
+     * search fails an errorbox is displayed and false is returned. Otherwise
+     * true is returned.
      */
     public boolean setListData(ISGCIMainFrame parent, NodeList list) {
         String text = getText();
@@ -144,7 +159,6 @@ public class WebSearch extends JTextField implements Iterator, FocusListener {
         }
         return true;
     }
-    
 
     public boolean hasNext() {
         return count < ergebnis.size();
@@ -160,11 +174,11 @@ public class WebSearch extends JTextField implements Iterator, FocusListener {
     public void remove() {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
-     * Set the listdata of the given list using the search results.
-     * If the search fails an errorbox is displayed and false is returned.
-     * Otherwise true is returned.
+     * Set the listdata of the given list using the search results. If the
+     * search fails an errorbox is displayed and false is returned. Otherwise
+     * true is returned.
      */
     public boolean setListDataSearch(ISGCIMainFrame parent, NodeList list) {
         String text = getText();
@@ -186,50 +200,47 @@ public class WebSearch extends JTextField implements Iterator, FocusListener {
         }
         return true;
     }
-    
+
     /**
-     *Checks the current graph, if the search string is included
+     * Checks the current graph, if the search string is included
      */
-    public void searchForClass(String search, boolean ignoreCase,ISGCIMainFrame parent) throws IOException {
+    public void searchForClass(String search, boolean ignoreCase,
+            ISGCIMainFrame parent) throws IOException {
         count = 0;
         ergebnis.clear();
 
-        //Take Classes
+        // Take Classes
         List<String> currentNames = parent.getxCanvas().getNames();
-        for(int i = 0; i < currentNames.size(); i++){
-        	if(currentNames.get(i).toString().indexOf(search) != -1)
-        		 ergebnis.add(currentNames.get(i).toString());
+        for (int i = 0; i < currentNames.size(); i++) {
+            if (currentNames.get(i).toString().indexOf(search) != -1)
+                ergebnis.add(currentNames.get(i).toString());
         }
         if (ergebnis.size() > 1)
             Collections.sort(ergebnis, cmpor);
     }
 
+    @Override
+    public void focusGained(FocusEvent e) {
+        if (!customTextSet) {
+            setText("");
+        }
+    }
 
-	@Override
-	public void focusGained(FocusEvent e) {
-		if (!customTextSet) {
-			setText("");
-		}
-	}
+    @Override
+    public void focusLost(FocusEvent e) {
+        if (getText().trim().length() == 0) {
+            customTextSet = false;
+            setText(emptyText);
+        }
+    }
 
+    public boolean isCustomTextSet() {
+        return customTextSet;
+    }
 
-	@Override
-	public void focusLost(FocusEvent e) {
-		if (getText().trim().length() == 0) {
-			customTextSet = false;
-			setText(emptyText);
-		}
-	}
-
-
-	public boolean isCustomTextSet() {
-		return customTextSet;
-	}
-
-
-	public void setCustomTextSet(boolean customTextSet) {
-		this.customTextSet = customTextSet;
-	}
+    public void setCustomTextSet(boolean customTextSet) {
+        this.customTextSet = customTextSet;
+    }
 
 }
 

@@ -10,30 +10,39 @@
 
 package teo.isgci.gui;
 
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Set;
-import javax.swing.*;
-import org.jgrapht.graph.DefaultEdge;
+
+import javax.swing.JDialog;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+
 import teo.isgci.db.DataSet;
 import teo.isgci.gc.GraphClass;
-import teo.isgci.util.Latex2JHtml;
 
-
+/**
+ * Creates a context menu for edges and offers an information dialogue.
+ * 
+ * @author ISGCI, Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu,
+ *         Moritz Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ * 
+ */
 public class EdgePopup extends JPopupMenu implements ActionListener {
-	private ISGCIMainFrame parent;
-    private JMenuItem deleteItem, infoItem;
+    private ISGCIMainFrame parent;
+    private JMenuItem infoItem;
     private Set<GraphClass> source, target;
     private String srcName, trgtName;
 
     public EdgePopup(ISGCIMainFrame parent) {
         super();
         this.parent = parent;
-        //deleteItem = new JMenuItem("Delete");
         add(infoItem = new JMenuItem("Information"));
         infoItem.addActionListener(this);
     }
 
-    public void setEdgeNodes(Set<GraphClass> source, String sname, Set<GraphClass> target, String tname) {
+    public void setEdgeNodes(Set<GraphClass> source, String sname,
+            Set<GraphClass> target, String tname) {
         this.source = source;
         this.target = target;
         srcName = sname;
@@ -43,32 +52,33 @@ public class EdgePopup extends JPopupMenu implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == infoItem) {
-        	
-        	String tempsrc = null;
-        	String temptrgt = null;
-        	
-        	for(GraphClass gc : this.source){
-        		if(parent.getxCanvas().getNodeName(gc.toString()).equals(srcName)) {
-        			tempsrc = gc.toString();
-        			break;
-        		}
-        	}
-        	
-        	for(GraphClass gc : this.target){
-        		if(parent.getxCanvas().getNodeName(gc.toString()).equals(trgtName)) {
-        			temptrgt = gc.toString();
-        			break;
-        		}
-        	}
-        	
+
+            String tempsrc = null;
+            String temptrgt = null;
+
+            for (GraphClass gc : this.source) {
+                if (parent.getxCanvas().getNodeName(gc.toString())
+                        .equals(srcName)) {
+                    tempsrc = gc.toString();
+                    break;
+                }
+            }
+
+            for (GraphClass gc : this.target) {
+                if (parent.getxCanvas().getNodeName(gc.toString())
+                        .equals(trgtName)) {
+                    temptrgt = gc.toString();
+                    break;
+                }
+            }
+
             JDialog d = InclusionResultDialog.newInstance(parent,
-                DataSet.getClass(tempsrc),
-                DataSet.getClass(temptrgt));
+                    DataSet.getClass(tempsrc), DataSet.getClass(temptrgt));
             d.setLocation(50, 50);
             d.pack();
             d.setVisible(true);
-            
-        } 
+
+        }
     }
 
 }

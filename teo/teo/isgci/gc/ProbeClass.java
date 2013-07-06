@@ -8,32 +8,29 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.gc;
-
 
 /**
  * A GraphClass that is the probe class of another class.
  */
 public class ProbeClass extends DerivedClass {
-    
+
     /** Creates a new graph class based on <tt>gc</tt>. */
-    public ProbeClass(GraphClass gc){
+    public ProbeClass(GraphClass gc) {
         super();
         setBase(gc);
         if (gc.getHereditariness() == Hered.INDUCED)
             hereditariness = Hered.INDUCED;
     }
 
-    
     /**
-     * Constructs the name of this class by adding the prefix "probe "
-     * to the name of the base class.
+     * Constructs the name of this class by adding the prefix "probe " to the
+     * name of the base class.
      */
-    public void setName(){
-        name = "probe "+ getBase().toString();
+    public void setName() {
+        name = "probe " + getBase().toString();
         nameExplicit = false;
     }
-    
+
 }
 /* EOF */

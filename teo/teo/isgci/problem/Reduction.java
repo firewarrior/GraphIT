@@ -10,14 +10,14 @@
 
 package teo.isgci.problem;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Represents a reduction from a parent to a child.
- * If parent can be solved with complexity x on a class, then child can be
- * solved with complexity complexity + x on the same class.
- * Conversely, if child is (co)NPC on a class, then so is the parent.
+ * Represents a reduction from a parent to a child. If parent can be solved with
+ * complexity x on a class, then child can be solved with complexity complexity
+ * + x on the same class. Conversely, if child is (co)NPC on a class, then so is
+ * the parent.
  */
 public class Reduction {
     protected Problem parent, child;
@@ -25,14 +25,12 @@ public class Reduction {
     /** The algorithms solving the parent/child problems */
     protected List<Algorithm> parentAlgos, childAlgos;
 
-
     /**
      * Create a new linear/constant time reduction from parent to child.
      */
     public Reduction(Problem child, Problem parent) {
         this(child, parent, Complexity.LINEAR);
     }
-
 
     /**
      * Create a new poly/linear/constant time reduction from parent to child.
@@ -46,7 +44,6 @@ public class Reduction {
         this.childAlgos = new ArrayList<Algorithm>();
     }
 
-
     public Problem getParent() {
         return parent;
     }
@@ -59,25 +56,23 @@ public class Reduction {
         return complexity;
     }
 
-
     /**
-     * If parent can be solved on a graph class in time c, return the
-     * complexity of child for this class.
+     * If parent can be solved on a graph class in time c, return the complexity
+     * of child for this class.
      */
     public Complexity fromParent(Complexity c) {
         if (c.betterOrEqual(Complexity.P))
             return c.betterThan(complexity) ? complexity : c;
         // Cliquewidth unbounded distributes DOWNWARD!
-        if (c.equals(Complexity.NPC)  &&
-                "Cliquewidth".equals(parent.getName())  &&
-                "Cliquewidth expression".equals(child.getName()))
+        if (c.equals(Complexity.NPC) && "Cliquewidth".equals(parent.getName())
+                && "Cliquewidth expression".equals(child.getName()))
             return c;
         return Complexity.UNKNOWN;
     }
 
     /**
-     * If child can be solved on a graph class in time c, return the
-     * complexity of parent for this class.
+     * If child can be solved on a graph class in time c, return the complexity
+     * of parent for this class.
      */
     public Complexity fromChild(Complexity c) {
         if (c.likelyNotP())
@@ -101,24 +96,22 @@ public class Reduction {
         l.add(a);
         return a;
     }
-    
 
     /**
-     * Return an algorithm that solves parent on a class in time c, assuming
-     * the child can be solved.
+     * Return an algorithm that solves parent on a class in time c, assuming the
+     * child can be solved.
      */
     public Algorithm getParentAlgo(Complexity c) {
-        final String why = "from "+ child.getName();
+        final String why = "from " + child.getName();
         return getReductionAlgo(parent, c, why);
     }
 
-
     /**
-     * Return an algorithm that solves child on a class in time c, assuming
-     * the parent can be solved.
+     * Return an algorithm that solves child on a class in time c, assuming the
+     * parent can be solved.
      */
     public Algorithm getChildAlgo(Complexity c) {
-        final String why = "from "+ parent.getName();
+        final String why = "from " + parent.getName();
         return getReductionAlgo(child, c, why);
     }
 }

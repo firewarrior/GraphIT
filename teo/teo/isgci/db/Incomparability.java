@@ -22,7 +22,7 @@ public class Incomparability extends AbstractRelation {
     }
 
     public String toString() {
-        return gc1.getID() +" ~ "+ gc2.getID();
+        return gc1.getID() + " ~ " + gc2.getID();
     }
 }
 

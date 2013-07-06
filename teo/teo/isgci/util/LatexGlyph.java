@@ -17,36 +17,36 @@ import java.awt.Image;
  */
 public class LatexGlyph {
     /**
-    * The known glyphs.
-    */
+     * The known glyphs.
+     */
     static protected LatexGlyph[] glyphs = {
-        new LatexGlyph("cap",  "\u2229",   "",      "a", "cap.gif"),
-        new LatexGlyph("cup",  "\u222a",   "",      "b", "cup.gif"),
-        new LatexGlyph("tau",  "\u03c4",   "",      "c", "tau.gif"),
-        new LatexGlyph("le",   "\u2264",   "&lt;=", "<=","le.gif"),
-        new LatexGlyph("ge",   "\u2265",   "&gt;=", "d", "ge.gif"),
-        new LatexGlyph("cal C","",         "",      "e", "calC.gif"), //u0187
-        new LatexGlyph("cal P","",         "",      "f", "calP.gif"), //u01a7
-        new LatexGlyph("beta", "\u03b2",   "",      "g", ""),
-        new LatexGlyph("equiv","=",        "",      "=", ""),
-        new LatexGlyph("subseteq","\u2286","",      "<=","subseteq.gif"),
-        new LatexGlyph("subset","\u2282",  "",      "<", "subset.gif"),
-        new LatexGlyph("supseteq","\u2287","",      ">=","supseteq.gif"),
-        new LatexGlyph("supset","\u2283",  "",      ">", "supset.gif"),
-        new LatexGlyph("not",  "\u0338",   "",      "/", ""),
-    };
-
+            new LatexGlyph("cap", "\u2229", "", "a", "cap.gif"),
+            new LatexGlyph("cup", "\u222a", "", "b", "cup.gif"),
+            new LatexGlyph("tau", "\u03c4", "", "c", "tau.gif"),
+            new LatexGlyph("le", "\u2264", "&lt;=", "<=", "le.gif"),
+            new LatexGlyph("ge", "\u2265", "&gt;=", "d", "ge.gif"),
+            new LatexGlyph("cal C", "", "", "e", "calC.gif"), // u0187
+            new LatexGlyph("cal P", "", "", "f", "calP.gif"), // u01a7
+            new LatexGlyph("beta", "\u03b2", "", "g", ""),
+            new LatexGlyph("equiv", "=", "", "=", ""),
+            new LatexGlyph("subseteq", "\u2286", "", "<=", "subseteq.gif"),
+            new LatexGlyph("subset", "\u2282", "", "<", "subset.gif"),
+            new LatexGlyph("supseteq", "\u2287", "", ">=", "supseteq.gif"),
+            new LatexGlyph("supset", "\u2283", "", ">", "supset.gif"),
+            new LatexGlyph("not", "\u0338", "", "/", ""), };
 
     public static LatexGlyph[] getGlyphs() {
         return glyphs;
     }
 
-
     /**
      * See if the given string starts with a known latex command and if so,
      * return the glyph. Otherwise return null.
-     * @param s the string to check
-     * @param ix at which index to check
+     * 
+     * @param s
+     *            the string to check
+     * @param ix
+     *            at which index to check
      */
     public static LatexGlyph parseGlyph(String s, int ix) {
         for (int i = 0; i < glyphs.length; i++)
@@ -54,7 +54,6 @@ public class LatexGlyph {
                 return glyphs[i];
         return null;
     }
-
 
     /**
      * Return the glyph with the given latex commandname or null.
@@ -66,11 +65,10 @@ public class LatexGlyph {
         return null;
     }
 
-
     /**
      * The latex command name for this glyph.
      */
-    protected String name;             
+    protected String name;
 
     /**
      * Its unicode.
@@ -97,7 +95,6 @@ public class LatexGlyph {
      */
     protected Image image;
 
-
     /**
      * Creates a glyph that can be rendered with the given unicode, html or
      * image.
@@ -110,7 +107,6 @@ public class LatexGlyph {
         this.isgcichar = c;
         this.imagename = imagename;
     }
-
 
     /**
      * Return the name of this glyph.

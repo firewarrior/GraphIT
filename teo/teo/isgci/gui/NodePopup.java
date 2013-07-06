@@ -11,31 +11,39 @@
 package teo.isgci.gui;
 
 import java.awt.Component;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Set;
-import javax.swing.*;
-import org.jgrapht.graph.DefaultEdge;
+
+import javax.swing.JDialog;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import teo.isgci.db.DataSet;
 import teo.isgci.gc.GraphClass;
 import teo.isgci.util.Latex2Html;
-import teo.isgci.util.Latex2JHtml;
-import teo.isgci.util.Utility;
 
-
+/**
+ * Creates a context menu for nodes and offers methods for hide sub- and
+ * superclasses, information and change name.
+ * 
+ * @author ISGCI, Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu,
+ *         Moritz Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ * 
+ */
 public class NodePopup extends JPopupMenu implements ActionListener {
-	private ISGCIMainFrame parent;
-	private JMenuItem deleteSub, deleteSup, infoItem;
-	private JMenu nameItem;
+    private ISGCIMainFrame parent;
+    private JMenuItem deleteSub, deleteSup, infoItem;
+    private JMenu nameItem;
     private Set<GraphClass> view;
-	private String latexName;
+    private String latexName;
     private Latex2Html converter = new Latex2Html("images/");
     private static String CHANGENAME = "Name: ";
 
     public NodePopup(ISGCIMainFrame parent) {
         super();
         this.parent = parent;
-        //deleteItem = new JMenuItem("Delete");
         add(infoItem = new JMenuItem("Information"));
         add(nameItem = new JMenu("Change name"));
         add(deleteSub = new JMenuItem("Hide subclasses"));
@@ -53,57 +61,47 @@ public class NodePopup extends JPopupMenu implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == infoItem) {
-        	System.out.println("info");
-        	
-        	for(GraphClass gc : view){
-        		if(parent.getxCanvas().getNodeName(gc.toString()).equals(latexName)){
-        			JDialog d = new GraphClassInformationDialog(
-                    parent, DataSet.getClass(gc.toString()));
-        			d.setLocation(50, 50);
-        			d.pack();
-        			d.setSize(800, 600);
-        			d.setVisible(true);
-        			break;
-        		}
-        	}
-        	
-            
-        } 
-        else if(source == deleteSub){
-        	parent.getxCanvas().hideSubClasses(view);
-        }
-        else if(source == deleteSup){
-        	parent.getxCanvas().hideSuperClasses(view);
-        }
-        else if (event.getActionCommand().startsWith(CHANGENAME)) {
+
+            for (GraphClass gc : view) {
+                if (parent.getxCanvas().getNodeName(gc.toString())
+                        .equals(latexName)) {
+                    JDialog d = new GraphClassInformationDialog(parent,
+                            DataSet.getClass(gc.toString()));
+                    d.setLocation(50, 50);
+                    d.pack();
+                    d.setSize(800, 600);
+                    d.setVisible(true);
+                    break;
+                }
+            }
+
+        } else if (source == deleteSub) {
+            parent.getxCanvas().hideSubClasses(view);
+        } else if (source == deleteSup) {
+            parent.getxCanvas().hideSuperClasses(view);
+        } else if (event.getActionCommand().startsWith(CHANGENAME)) {
             String fullname = event.getActionCommand().substring(
                     CHANGENAME.length());
-            
-            //for(GraphClass gc : view){
-            	//if(gc.toString().equals(fullname)){
-            		parent.getxCanvas().renameNode(view, fullname);
-            		//break;
-            //	}
-            //}
+            parent.getxCanvas().renameNode(view, fullname);
         }
     }
-    
+
     public void show(Component orig, int x, int y) {
-    	Set<GraphClass> gcs = view;
+        Set<GraphClass> gcs = view;
         int i = 0;
 
         nameItem.removeAll();
         nameItem.setEnabled(gcs.size() != 1);
         JMenuItem[] mItem = new JMenuItem[gcs.size()];
-        //FIXME sort and render latex overline properly
+        // FIXME sort and render latex overline properly
         for (GraphClass gc : gcs) {
-            nameItem.add(mItem[i] = new JMenuItem(
-                    /* Utility.getShortName */("<html>" + converter.html(gc.toString())) + "</html>"));
+            nameItem.add(mItem[i] = new JMenuItem(("<html>" + converter
+                    .html(gc.toString())) + "</html>"));
             mItem[i].setActionCommand(CHANGENAME + gc.toString());
             mItem[i].addActionListener(this);
             i++;
         }
-        
+
         super.show(orig, x, y);
     }
 }

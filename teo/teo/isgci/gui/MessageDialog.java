@@ -11,6 +11,7 @@
 package teo.isgci.gui;
 
 import java.awt.Component;
+
 import javax.swing.JOptionPane;
 
 public class MessageDialog {
@@ -21,11 +22,10 @@ public class MessageDialog {
 
     public static boolean confirm(Component parent, String message,
             String yes, String no) {
-        String[] options = {yes, no};
-        return JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
-                parent, message, "ISGCI Confirmation",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                options, options[0]);
+        String[] options = { yes, no };
+        return JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(parent,
+                message, "ISGCI Confirmation", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
     }
 

@@ -17,7 +17,6 @@ public class Latex2Html extends Latex {
      */
     protected String imgpath;
 
-
     /**
      * Create a new latex->html converter with images at the given location.
      */
@@ -25,7 +24,6 @@ public class Latex2Html extends Latex {
         super();
         this.imgpath = imgpath;
     }
-
 
     /**
      * Return s as an html string.
@@ -75,8 +73,7 @@ public class Latex2Html extends Latex {
         if (!g.getHtml().equals("")) {
             t.append(g.getHtml());
         } else {
-            t.append(
-                "<img src=\"");
+            t.append("<img src=\"");
             t.append(imgpath);
             t.append(g.getImageName());
             t.append("\" alt=\"");
@@ -84,8 +81,6 @@ public class Latex2Html extends Latex {
             t.append("\"/>");
         }
     }
-
-
 
     protected class HtmlState extends Latex.State {
         protected StringBuffer target;
@@ -108,6 +103,5 @@ public class Latex2Html extends Latex {
         }
     }
 }
-
 
 /* EOF */

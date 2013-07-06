@@ -7,18 +7,18 @@
  * Inclusions (ISGCI) at http://www.graphclasses.org.
  * Email: isgci@graphclasses.org
  */
- 
+
 package teo.isgci.xml;
 
 public class SmallGraphTags {
     /* Root types */
     static final String ROOT_SMALLGRAPHS = "SMALLGRAPHS";
-    
+
     /* Graph declarations types */
     static final String SIMPLE = "simple";
     static final String FAMILY = "family";
     static final String CONFIGURATION = "configuration";
-    
+
     /* Child elements */
     static final String COMPLEMENT = "complement";
     static final String NODES = "nodes";
@@ -43,7 +43,7 @@ public class SmallGraphTags {
     static final String USEGRAMMAR = "use-grammar";
     static final String SUBFAMILY = "subfamily";
     public static final String EXPL = "expl";
-    
+
     /* Attributes */
     static final String NAME = "name";
     static final String COUNT = "count";
@@ -55,9 +55,9 @@ public class SmallGraphTags {
     static final String INCL = "incl";
     static final String SUPER = "super";
     static final String SUB = "sub";
-    
+
     private SmallGraphTags() {
     }
 }
-    
+
 /* EOF */

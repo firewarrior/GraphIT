@@ -10,7 +10,6 @@
 
 package teo.isgci.util;
 
-
 /**
  * A Binary predicate.
  */

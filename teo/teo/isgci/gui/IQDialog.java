@@ -8,33 +8,36 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.gui;
 
-import teo.isgci.gc.GraphClass;
-import teo.isgci.db.DataSet;
-import teo.isgci.grapht.*;
-import teo.isgci.util.LatexGlyph;
-import java.io.IOException;
-import java.awt.Cursor;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.Container;
-import java.awt.event.*;
-
-import javax.swing.*;
-import java.util.HashSet;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Collection;
+import java.util.HashSet;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import teo.isgci.db.DataSet;
+import teo.isgci.gc.GraphClass;
+import teo.isgci.util.LatexGlyph;
 
 /**
  * Display a list of graphclasses and change the drawing according to the
  * selection.
  */
-public class IQDialog extends JDialog
-        implements ActionListener, KeyListener {
-    
+public class IQDialog extends JDialog implements ActionListener, KeyListener {
+
     protected ISGCIMainFrame parent;
     protected NodeList classesList;
     protected JButton newButton, cancelButton;
@@ -51,7 +54,7 @@ public class IQDialog extends JDialog
         GridBagConstraints c = new GridBagConstraints();
         contents.setLayout(gridbag);
 
-        //---- and/or ----
+        // ---- and/or ----
         c.insets = new Insets(5, 5, 0, 0);
         c.weightx = 0.0;
         c.anchor = GridBagConstraints.WEST;
@@ -61,7 +64,7 @@ public class IQDialog extends JDialog
         gridbag.setConstraints(label, c);
         contents.add(label);
 
-        //---- List of graph classes
+        // ---- List of graph classes
         label = new JLabel("     Filter:", JLabel.RIGHT);
         c.anchor = GridBagConstraints.EAST;
         c.gridwidth = 1;
@@ -74,7 +77,7 @@ public class IQDialog extends JDialog
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(5,5,0,5);
+        c.insets = new Insets(5, 5, 0, 5);
         gridbag.setConstraints(search, c);
         contents.add(search);
 
@@ -87,7 +90,7 @@ public class IQDialog extends JDialog
         gridbag.setConstraints(scroller, c);
         contents.add(scroller);
 
-        //---- Relation buttons
+        // ---- Relation buttons
         JPanel panel = new JPanel();
         ltButton = new JButton(LatexGlyph.getGlyph("subset").getUnicode());
         leButton = new JButton(LatexGlyph.getGlyph("subseteq").getUnicode());
@@ -105,16 +108,15 @@ public class IQDialog extends JDialog
         gridbag.setConstraints(panel, c);
         contents.add(panel);
 
-        /*c.insets = new Insets(0, 5, 0, 0);
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        superCheck = new JCheckBox("superclasses");
-        gridbag.setConstraints(superCheck, c);
-        contents.add(superCheck);
-
-        subCheck = new JCheckBox("subclasses");
-        gridbag.setConstraints(subCheck, c);
-        contents.add(subCheck);*/
+        /*
+         * c.insets = new Insets(0, 5, 0, 0); c.fill = GridBagConstraints.NONE;
+         * c.anchor = GridBagConstraints.WEST; superCheck = new
+         * JCheckBox("superclasses"); gridbag.setConstraints(superCheck, c);
+         * contents.add(superCheck);
+         * 
+         * subCheck = new JCheckBox("subclasses");
+         * gridbag.setConstraints(subCheck, c); contents.add(subCheck);
+         */
 
         JPanel buttonPanel = new JPanel();
         newButton = new JButton("New drawing");
@@ -132,7 +134,6 @@ public class IQDialog extends JDialog
         pack();
         setSize(500, 400);
     }
-
 
     protected void addListeners() {
         newButton.addActionListener(this);
@@ -159,16 +160,7 @@ public class IQDialog extends JDialog
             Cursor oldcursor = parent.getCursor();
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             parent.getxCanvas().drawGraph(getNodes());
-            
-            /*Reference to old Canvas maybe not needed*/
-            for (Object o : classesList.getSelectedValues()) {
-                GraphClass gc = (GraphClass) o;
-                NodeView v = parent.graphCanvas.findNode(gc);
-                if (v != null)
-                    v.setNameAndLabel(gc.toString());
-            }
-            parent.graphCanvas.updateBounds();
-            
+
             setCursor(oldcursor);
             closeDialog();
         } else if (source == search) {
@@ -176,61 +168,44 @@ public class IQDialog extends JDialog
         }
 
     }
-    
-    
+
     /**
      * Returns a Collection with the classes (in DataSet.inclGraph) that are
      * selected by the current settings.
      */
     protected Collection<GraphClass> getNodes() {
         final HashSet<GraphClass> result = new HashSet<GraphClass>();
-        /*boolean doSuper = superCheck.isSelected(),
-                doSub = subCheck.isSelected();
-       
-        for (Object o : classesList.getSelectedValues()) {
-            GraphClass gc = (GraphClass) o;
-            result.add(gc);
-            if (doSuper) {
-                new RevBFSWalker<GraphClass,Inclusion>( DataSet.inclGraph,
-                        gc, null, GraphWalker.InitCode.DYNAMIC) {
-                    public void visit(GraphClass v) {
-                        result.add(v);
-                        super.visit(v);
-                    }
-                }.run();
-            }
-            if (doSub) {
-                new BFSWalker<GraphClass,Inclusion>(DataSet.inclGraph,
-                        gc, null, GraphWalker.InitCode.DYNAMIC) {
-                    public void visit(GraphClass v) {
-                        result.add(v);
-                        super.visit(v);
-                    }
-                }.run();
-            }
-        }*/
+        /*
+         * boolean doSuper = superCheck.isSelected(), doSub =
+         * subCheck.isSelected();
+         * 
+         * for (Object o : classesList.getSelectedValues()) { GraphClass gc =
+         * (GraphClass) o; result.add(gc); if (doSuper) { new
+         * RevBFSWalker<GraphClass,Inclusion>( DataSet.inclGraph, gc, null,
+         * GraphWalker.InitCode.DYNAMIC) { public void visit(GraphClass v) {
+         * result.add(v); super.visit(v); } }.run(); } if (doSub) { new
+         * BFSWalker<GraphClass,Inclusion>(DataSet.inclGraph, gc, null,
+         * GraphWalker.InitCode.DYNAMIC) { public void visit(GraphClass v) {
+         * result.add(v); super.visit(v); } }.run(); } }
+         */
 
         return result;
     }
-
 
     @Override
     public void keyTyped(KeyEvent e) {
     }
 
-
     @Override
     public void keyPressed(KeyEvent e) {
     }
-
 
     @Override
     public void keyReleased(KeyEvent e) {
         search.setCustomTextSet(true);
         search.setListData(parent, classesList);
-    }    
+    }
 }
-
 
 /* EOF */
 

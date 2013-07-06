@@ -30,14 +30,14 @@ public class LessLatex implements BinaryPredicate, Comparator {
         for (;;) {
             do {
                 ct = it == t.length() ? '\0' : t.charAt(it++);
-            } while (ct == '$'  ||  ct == '{'  ||  ct == '}'  ||
-                     ct == '('  ||  ct == ')'  ||  ct == '^'  ||  ct == '_'  ||
-                     ct == '-'  &&  t.charAt(it) == '-');
+            } while (ct == '$' || ct == '{' || ct == '}' || ct == '('
+                    || ct == ')' || ct == '^' || ct == '_' || ct == '-'
+                    && t.charAt(it) == '-');
             do {
                 cs = is == s.length() ? '\0' : s.charAt(is++);
-            } while (cs == '$'  ||  cs == '{'  ||  cs == '}'  ||
-                     cs == '('  ||  cs == ')'  ||  cs == '^'  ||  cs == '_'  ||
-                     cs == '-'  &&  s.charAt(is) == '-');
+            } while (cs == '$' || cs == '{' || cs == '}' || cs == '('
+                    || cs == ')' || cs == '^' || cs == '_' || cs == '-'
+                    && s.charAt(is) == '-');
             if (cs < ct)
                 return -1;
             if (cs > ct)
@@ -45,7 +45,7 @@ public class LessLatex implements BinaryPredicate, Comparator {
             if (cs == '\0')
                 return s.compareTo(t);
         }
-        
+
     }
 
     /**

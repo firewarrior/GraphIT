@@ -10,8 +10,18 @@
 
 package teo.isgci.xml;
 
+import teo.isgci.gc.BaseClass;
+import teo.isgci.gc.CliqueClass;
+import teo.isgci.gc.ComplementClass;
+import teo.isgci.gc.ConnectedHereditaryClass;
+import teo.isgci.gc.ForbiddenClass;
+import teo.isgci.gc.GraphClass;
+import teo.isgci.gc.InducedHereditaryClass;
+import teo.isgci.gc.IntersectClass;
+import teo.isgci.gc.IsometricHereditaryClass;
+import teo.isgci.gc.ProbeClass;
+import teo.isgci.gc.UnionClass;
 import teo.isgci.grapht.Inclusion;
-import teo.isgci.gc.*;
 
 class Tags {
     /* Root types */
@@ -21,7 +31,7 @@ class Tags {
     static final String DATE = "date";
     static final String NODECOUNT = "nodes";
     static final String EDGECOUNT = "edges";
-    
+
     /* GraphClasses */
     static final String GRAPHCLASSES = "GraphClasses";
     static final String GRAPHCLASS = "GraphClass";
@@ -78,7 +88,8 @@ class Tags {
     static final String REF = "ref";
     static final String NOTE = "note";
 
-    private Tags() {}
+    private Tags() {
+    }
 
     public static String graphClassType(GraphClass gc) {
         Class c = gc.getClass();
@@ -103,7 +114,7 @@ class Tags {
         else if (c == CliqueClass.class)
             return CLIQUE;
         else
-            throw new RuntimeException("Unknown graphclass "+c);
+            throw new RuntimeException("Unknown graphclass " + c);
     }
 
     /* Should go in GraphClass? Special hereditary class? */
@@ -115,16 +126,19 @@ class Tags {
         else if (INDHERED.equals(s))
             return GraphClass.Hered.INDUCED;
         else
-            throw new RuntimeException("Unknown hereditariness "+s);
+            throw new RuntimeException("Unknown hereditariness " + s);
     }
 
     public static String hereditariness2string(GraphClass.Hered h) {
         switch (h) {
-            case ISOMETRIC: return ISOHERED;
-            case CONNECTED: return CONHERED;
-            case INDUCED: return INDHERED;
-            default:
-                throw new RuntimeException("No string for hereditariness "+h);
+        case ISOMETRIC:
+            return ISOHERED;
+        case CONNECTED:
+            return CONHERED;
+        case INDUCED:
+            return INDHERED;
+        default:
+            throw new RuntimeException("No string for hereditariness " + h);
         }
     }
 
@@ -134,15 +148,15 @@ class Tags {
         if (UNPUBLISHED.equals(s))
             return Inclusion.CONFIDENCE_UNPUBLISHED;
         else
-            throw new RuntimeException("Unknown confidence "+s);
+            throw new RuntimeException("Unknown confidence " + s);
     }
-
 
     public static String confidence2string(int c) {
         switch (c) {
-            case Inclusion.CONFIDENCE_UNPUBLISHED: return UNPUBLISHED;
-            default:
-                throw new RuntimeException("No string for confidence "+c);
+        case Inclusion.CONFIDENCE_UNPUBLISHED:
+            return UNPUBLISHED;
+        default:
+            throw new RuntimeException("No string for confidence " + c);
         }
     }
 }

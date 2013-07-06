@@ -10,25 +10,19 @@
 
 package teo.isgci.problem;
 
-
 /**
- * Represents complexity classes like Linear, P, NPC, coNPC and Unknown.
- * Use only the defined comparison methods, the enum compareTo does not give a
- * complexity comparison.
- * The betterThan and betterOrEqual compare as LIN < P < GIC < NPC,NPH,CONPC.
- * betterThan with other complexities is undefined.
+ * Represents complexity classes like Linear, P, NPC, coNPC and Unknown. Use
+ * only the defined comparison methods, the enum compareTo does not give a
+ * complexity comparison. The betterThan and betterOrEqual compare as LIN < P <
+ * GIC < NPC,NPH,CONPC. betterThan with other complexities is undefined.
  */
 public enum Complexity {
     /** Higher complexity, higher number */
-    LINEAR ("Linear",        "Lin",   "Bounded"),
-    P      ("Polynomial",    "P",     "Bounded"),
-    GIC    ("GI-complete",   "GIC",   "Unbounded"),
-    NPC    ("NP-complete",   "NPC",   "Unbounded"),
-    NPH    ("NP-hard",       "NPh",   "Unbounded"),
-    CONPC  ("coNP-complete", "coNPC", "Unbounded"),
-    OPEN   ("Open",          "Open",  "Open"),
-    UNKNOWN("Unknown",       "?",     "Unknown");
-
+    LINEAR("Linear", "Lin", "Bounded"), P("Polynomial", "P", "Bounded"), GIC(
+            "GI-complete", "GIC", "Unbounded"), NPC("NP-complete", "NPC",
+            "Unbounded"), NPH("NP-hard", "NPh", "Unbounded"), CONPC(
+            "coNP-complete", "coNPC", "Unbounded"), OPEN("Open", "Open",
+            "Open"), UNKNOWN("Unknown", "?", "Unknown");
 
     /** Complexity class */
     protected String name;
@@ -43,7 +37,6 @@ public enum Complexity {
         this.abbrev = abbrev;
         this.widthName = widthName;
     }
-
 
     public String getShortString() {
         return abbrev;
@@ -66,7 +59,7 @@ public enum Complexity {
     }
 
     public boolean isUnknown() {
-        return this == UNKNOWN  ||  this == OPEN;
+        return this == UNKNOWN || this == OPEN;
     }
 
     public boolean isOpen() {
@@ -82,7 +75,7 @@ public enum Complexity {
     }
 
     public boolean likelyNotP() {
-        return this == CONPC  || this == NPC  ||  this == NPH  ||  this == GIC;
+        return this == CONPC || this == NPC || this == NPH || this == GIC;
     }
 
     public String toString() {
@@ -93,9 +86,8 @@ public enum Complexity {
      * Can a problem at the same time have this complexity and c's?
      */
     public boolean isCompatible(Complexity c) {
-        return this == UNKNOWN  ||  c == UNKNOWN  ||
-                (betterOrEqual(P)  &&  c.betterOrEqual(P))  ||
-                equals(c);
+        return this == UNKNOWN || c == UNKNOWN
+                || (betterOrEqual(P) && c.betterOrEqual(P)) || equals(c);
     }
 
     /**
@@ -123,7 +115,6 @@ public enum Complexity {
         return isOpen();
     }
 
-
     /*
      * If a problem has both complexity this and c, return the resulting
      * complexity.
@@ -133,18 +124,17 @@ public enum Complexity {
             throw new ComplexityClashException(this, c);
         if (c.isUnknown())
             return this;
-        if (c.betterThan(this)  ||  this.isUnknown())
+        if (c.betterThan(this) || this.isUnknown())
             return c;
         return this;
     }
-
 
     /**
      * Return the complexity class represented by s.
      */
     public static Complexity getComplexity(String s) {
         for (Complexity c : Complexity.values())
-            if (c.name.equals(s)  ||  c.abbrev.equals(s))
+            if (c.name.equals(s) || c.abbrev.equals(s))
                 return c;
         if (LINEAR.widthName.equals(s))
             return LINEAR;

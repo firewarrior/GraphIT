@@ -21,7 +21,7 @@ public class Disjointness extends AbstractRelation {
     }
 
     public String toString() {
-        return gc1.getID() +" 0 "+ gc2.getID();
+        return gc1.getID() + " 0 " + gc2.getID();
     }
 }
 

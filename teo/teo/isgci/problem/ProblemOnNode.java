@@ -11,6 +11,7 @@
 package teo.isgci.problem;
 
 import java.util.HashSet;
+
 import teo.isgci.gc.GraphClass;
 
 /**
@@ -37,10 +38,8 @@ public class ProblemOnNode {
             complexity[i] = Complexity.UNKNOWN;
     }
 
-
     /**
-     * Update the complexity of this at the given step by distilling it with
-     * c.
+     * Update the complexity of this at the given step by distilling it with c.
      */
     protected void updateComplexity(Complexity c, int step)
             throws ComplexityClashException {
@@ -49,14 +48,12 @@ public class ProblemOnNode {
             complexity[step] = c;
     }
 
-
     /**
      * Return the complexity at the given step.
      */
     Complexity getComplexity(int step) {
         return complexity[step];
     }
-
 
     /**
      * Add an algorithm at the given deduction step.
@@ -66,12 +63,11 @@ public class ProblemOnNode {
         try {
             updateComplexity(a.getComplexity(), step);
         } catch (ComplexityClashException e) {
-            System.err.println("Complexity clash for "+ problem.getName() +
-                    " on "+ node + " "+ a +" and "+ algos);
+            System.err.println("Complexity clash for " + problem.getName()
+                    + " on " + node + " " + a + " and " + algos);
         }
 
     }
-
 
     /**
      * Return the algorithms defined on this node.

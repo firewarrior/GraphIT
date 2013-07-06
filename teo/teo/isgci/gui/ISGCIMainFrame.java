@@ -18,8 +18,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -30,8 +28,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -49,22 +45,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 
-import org.jgrapht.Graphs;
-import org.jgrapht.graph.SimpleDirectedGraph;
+import teo.isgci.db.DataSet;
+import teo.isgci.gc.ForbiddenClass;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraphView;
-
-import teo.isgci.db.DataSet;
-import teo.isgci.gc.ForbiddenClass;
-import teo.isgci.gc.GraphClass;
-import teo.isgci.grapht.GAlg;
-import teo.isgci.grapht.Inclusion;
-import teo.isgci.xml.GraphMLWriter;
 
 /*import teo.isgci.gc.GraphClass;
  import java.util.ArrayList;*/
@@ -110,12 +98,11 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
 
     // New added for Graph Browser
     protected NodeList classesList;
-    protected ClassesListVisabilityHandler classesHandler;
+    protected NodeListVisibilityHandler classesHandler;
     protected LegendPanel legend = new LegendPanel();
 
     // This is where the drawing goes.
     protected JScrollPane drawingPane;
-    public ISGCIGraphCanvas graphCanvas;
     private JGraphXCanvas xCanvas;
 
     // Global Settings
@@ -146,19 +133,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         }
 
         if (classesHandler == null) {
-            classesHandler = new ClassesListVisabilityHandler(latex);
-        }
-
-        boolean createMaps = false;
-        try {
-            createMaps = System.getProperty("org.isgci.mappath") != null;
-        } catch (Exception e) {
-        }
-
-        if (createMaps) { // Create maps and terminate
-            createCanvasPanel();
-            new teo.isgci.util.LandMark(this).createMaps();
-            closeWindow();
+            classesHandler = new NodeListVisibilityHandler(latex);
         }
 
         setSize(size);
@@ -171,7 +146,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         setLayout(new BorderLayout());
 
         // Add canvas panel to main panel
-        // JPanel canvas = new JPanel(new BorderLayout());
         JLayeredPane canvas = new JLayeredPane();
         canvas.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -212,37 +186,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
     }
 
     /**
-     * Write the entire database in GraphML to isgcifull.graphml.
-     */
-    private void writeGraphML() {
-        OutputStreamWriter out = null;
-
-        SimpleDirectedGraph<GraphClass, Inclusion> g = new SimpleDirectedGraph<GraphClass, Inclusion>(
-                Inclusion.class);
-        Graphs.addGraph(g, DataSet.inclGraph);
-        GAlg.transitiveReductionBruteForce(g);
-
-        try {
-            out = new OutputStreamWriter(new FileOutputStream(
-                    "isgcifull.graphml"), "UTF-8");
-            GraphMLWriter w = new GraphMLWriter(out, GraphMLWriter.MODE_PLAIN,
-                    true, false);
-            w.startDocument();
-            for (GraphClass gc : g.vertexSet()) {
-                w.writeNode(gc.getID(), gc.toString(), Color.WHITE);
-            }
-            for (Inclusion e : g.edgeSet()) {
-                w.writeEdge(e.getSuper().getID(), e.getSub().getID(),
-                        e.isProper());
-            }
-            w.endDocument();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Creates and attaches the necessary eventlisteners.
      */
     protected void registerListeners() {
@@ -264,7 +207,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         zoomIn.addActionListener(this);
         zoomOut.addActionListener(this);
         zoomToFit.addActionListener(this);
-
         search.addKeyListener(this);
         search.addFocusListener(search);
         addTab.addActionListener(this);
@@ -292,10 +234,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
 
-        tabs.addTab("GraphIT ruleZ the WorlD !", informationPanel);
-        JPanel panel = new JPanel();
-        // ImageIcon informationArrow = new
-        // ImageIcon("/images/informationarrow.png");
+        tabs.addTab("", informationPanel);
 
         addTab = new JButton(Character.valueOf('\u25C4').toString());
         addTab.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
@@ -303,9 +242,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         addTab.setBorder(null);
         addTab.setContentAreaFilled(false);
         addTab.setFocusPainted(false);
-
         addTab.setFocusable(false);
-        panel.add(addTab);
 
         tabs.setTabComponentAt(0, addTab);
         tabs.setTabPlacement(JTabbedPane.LEFT);
@@ -369,7 +306,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         c.fill = GridBagConstraints.HORIZONTAL;
 
         search = new WebSearch("Search...");
-        // search.setText("Search...");
         mainPanel.add(search, c);
 
         // List Panel
@@ -411,7 +347,8 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         cLayout.gridy = 2;
         cLayout.fill = GridBagConstraints.HORIZONTAL;
         restoreLayButton = new JButton("Restore");
-        restoreLayButton.setToolTipText("Restore the originally displayed graph");
+        restoreLayButton
+                .setToolTipText("Restore the originally displayed graph");
         lay.add(restoreLayButton, cLayout);
 
         cLayout.gridx = 1;
@@ -439,7 +376,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         // Problem Panel add to MainPanel
         c.gridx = 0;
         c.gridy = 4;
-
         c.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(probPanel, c);
 
@@ -483,6 +419,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         classesList.addListSelectionListener(classesHandler);
         classesList.setCellRenderer(classesHandler);
         JScrollPane scroller = new JScrollPane(classesList);
+
         // Mouselistener for single click
         classesList.addMouseListener(new MouseAdapter() {
             @Override
@@ -507,36 +444,6 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
     protected JComponent createCanvasPanel() {
         xCanvas = new JGraphXCanvas(this);
         return xCanvas.getComponent();
-    }
-
-    /**
-     * Center the canvas on the given point.
-     */
-    public void centerCanvas(Point p) {
-        JViewport viewport = drawingPane.getViewport();
-        Dimension port = viewport.getExtentSize();
-        Dimension view = viewport.getViewSize();
-
-        p.x -= port.width / 2;
-        if (p.x + port.width > view.width)
-            p.x = view.width - port.width;
-        if (p.x < 0)
-            p.x = 0;
-        p.y -= port.height / 2;
-        if (p.y + port.height > view.height)
-            p.y = view.height - port.height;
-        if (p.y < 0)
-            p.y = 0;
-        viewport.setViewPosition(p);
-    }
-
-    public void printPort() {
-        Rectangle view = getViewport();
-        System.err.println("port: " + view);
-    }
-
-    public Rectangle getViewport() {
-        return drawingPane.getViewport().getViewRect();
     }
 
     /** Closes the window and possibly terminates the program. */
@@ -693,9 +600,9 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         Object object = event.getSource();
 
         if (object == miDrawUnproper) {
-            getxCanvas().setUnpropper(((JCheckBoxMenuItem) object).getState());
+            getxCanvas().setUnproper(((JCheckBoxMenuItem) object).getState());
         } else if (object == miLegend) {
-            // Hide Information bar
+            // Hide/show legend
             legend.setVisible(miLegend.getState());
         }
     }

@@ -9,18 +9,16 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.gc;
-
 
 /**
  * A GraphClass based on another class and adding the induced-hereditary
  * property.
  */
 public class InducedHereditaryClass extends ConnectedHereditaryClass {
-    
+
     /** Creates a new graph class based on <tt>gc</tt>. */
-    public InducedHereditaryClass(GraphClass gc){
+    public InducedHereditaryClass(GraphClass gc) {
         super(gc);
         hereditariness = Hered.INDUCED;
     }

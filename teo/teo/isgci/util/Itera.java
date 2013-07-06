@@ -11,11 +11,9 @@
 package teo.isgci.util;
 
 import java.util.Iterator;
-import java.util.Vector;
 
 public class Itera<T> implements Iterable<T>, Iterator<T> {
     private Iterator<T> iter;
-
 
     /**
      * Especially for subclassing. Overload next/hasNext/remove or an endless
@@ -45,14 +43,11 @@ public class Itera<T> implements Iterable<T>, Iterator<T> {
         iter.remove();
     }
 
-    /*public static void main(String[] args) {
-        Vector<String> v = new Vector<String>();
-        v.add("one");
-        v.add("two");
-        v.add("three");
-        for (String s : new Itera<String>(v.iterator()))
-            System.out.println(s);
-    }*/
+    /*
+     * public static void main(String[] args) { Vector<String> v = new
+     * Vector<String>(); v.add("one"); v.add("two"); v.add("three"); for (String
+     * s : new Itera<String>(v.iterator())) System.out.println(s); }
+     */
 }
 
 /* EOF */

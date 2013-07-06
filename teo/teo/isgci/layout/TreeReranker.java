@@ -12,27 +12,23 @@ package teo.isgci.layout;
 
 import org.jgrapht.DirectedGraph;
 
+import teo.isgci.grapht.Annotation;
 import teo.isgci.grapht.GraphWalker;
 import teo.isgci.grapht.TreeBFSWalker;
 import teo.isgci.grapht.WalkerInfo;
-import teo.isgci.grapht.Annotation;
 
-public class TreeReranker<V,E> extends TreeBFSWalker<V,E> {
+public class TreeReranker<V, E> extends TreeBFSWalker<V, E> {
     protected int delta;
 
-    public TreeReranker(
-            DirectedGraph<V,E> graph,
-            V start,
-            Annotation<V,E,WalkerInfo<V,E> > mark,
-            GraphWalker.InitCode initCode,
-            int delta) {
+    public TreeReranker(DirectedGraph<V, E> graph, V start,
+            Annotation<V, E, WalkerInfo<V, E>> mark,
+            GraphWalker.InitCode initCode, int delta) {
         super(graph, start, mark, initCode);
         this.delta = delta;
     }
 
-
     public void visit(V v) {
-        ((GraphDrawInfo)getDataNode(v)).rank += delta;
+        ((GraphDrawInfo) getDataNode(v)).rank += delta;
         super.visit(v);
     }
 }

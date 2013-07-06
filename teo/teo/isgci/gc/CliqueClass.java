@@ -8,31 +8,27 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.gc;
-
 
 /**
  * A GraphClass that is the clique class of another class.
  */
 public class CliqueClass extends DerivedClass {
-    
+
     /** Creates a new graph class based on <tt>gc</tt>. */
-    public CliqueClass(GraphClass gc){
+    public CliqueClass(GraphClass gc) {
         super();
         setBase(gc);
     }
 
-    
     /**
      * Constructs the name of this class by adding the prefix
      * "clique graphs of " to the name of the base class.
      */
-    public void setName(){
-        name = "clique graphs of "+ getBase().toString();
+    public void setName() {
+        name = "clique graphs of " + getBase().toString();
         nameExplicit = false;
     }
-
 
     public boolean subClassOf(GraphClass gc) {
         if (super.subClassOf(gc))
@@ -45,6 +41,6 @@ public class CliqueClass extends DerivedClass {
         }
         return false;
     }
-    
+
 }
 /* EOF */

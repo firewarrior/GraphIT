@@ -10,13 +10,13 @@
 
 package teo.isg;
 
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-public abstract class SmallGraph{
-    
+public abstract class SmallGraph {
+
     /** List of names, the first is the prime, the others are aliases */
     protected List<String> names;
     protected String link;
@@ -28,32 +28,31 @@ public abstract class SmallGraph{
      */
     protected boolean primary;
     /** Induced subgraphs common for all members of the SmallGraph */
-    protected Vector< Vector<SmallGraph> > induced;
-    
+    protected Vector<Vector<SmallGraph>> induced;
+
     /** Creates a new empty SmallGraph */
-    public SmallGraph(){
+    public SmallGraph() {
         names = null;
         link = null;
         complement = null;
         primary = true;
         induced = null;
     }
-    
 
     /** Adds a new name */
-    public void addName(String parsedName){
+    public void addName(String parsedName) {
         if (names == null)
             names = new ArrayList<String>(2);
         names.add(parsedName);
     }
-    
+
     /** Returns the first name. */
-    public String getName(){
+    public String getName() {
         return names == null ? null : names.get(0);
     }
-    
+
     /** Returns the list with all names. */
-    public List<String> getNames(){
+    public List<String> getNames() {
         return Collections.unmodifiableList(names);
     }
 
@@ -64,62 +63,60 @@ public abstract class SmallGraph{
         if (names != null) {
             s.append("[");
             j = names.size();
-            for (i=0; i<j; i++) {
-                s.append( names.get(i) );
-                if (i < j-1)
+            for (i = 0; i < j; i++) {
+                s.append(names.get(i));
+                if (i < j - 1)
                     s.append("=");
             }
             s.append("]");
         }
         return s.toString();
     }
-    
+
     /** Adds a link */
-    public void addLink(String parsedLink){
+    public void addLink(String parsedLink) {
         link = parsedLink;
     }
-    
+
     /** Returns a link to the drawing */
-    public String getLink(){
+    public String getLink() {
         return link;
     }
-    
+
     /** Sets complement */
-    public void setComplement(SmallGraph comp){
+    public void setComplement(SmallGraph comp) {
         complement = comp;
     }
-    
+
     /** Returns complement */
-    public SmallGraph getComplement(){
+    public SmallGraph getComplement() {
         return complement;
     }
-    
-    public void setPrimary(boolean prim){
+
+    public void setPrimary(boolean prim) {
         primary = prim;
     }
-    
-    public boolean isPrimary(){
+
+    public boolean isPrimary() {
         return primary;
     }
 
     /** Adds induced <tt>parsedInduced</tt> to induced */
-    public void addInduced(Vector<SmallGraph> parsedInduced){
+    public void addInduced(Vector<SmallGraph> parsedInduced) {
         if (induced == null)
-            induced = new Vector<Vector<SmallGraph> >();
+            induced = new Vector<Vector<SmallGraph>>();
         induced.add(parsedInduced);
     }
-    
+
     /** Returns Collection induced */
-    public Vector< Vector<SmallGraph> > getInduced(){
+    public Vector<Vector<SmallGraph>> getInduced() {
         return induced;
     }
 
-    
     /**
-     * Return an incomplete complement of this.
-     * this and the returned graph are marked as each others complement,
-     * otherwise the new graph has no contents yet. It can be completed by
-     * calling copyFromComplement.
+     * Return an incomplete complement of this. this and the returned graph are
+     * marked as each others complement, otherwise the new graph has no contents
+     * yet. It can be completed by calling copyFromComplement.
      */
     public SmallGraph halfComplement() {
         SmallGraph c = null;
@@ -132,10 +129,9 @@ public abstract class SmallGraph{
         c.setPrimary(false);
         c.setComplement(this);
         setComplement(c);
-        
+
         return c;
     }
-
 
     /**
      * Copy data from the complement to this. Ignores names and links.
@@ -145,38 +141,38 @@ public abstract class SmallGraph{
         int i, j;
 
         if (complement.getInduced() != null) {
-            //---- First copy induced from complement
-            induced = new Vector<Vector<SmallGraph> >();
+            // ---- First copy induced from complement
+            induced = new Vector<Vector<SmallGraph>>();
             for (Vector<SmallGraph> is : complement.getInduced())
                 induced.add(new Vector<SmallGraph>(is));
 
-            //---- Then complement it.
+            // ---- Then complement it.
             for (i = 0; i < induced.size(); i++) {
                 v = induced.elementAt(i);
                 if (v != null)
-                    for (j=0; j < v.size(); j++) {
-                        /*if (!(v.elementAt(j) instanceof SmallGraph)) {
-                            System.err.println("Induced "+
-                                v.elementAt(j) +" of "+ getName() +
-                                " not a SmallGraph");
-                        }*/
+                    for (j = 0; j < v.size(); j++) {
+                        /*
+                         * if (!(v.elementAt(j) instanceof SmallGraph)) {
+                         * System.err.println("Induced "+ v.elementAt(j)
+                         * +" of "+ getName() + " not a SmallGraph"); }
+                         */
                         v.setElementAt(v.elementAt(j).getComplement(), j);
                     }
             }
         }
     }
-    
-    
+
     /** Create and return the complement of this SmallGraph */
     public SmallGraph makeComplement() {
         SmallGraph c = halfComplement();
         c.copyFromComplement();
-        
+
         return c;
     }
-    
+
     /* Ugly hack */
-    public void addEdge(int a, int b){}
+    public void addEdge(int a, int b) {
+    }
 }
-    
+
 /* EOF */

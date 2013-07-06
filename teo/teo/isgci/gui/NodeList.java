@@ -10,23 +10,21 @@
 
 package teo.isgci.gui;
 
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.Collection;
 import java.awt.Component;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 
 import teo.isgci.gc.GraphClass;
-
 
 /**
  * A JList filled with ISGCINodes, that are displayed with formatted html.
  */
 public class NodeList extends JList {
     LatexGraphics latex;
-
 
     /**
      * Create a new list with the given nodes in it.
@@ -35,7 +33,6 @@ public class NodeList extends JList {
         super(nodes);
         init(latex);
     }
-
 
     /**
      * Create a new list.
@@ -51,14 +48,12 @@ public class NodeList extends JList {
         setFont(latex.getFont());
     }
 
-
     /**
      * Return the number of nodes in this list.
      */
     public int getElementCount() {
         return getModel().getSize();
     }
-
 
     /**
      * Replace all nodes in this list by the given data.
@@ -70,7 +65,6 @@ public class NodeList extends JList {
         setListData(v);
     }
 
-
     /**
      * Replace all nodes in this list by the given data.
      */
@@ -79,7 +73,6 @@ public class NodeList extends JList {
         setListData(v);
     }
 
-
     /**
      * Return the smallest selected node.
      */
@@ -87,16 +80,14 @@ public class NodeList extends JList {
         return (GraphClass) getSelectedValue();
     }
 
-
     /**
      * The renderer for nodes: We use a label with html code in it.
      */
     protected class NodeListCellRenderer implements ListCellRenderer {
-        public Component getListCellRendererComponent(
-                JList list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus) {
-            LatexLabel label =
-                    latex.newLabel(((GraphClass) value).toString());
+        public Component getListCellRendererComponent(JList list,
+                Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
+            LatexLabel label = latex.newLabel(((GraphClass) value).toString());
             if (isSelected) {
                 label.setBackground(list.getSelectionBackground());
                 label.setForeground(list.getSelectionForeground());
@@ -106,7 +97,7 @@ public class NodeList extends JList {
             }
             label.setEnabled(list.isEnabled());
             label.setFont(list.getFont());
-            //setOpaque(this);
+            // setOpaque(this);
             return label;
         }
     }

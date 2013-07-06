@@ -9,19 +9,20 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.xml;
 
 import java.io.StringWriter;
-import teo.sax.XMLWriter;
-import org.xml.sax.helpers.XMLFilterImpl;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.XMLFilterImpl;
+
+import teo.sax.XMLWriter;
 
 /**
  * A NoteFilter passes the contents of a <note> element as a string to its
- * parent: startElement("note"); character(..); endElement(note);
- * note elements cannot be nested.
+ * parent: startElement("note"); character(..); endElement(note); note elements
+ * cannot be nested.
  */
 public class NoteFilter extends XMLFilterImpl {
     StringWriter content;
@@ -41,15 +42,15 @@ public class NoteFilter extends XMLFilterImpl {
     }
 
     /** ContentHandler Interface */
-    public void startElement(String uri, String locName, String qName, 
-             Attributes atts) throws SAXException {
+    public void startElement(String uri, String locName, String qName,
+            Attributes atts) throws SAXException {
         if (tag.equals(qName)) {
             if (content != null)
-                throw new SAXException(tag +" can't be nested");
+                throw new SAXException(tag + " can't be nested");
             content = new StringWriter();
             writer.setOutput(content);
             writer.reset();
-            writer.startDocument("");     // Prevent XML decl
+            writer.startDocument(""); // Prevent XML decl
             super.startElement(uri, locName, qName, atts);
         } else {
             if (content != null)

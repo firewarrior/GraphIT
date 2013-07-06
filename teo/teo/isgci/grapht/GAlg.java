@@ -10,11 +10,24 @@
 
 package teo.isgci.grapht;
 
-import java.util.*;
-import org.jgrapht.*;
-import org.jgrapht.graph.*;
-import org.jgrapht.alg.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.alg.StrongConnectivityInspector;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
+
 import teo.isgci.util.Itera;
 
 public class GAlg {
@@ -23,39 +36,36 @@ public class GAlg {
      * Copy the subgraph (vertices and edges) induced by vertices in g to
      * target.
      */
-    public static <V,E> void copyInduced(DirectedGraph<V,E> g,
-            Iterable<V> vertices, DirectedGraph<V,E> target) {
+    public static <V, E> void copyInduced(DirectedGraph<V, E> g,
+            Iterable<V> vertices, DirectedGraph<V, E> target) {
         for (V v : vertices)
             target.addVertex(v);
         for (E e : g.edgeSet())
-            if (target.containsVertex(g.getEdgeSource(e))  &&
-                    target.containsVertex(g.getEdgeTarget(e)))
+            if (target.containsVertex(g.getEdgeSource(e))
+                    && target.containsVertex(g.getEdgeTarget(e)))
                 target.addEdge(g.getEdgeSource(e), g.getEdgeTarget(e), e);
     }
-
 
     /**
      * Split a graph into its connected components.
      */
-    public static <V,E> List<SimpleDirectedGraph<V,E> > split(
-            SimpleDirectedGraph<V,E> g, java.lang.Class<E> edgeClass) {
-        List<SimpleDirectedGraph<V,E> > res =
-                new ArrayList<SimpleDirectedGraph<V,E> >();
-        for (Set<V> compo : new ConnectivityInspector<V,E>(g).connectedSets()){
-            SimpleDirectedGraph<V,E> compog =
-                    new SimpleDirectedGraph<V,E>(edgeClass);
+    public static <V, E> List<SimpleDirectedGraph<V, E>> split(
+            SimpleDirectedGraph<V, E> g, java.lang.Class<E> edgeClass) {
+        List<SimpleDirectedGraph<V, E>> res = new ArrayList<SimpleDirectedGraph<V, E>>();
+        for (Set<V> compo : new ConnectivityInspector<V, E>(g).connectedSets()) {
+            SimpleDirectedGraph<V, E> compog = new SimpleDirectedGraph<V, E>(
+                    edgeClass);
             copyInduced(g, compo, compog);
             res.add(compog);
         }
         return res;
     }
 
-
     /**
      * Return the in-neighbours of v in g.
      */
-    public static <V,E>
-            Itera<V> inNeighboursOf(final DirectedGraph<V,E> g, final V v) {
+    public static <V, E> Itera<V> inNeighboursOf(final DirectedGraph<V, E> g,
+            final V v) {
         return new Itera<V>() {
             final Iterator<E> edges = g.incomingEdgesOf(v).iterator();
 
@@ -74,12 +84,11 @@ public class GAlg {
         };
     }
 
-
     /**
      * Return the out-neighbours of v in g.
      */
-    public static <V,E>
-            Itera<V> outNeighboursOf(final DirectedGraph<V,E> g, final V v) {
+    public static <V, E> Itera<V> outNeighboursOf(final DirectedGraph<V, E> g,
+            final V v) {
         return new Itera<V>() {
             final Iterator<E> edges = g.outgoingEdgesOf(v).iterator();
 
@@ -98,24 +107,21 @@ public class GAlg {
         };
     }
 
-    
     /**
      * Return a path (list of edges) between src and dest in g or null if no
      * path exist. If src==dest an empty list is returned.
      */
-    public static <V,E> List<E> getPath(DirectedGraph<V,E> g, V src, V dest) {
-        return org.jgrapht.alg.DijkstraShortestPath.findPathBetween(
-                g, src, dest);
+    public static <V, E> List<E> getPath(DirectedGraph<V, E> g, V src, V dest) {
+        return org.jgrapht.alg.DijkstraShortestPath.findPathBetween(g, src,
+                dest);
     }
 
-
     /**
-     * Return a map from vertices to their SCCs.
-     * In the values of this map, every SCC exists precisely once as an
-     * unmodifiable set.
+     * Return a map from vertices to their SCCs. In the values of this map,
+     * every SCC exists precisely once as an unmodifiable set.
      */
-    public static <V,E> Map<V,Set<V> > calcSCCMap(DirectedGraph<V,E> dg) {
-        Map<V, Set<V> > sccs = new HashMap<V, Set<V> >();
+    public static <V, E> Map<V, Set<V>> calcSCCMap(DirectedGraph<V, E> dg) {
+        Map<V, Set<V>> sccs = new HashMap<V, Set<V>>();
         for (Set<V> scc : calcSCCList(dg)) {
             Set<V> s = Collections.unmodifiableSet(scc);
             for (V g : scc)
@@ -125,44 +131,40 @@ public class GAlg {
         return sccs;
     }
 
-
     /*
      * Return the SCCs of a graph as a list of vertex sets.
      */
-    public static <V,E> List<Set<V> > calcSCCList(DirectedGraph<V,E> g) {
+    public static <V, E> List<Set<V>> calcSCCList(DirectedGraph<V, E> g) {
         return new StrongConnectivityInspector(g).stronglyConnectedSets();
     }
 
-
     /**
-     * Return the topological order of g.
-     * Undefined if this graph is not acyclic!
+     * Return the topological order of g. Undefined if this graph is not
+     * acyclic!
      */
-    public static <V,E> Itera<V> topologicalOrder(DirectedGraph<V,E> g) {
-        return new Itera<V>(new TopologicalOrderIterator<V,E>(g));
+    public static <V, E> Itera<V> topologicalOrder(DirectedGraph<V, E> g) {
+        return new Itera<V>(new TopologicalOrderIterator<V, E>(g));
     }
-
 
     /**
      * Transitively close g.
      */
-    public static <V,E> void transitiveClosure(DirectedGraph<V,E> g) {
+    public static <V, E> void transitiveClosure(DirectedGraph<V, E> g) {
         new ClosingDFS(g).run();
     }
-
 
     /**
      * Transitively reduce g.
      */
-    public static <V,E> void transitiveReduction(DirectedGraph<V,E> g) {
-        if (new CycleDetector<V,E>(g).detectCycles())
+    public static <V, E> void transitiveReduction(DirectedGraph<V, E> g) {
+        if (new CycleDetector<V, E>(g).detectCycles())
             throw new IllegalArgumentException("Graph not acyclic");
 
         ArrayDeque<V> topo = new ArrayDeque<V>();
-        for (V n : new Itera<V>(new TopologicalOrderIterator<V,E>(g)))
+        for (V n : new Itera<V>(new TopologicalOrderIterator<V, E>(g)))
             topo.add(n);
 
-        HashMap<V, HashSet<V> > sub = new HashMap<V, HashSet<V> >();
+        HashMap<V, HashSet<V>> sub = new HashMap<V, HashSet<V>>();
 
         // Process nodes in reverse topo order
         for (V n : new Itera<V>(topo.descendingIterator())) {
@@ -195,14 +197,13 @@ public class GAlg {
         }
     }
 
-
     /**
-     * Transitively reduce a possibly cyclic graph using brute force:
-     * Every edges is removed and re-added only if it is necessary to maintain
+     * Transitively reduce a possibly cyclic graph using brute force: Every
+     * edges is removed and re-added only if it is necessary to maintain
      * reachability.
      */
-    public static <V,E> void transitiveReductionBruteForce(
-            DirectedGraph<V,E> g) {
+    public static <V, E> void transitiveReductionBruteForce(
+            DirectedGraph<V, E> g) {
         List<E> edges = new ArrayList<E>(g.edgeSet());
         for (E edge : edges) {
             V src = g.getEdgeSource(edge);
@@ -213,10 +214,9 @@ public class GAlg {
         }
     }
 
-
     public static void main(String[] args) {
-        SimpleDirectedGraph<String,DefaultEdge> g =
-                new SimpleDirectedGraph<String,DefaultEdge>(DefaultEdge.class);
+        SimpleDirectedGraph<String, DefaultEdge> g = new SimpleDirectedGraph<String, DefaultEdge>(
+                DefaultEdge.class);
 
         g.addVertex("q");
         g.addVertex("u");
@@ -232,12 +232,12 @@ public class GAlg {
         GAlg.transitiveReduction(g);
         System.out.println(g);
 
-        System.out.println(org.jgrapht.alg.DijkstraShortestPath.
-                findPathBetween(g, "q", "q"));
-        System.out.println(org.jgrapht.alg.DijkstraShortestPath.
-                findPathBetween(g, "q", "k"));
-        System.out.println(org.jgrapht.alg.DijkstraShortestPath.
-                findPathBetween(g, "k", "q"));
+        System.out.println(org.jgrapht.alg.DijkstraShortestPath
+                .findPathBetween(g, "q", "q"));
+        System.out.println(org.jgrapht.alg.DijkstraShortestPath
+                .findPathBetween(g, "q", "k"));
+        System.out.println(org.jgrapht.alg.DijkstraShortestPath
+                .findPathBetween(g, "k", "q"));
     }
 }
 

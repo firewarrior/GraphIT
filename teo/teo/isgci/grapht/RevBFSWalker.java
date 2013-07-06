@@ -14,17 +14,14 @@ package teo.isgci.grapht;
 
 import org.jgrapht.DirectedGraph;
 
-public class RevBFSWalker<V,E> extends BFSWalker<V,E> {
+public class RevBFSWalker<V, E> extends BFSWalker<V, E> {
 
-    public RevBFSWalker(
-            DirectedGraph<V,E> graph,
-            V start,
-            Annotation<V,E,WalkerInfo<V,E> > mark,
+    public RevBFSWalker(DirectedGraph<V, E> graph, V start,
+            Annotation<V, E, WalkerInfo<V, E>> mark,
             GraphWalker.InitCode initCode) {
         super(graph, start, mark, initCode);
     }
 
-    
     public void visit(V v) {
         for (E e : graph.incomingEdgesOf(v))
             explore(e, graph.getEdgeTarget(e), graph.getEdgeSource(e));

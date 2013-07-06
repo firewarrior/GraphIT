@@ -8,13 +8,12 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.gc;
 
-import java.util.Collection;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A GraphClass defined by union of two or more other GraphClasses.
@@ -22,23 +21,23 @@ import java.util.HashSet;
 public class UnionClass extends SetClass {
 
     /**
-     * Creates a new graph class based on the GraphClasses in the
-     * given set (doesn't need to be mathematical set).
+     * Creates a new graph class based on the GraphClasses in the given set
+     * (doesn't need to be mathematical set).
      */
-    public UnionClass(Collection<GraphClass> set){
+    public UnionClass(Collection<GraphClass> set) {
         super();
-        if (set == null  ||  set.size() < 2)
+        if (set == null || set.size() < 2)
             throw new IllegalArgumentException("missing GraphClasses" + set);
-        
+
         Set<GraphClass> gcSet = new HashSet<GraphClass>();
         Hered hered = Hered.STRICTEST;
 
         for (GraphClass gc : set) {
-            /* avoid classes like (a+b)+c
-             * instead make a      a+b+c
+            /*
+             * avoid classes like (a+b)+c instead make a a+b+c
              */
             if (gc instanceof UnionClass) {
-                gcSet.addAll(((UnionClass)gc).getSet());
+                gcSet.addAll(((UnionClass) gc).getSet());
             } else {
                 gcSet.add(gc);
             }
@@ -49,38 +48,34 @@ public class UnionClass extends SetClass {
         hereditariness = hered;
     }
 
-    
     /**
-     * Constructs the name of this graphclass by connecting the names of
-     * its base-classes with " \cup " (TeX-symbol for a union).
+     * Constructs the name of this graphclass by connecting the names of its
+     * base-classes with " \cup " (TeX-symbol for a union).
      */
     public void setName() {
         buildName(" $\\cup$ ");
     }
 
-        
-    public boolean subClassOf(GraphClass gc){
+    public boolean subClassOf(GraphClass gc) {
         if (super.subClassOf(gc))
             return true;
         if (gc instanceof UnionClass) {
             // A+B+C -> A+B (includes gc==this)
-            return ((UnionClass)gc).getSet().containsAll(getSet());
+            return ((UnionClass) gc).getSet().containsAll(getSet());
         }
         return false;
     }
-    
-    
+
     public GraphClass unite(GraphClass gc) {
         ArrayList<GraphClass> set = new ArrayList<GraphClass>(getSet());
         // result may be equal to this, e.g. if gc already elem in gcSet
         if (gc instanceof UnionClass) {
-            set.addAll(((UnionClass)gc).getSet());
+            set.addAll(((UnionClass) gc).getSet());
         } else {
             set.add(gc);
         }
         return new UnionClass(set);
     }
-
 
     /**
      * Create a complement of this by complementing the member classes.
@@ -91,6 +86,6 @@ public class UnionClass extends SetClass {
             set.add(gc.complement());
         return new UnionClass(set);
     }
-    
+
 }
 /* EOF */

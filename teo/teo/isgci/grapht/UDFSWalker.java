@@ -12,15 +12,13 @@ package teo.isgci.grapht;
 
 import org.jgrapht.DirectedGraph;
 
-public class UDFSWalker<V,E> extends DFSWalker<V,E> {
-    
-    public UDFSWalker(
-            DirectedGraph<V,E> graph,
-            Annotation<V,E,WalkerInfo<V,E> > mark,
+public class UDFSWalker<V, E> extends DFSWalker<V, E> {
+
+    public UDFSWalker(DirectedGraph<V, E> graph,
+            Annotation<V, E, WalkerInfo<V, E>> mark,
             GraphWalker.InitCode initCode) {
         super(graph, mark, initCode);
     }
-
 
     public void visit(V v) {
         /* This does lead to parent edges being explored again */

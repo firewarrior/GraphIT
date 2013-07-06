@@ -8,43 +8,57 @@
  * Email: isgci@graphclasses.org
  */
 
-import teo.isgci.grapht.*;
-import teo.isgci.xml.*;
-import teo.isgci.gc.*;
-import teo.isgci.db.*;
-import teo.isgci.problem.*;
-import teo.Loader;
-
 import gnu.getopt.Getopt;
-import java.io.*;
-import java.util.*;
-import java.net.URL;
-import org.xml.sax.InputSource;
-import org.jgrapht.Graph;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DirectedMultigraph;
+
+import teo.Loader;
+import teo.isgci.db.AbstractRelation;
+import teo.isgci.gc.ComplementClass;
+import teo.isgci.gc.ForbiddenClass;
+import teo.isgci.gc.GraphClass;
+import teo.isgci.grapht.Deducer;
+import teo.isgci.grapht.GAlg;
+import teo.isgci.grapht.Inclusion;
+import teo.isgci.problem.Complexity;
+import teo.isgci.problem.Problem;
+import teo.isgci.xml.ISGCIReader;
+import teo.isgci.xml.ISGCIWriter;
+import teo.isgci.xml.NoteFilter;
+import teo.isgci.xml.XMLParser;
 
 public class Generate {
 
-    static final String XMLDECL =
-        "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\n" +
-        "<!DOCTYPE ISGCI SYSTEM \"isgci.dtd\">\n";
-
+    static final String XMLDECL = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\n"
+            + "<!DOCTYPE ISGCI SYSTEM \"isgci.dtd\">\n";
 
     /**
      * Print node/edge count statistics of the given graph.
      */
-    public static void show(Graph dg){
-        System.err.print("Nodes: "+ dg.vertexSet().size());
-	System.err.println("     Edges: "+ dg.edgeSet().size());
+    public static void show(Graph dg) {
+        System.err.print("Nodes: " + dg.vertexSet().size());
+        System.err.println("     Edges: " + dg.edgeSet().size());
     }
-
 
     /**
      * Print statistics on the given problem.
      */
     public static void showProblemStats(
-            DirectedGraph<GraphClass,Inclusion> dg, Problem p) {
+            DirectedGraph<GraphClass, Inclusion> dg, Problem p) {
         int i;
         String cs;
         int[] count = new int[Complexity.values().length];
@@ -63,12 +77,11 @@ public class Generate {
         System.out.println();
     }
 
-
     /**
      * Print statistics on the given problems.
      */
     public static void showProblemStats(
-            DirectedGraph<GraphClass,Inclusion> dg, List<Problem> problems) {
+            DirectedGraph<GraphClass, Inclusion> dg, List<Problem> problems) {
         System.out.print("Problem:        ");
         for (Complexity c : Complexity.values()) {
             System.out.print("\t");
@@ -79,12 +92,11 @@ public class Generate {
             showProblemStats(dg, p);
     }
 
-
     /**
      * Write a list of gc-numbers and names to file.
      */
-    public static void showNames(
-            DirectedGraph<GraphClass,Inclusion> dg, String file) {
+    public static void showNames(DirectedGraph<GraphClass, Inclusion> dg,
+            String file) {
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileWriter(file));
@@ -96,26 +108,21 @@ public class Generate {
         out.close();
     }
 
-
     /**
      * Write a list of gc-numbers and names to out.
      */
-    public static void showNames(
-            DirectedGraph<GraphClass,Inclusion> dg, PrintWriter out) {
+    public static void showNames(DirectedGraph<GraphClass, Inclusion> dg,
+            PrintWriter out) {
         for (GraphClass v : dg.vertexSet())
-            out.println(v.getID() +"\t"+ v);
+            out.println(v.getID() + "\t" + v);
     }
-
 
     /**
      * Write the data in xml format in the given ISGCIWriter.MODE_* mode.
      */
-    private static void writeISGCI(
-            DirectedGraph<GraphClass,Inclusion> g,
-            List<Problem> problems,
-            List<AbstractRelation> relations,
-            Map<GraphClass,Set<GraphClass> > complements,
-            String file,
+    private static void writeISGCI(DirectedGraph<GraphClass, Inclusion> g,
+            List<Problem> problems, List<AbstractRelation> relations,
+            Map<GraphClass, Set<GraphClass>> complements, String file,
             int format) {
         try {
             FileWriter out = new FileWriter(file);
@@ -127,66 +134,51 @@ public class Generate {
         }
     }
 
-
     /**
      * Write a MODE_SAGE document of g to file.
      */
-    public static void showSage(
-            DirectedGraph<GraphClass,Inclusion> g,
-            List<Problem> problems,
-            List<AbstractRelation> relations,
-            Map<GraphClass,Set<GraphClass> > complements,
-            String file) {
+    public static void showSage(DirectedGraph<GraphClass, Inclusion> g,
+            List<Problem> problems, List<AbstractRelation> relations,
+            Map<GraphClass, Set<GraphClass>> complements, String file) {
         writeISGCI(g, problems, relations, complements, file,
                 ISGCIWriter.MODE_SAGE);
     }
 
-
     /**
      * Write a MODE_FULL document of g to file.
      */
-    public static void showFull(
-            DirectedGraph<GraphClass,Inclusion> g,
-            List<Problem> problems,
-            List<AbstractRelation> relations,
-            Map<GraphClass,Set<GraphClass> > complements,
-            String file) {
+    public static void showFull(DirectedGraph<GraphClass, Inclusion> g,
+            List<Problem> problems, List<AbstractRelation> relations,
+            Map<GraphClass, Set<GraphClass>> complements, String file) {
         writeISGCI(g, problems, relations, complements, file,
                 ISGCIWriter.MODE_FULL);
     }
 
-
     /**
      * Write a MODE_ONLINE document of g to file.
      */
-    public static void showShort(
-            DirectedGraph<GraphClass,Inclusion> g,
-            List<Problem> problems,
-            List<AbstractRelation> relations,
-            Map<GraphClass,Set<GraphClass> > complements,
-            String file){
+    public static void showShort(DirectedGraph<GraphClass, Inclusion> g,
+            List<Problem> problems, List<AbstractRelation> relations,
+            Map<GraphClass, Set<GraphClass>> complements, String file) {
         writeISGCI(g, problems, relations, complements, file,
                 ISGCIWriter.MODE_ONLINE);
     }
-
 
     /**
      * Load the ISGCI database.
      */
     public static void load(String file,
-            DirectedGraph<GraphClass,Inclusion> graph,
-            List<Problem> problems,
-            List<AbstractRelation> relations)
+            DirectedGraph<GraphClass, Inclusion> graph,
+            List<Problem> problems, List<AbstractRelation> relations)
             throws java.net.MalformedURLException {
-        Loader loader = new Loader("file:"+System.getProperty("user.dir")+"/",
-                true);
+        Loader loader = new Loader("file:" + System.getProperty("user.dir")
+                + "/", true);
         ISGCIReader gcr = new ISGCIReader(graph, problems);
-        XMLParser xml = new XMLParser(loader.openInputSource(file),
-                gcr, loader.new Resolver(), new NoteFilter());
+        XMLParser xml = new XMLParser(loader.openInputSource(file), gcr,
+                loader.new Resolver(), new NoteFilter());
         xml.parse();
         relations.addAll(gcr.getRelations());
     }
-
 
     /**
      * Prints e to the given writer as gc_ -> gc_\t name -> name
@@ -195,11 +187,10 @@ public class Generate {
         println(w, e.getSuper(), e.getSub());
     }
 
-
     /**
      * Prints from->to to the given writer as gc_ -> gc_\t name -> name
      */
-    private static void println(PrintWriter w, GraphClass from, GraphClass to){
+    private static void println(PrintWriter w, GraphClass from, GraphClass to) {
         w.print(from.getID());
         w.print(" -> ");
         w.print(to.getID());
@@ -210,25 +201,23 @@ public class Generate {
         w.flush();
     }
 
-
     /**
-     * Check whether for every pair (from, to) in the list there is a path in
-     * g. Failures are printed.
+     * Check whether for every pair (from, to) in the list there is a path in g.
+     * Failures are printed.
      */
-    public static void checkPaths(DirectedGraph<GraphClass,Inclusion> g,
+    public static void checkPaths(DirectedGraph<GraphClass, Inclusion> g,
             Collection<Inclusion> list) {
         int i;
         GraphClass from, to;
         PrintWriter w = new PrintWriter(System.out);
 
-        for (Inclusion e :  list) {
+        for (Inclusion e : list) {
             from = e.getSuper();
             to = e.getSub();
             if (GAlg.getPath(g, from, to) == null)
                 println(w, from, to);
         }
     }
-
 
     /**
      * Print debug info gathered in the deducer d to the given writer.
@@ -241,12 +230,11 @@ public class Generate {
         w.flush();
     }
 
-
     /**
      * Print relation debug info gathered in the deducer d to the given writer.
      */
-    private static void printRelDebug(Deducer d, Iterable<Inclusion> originals,
-            PrintWriter w) {
+    private static void printRelDebug(Deducer d,
+            Iterable<Inclusion> originals, PrintWriter w) {
         w.println("\n==== Start relations ==============================");
         for (Inclusion e : d.getGraph().edgeSet())
             d.printRelationTrace(w, e);
@@ -254,7 +242,7 @@ public class Generate {
         w.flush();
         w.println("==== Proper or equal ================================");
         for (Inclusion e : originals) {
-            if (!e.isProper()  &&  d.getEdge(e.getSub(),e.getSuper()) == null){
+            if (!e.isProper() && d.getEdge(e.getSub(), e.getSuper()) == null) {
                 w.print("! ");
                 println(w, e);
             }
@@ -263,22 +251,20 @@ public class Generate {
         w.flush();
     }
 
-
     /**
      * Give every class a list of its complements and return it.
      */
-    private static Map<GraphClass,Set<GraphClass> >
-            gatherComplements(DirectedGraph<GraphClass,Inclusion> dg) {
+    private static Map<GraphClass, Set<GraphClass>> gatherComplements(
+            DirectedGraph<GraphClass, Inclusion> dg) {
         GraphClass w;
 
-        Map<GraphClass,Set<GraphClass> > scc = GAlg.calcSCCMap(dg);
-        Map<GraphClass,Set<GraphClass> > compls =
-            new HashMap<GraphClass,Set<GraphClass> >();
+        Map<GraphClass, Set<GraphClass>> scc = GAlg.calcSCCMap(dg);
+        Map<GraphClass, Set<GraphClass>> compls = new HashMap<GraphClass, Set<GraphClass>>();
 
         for (GraphClass v : dg.vertexSet()) {
             if (!(v instanceof ComplementClass))
                 continue;
-            if (compls.containsKey(v))          // Already handled.
+            if (compls.containsKey(v)) // Already handled.
                 continue;
 
             w = ((ComplementClass) v).getBase();
@@ -292,7 +278,6 @@ public class Generate {
         return compls;
     }
 
-
     /**
      * Main
      */
@@ -300,7 +285,7 @@ public class Generate {
         int i;
 
         Deducer deducer;
-        DirectedGraph<GraphClass,Inclusion> graph;
+        DirectedGraph<GraphClass, Inclusion> graph;
         List<Problem> problems;
 
         boolean notrivial = false;
@@ -311,35 +296,35 @@ public class Generate {
         String sageout = null;
         Collection<Inclusion> deleted;
         PrintWriter writer;
-        Map<GraphClass,Set<GraphClass> > compls;
+        Map<GraphClass, Set<GraphClass>> compls;
         List<AbstractRelation> relations = new ArrayList<AbstractRelation>();
 
         Getopt opts = new Getopt("Generate", args, "Cxa:l:r:s:h");
         opts.setOpterr(false);
         while ((i = opts.getopt()) != -1) {
             switch (i) {
-                case 'C':
-                    extrachecks = true;
-                    break;
-                case 'x':
-                    notrivial = true;
-                    break;
-                case 'a':
-                    autocache = opts.getOptarg();
-                    break;
-                case 'l':
-                    debugout = opts.getOptarg();
-                    break;
-                case 'r':
-                    debugrelout = opts.getOptarg();
-                    break;
-                case 's':
-                    sageout = opts.getOptarg();
-                    break;
-                case '?':
-                case 'h':
-                    usage();
-                    System.exit(1);
+            case 'C':
+                extrachecks = true;
+                break;
+            case 'x':
+                notrivial = true;
+                break;
+            case 'a':
+                autocache = opts.getOptarg();
+                break;
+            case 'l':
+                debugout = opts.getOptarg();
+                break;
+            case 'r':
+                debugrelout = opts.getOptarg();
+                break;
+            case 's':
+                sageout = opts.getOptarg();
+                break;
+            case '?':
+            case 'h':
+                usage();
+                System.exit(1);
             }
         }
         if (args.length - opts.getOptind() < 5) {
@@ -347,23 +332,23 @@ public class Generate {
             System.exit(1);
         }
 
-        //---- Load everything
+        // ---- Load everything
         // Performance optimization: We only add edges that do not exist yet,
         // so the underlying graph does not need to check this.
-        graph = new DirectedMultigraph<GraphClass,Inclusion>(Inclusion.class);
+        graph = new DirectedMultigraph<GraphClass, Inclusion>(Inclusion.class);
         problems = new ArrayList<Problem>();
 
         Problem.setDeducing();
-        ForbiddenClass.initRules(null, args[opts.getOptind()+1]);
+        ForbiddenClass.initRules(null, args[opts.getOptind() + 1]);
         load(args[opts.getOptind()], graph, problems, relations);
-        deducer = new Deducer(graph,true, extrachecks);
+        deducer = new Deducer(graph, true, extrachecks);
         deducer.setGeneratorCache(autocache);
         show(graph);
 
-        ArrayList<Inclusion> originals =
-                new ArrayList<Inclusion>(graph.edgeSet());
+        ArrayList<Inclusion> originals = new ArrayList<Inclusion>(
+                graph.edgeSet());
 
-        //---- Deductions
+        // ---- Deductions
         if (notrivial)
             GAlg.transitiveClosure(graph);
         else {
@@ -373,17 +358,17 @@ public class Generate {
             deducer.printStatistics();
         }
 
-        //---- Print debug info
+        // ---- Print debug info
         if (debugout != null) {
-            writer = new PrintWriter(
-                    new BufferedWriter(new FileWriter(debugout), 64*1024));
+            writer = new PrintWriter(new BufferedWriter(new FileWriter(
+                    debugout), 64 * 1024));
             showNames(graph, writer);
             printDebug(deducer, writer);
         }
-            
+
         if (debugrelout != null) {
-            writer = new PrintWriter(
-                    new BufferedWriter(new FileWriter(debugrelout), 64*1024));
+            writer = new PrintWriter(new BufferedWriter(new FileWriter(
+                    debugrelout), 64 * 1024));
             printRelDebug(deducer, originals, writer);
         }
 
@@ -400,8 +385,7 @@ public class Generate {
         show(graph);
         showProblemStats(graph, problems);
 
-        
-        int nc = graph.vertexSet().size();               // For Safety check
+        int nc = graph.vertexSet().size(); // For Safety check
         int ec = graph.edgeSet().size();
 
         deleted = deducer.deleteSuperfluousEdges();
@@ -414,7 +398,8 @@ public class Generate {
 
         // Output
         deducer.addRefs();
-        showShort(graph, problems, relations, compls,args[opts.getOptind()+3]);
+        showShort(graph, problems, relations, compls,
+                args[opts.getOptind() + 3]);
         showSage(graph, problems, relations, compls, sageout);
         deleted = deducer.deleteSuperfluousEdgesFull();
 
@@ -423,25 +408,26 @@ public class Generate {
             checkPaths(graph, deleted);
         }
 
-        showFull(graph, problems, relations, compls, args[opts.getOptind()+2]);
-        showNames(graph, args[opts.getOptind()+4]);
+        showFull(graph, problems, relations, compls,
+                args[opts.getOptind() + 2]);
+        showNames(graph, args[opts.getOptind() + 4]);
 
         // Safety check
         GAlg.transitiveClosure(graph);
-        if (graph.vertexSet().size() != nc  ||  graph.edgeSet().size() != ec)
+        if (graph.vertexSet().size() != nc || graph.edgeSet().size() != ec)
             System.err.println("Error in deleteSuperfluousEdges?!");
     }
 
-
     private static void usage() {
-        System.out.println("Usage: java Generate [options] "+
-                "input.xml smallgraphsin.xml "+
-                "fullout.xml shortout.xml outnames.txt\n"+
-                " -x : Only generate XML, no deductions done\n"+
-                " -C : Perform extra checks on code (not data) correctness\n"+
-                " -s filename: write out for sage to filename\n" +
-                " -a filename: AUTO_* cache filename\n" +
-                " -l filename: Log debug output to filename\n" +
-                " -r filename: Log relations debug output to filename");
+        System.out
+                .println("Usage: java Generate [options] "
+                        + "input.xml smallgraphsin.xml "
+                        + "fullout.xml shortout.xml outnames.txt\n"
+                        + " -x : Only generate XML, no deductions done\n"
+                        + " -C : Perform extra checks on code (not data) correctness\n"
+                        + " -s filename: write out for sage to filename\n"
+                        + " -a filename: AUTO_* cache filename\n"
+                        + " -l filename: Log debug output to filename\n"
+                        + " -r filename: Log relations debug output to filename");
     }
 }

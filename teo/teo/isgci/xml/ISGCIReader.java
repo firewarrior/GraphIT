@@ -8,35 +8,50 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.xml;
 
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Locator;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
 
 import org.jgrapht.DirectedGraph;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.*;
-import java.io.StringWriter;
-import java.io.PrintWriter;
+import teo.isgci.db.AbstractRelation;
+import teo.isgci.db.Disjointness;
+import teo.isgci.db.Incomparability;
+import teo.isgci.db.Note;
+import teo.isgci.db.Ref;
+import teo.isgci.gc.BaseClass;
+import teo.isgci.gc.CliqueClass;
+import teo.isgci.gc.ComplementClass;
+import teo.isgci.gc.ConnectedHereditaryClass;
+import teo.isgci.gc.ForbiddenClass;
+import teo.isgci.gc.GraphClass;
+import teo.isgci.gc.InducedHereditaryClass;
+import teo.isgci.gc.IntersectClass;
+import teo.isgci.gc.IsometricHereditaryClass;
+import teo.isgci.gc.ProbeClass;
+import teo.isgci.gc.UnionClass;
+import teo.isgci.grapht.Inclusion;
+import teo.isgci.problem.Complexity;
+import teo.isgci.problem.Problem;
 
-import teo.isgci.gc.*;
-import teo.isgci.grapht.*;
-import teo.isgci.problem.*;
-import teo.isgci.db.*;
+public class ISGCIReader extends DefaultHandler {
 
-public class ISGCIReader extends DefaultHandler{
-    
     private StringBuffer chunks;
     private Locator locator;
-    
+
     /* ISGCI */
-    DirectedGraph<GraphClass,Inclusion> graph;
+    DirectedGraph<GraphClass, Inclusion> graph;
 
     /* Graphclasses */
-    private HashMap<String,GraphClass> classes;         // key = id, obj = gc
+    private HashMap<String, GraphClass> classes; // key = id, obj = gc
     private List<GraphClassWrapper> todo;// Save Wrappers that are not yet done
     private GraphClassWrapper curClass;
 
@@ -48,42 +63,41 @@ public class ISGCIReader extends DefaultHandler{
     /* Problems */
     private Hashtable problemNames;
     private List<Problem> problems;
-    private List<AlgoWrapper> algos;               // All read algo elements
+    private List<AlgoWrapper> algos; // All read algo elements
     private AlgoWrapper curAlgo;
     private Problem curProblem;
     private List<ReductionWrapper> reductionsTodo;
 
     /* References */
-    private List refs;                // Refs for the current element
+    private List refs; // Refs for the current element
     private String noteName;
-    
+
     /* Statistics */
     private String date;
     private String nodecount;
     private String edgecount;
 
     private boolean parsingDone;
-    
 
     /**
      * Creates a reader that uses g for storing data. Data indices will be set
      * by the reader.
      */
-    public ISGCIReader(DirectedGraph<GraphClass,Inclusion> g,
+    public ISGCIReader(DirectedGraph<GraphClass, Inclusion> g,
             List<Problem> problems) {
         parsingDone = false;
         chunks = new StringBuffer();
         this.graph = g;
         this.problems = problems;
         problemNames = new Hashtable();
-        classes = new HashMap<String,GraphClass>();
+        classes = new HashMap<String, GraphClass>();
         todo = new ArrayList<GraphClassWrapper>();
         algos = new ArrayList<AlgoWrapper>();
         reductionsTodo = new ArrayList<ReductionWrapper>();
         relations = new ArrayList<AbstractRelation>();
     }
-    
-    public DirectedGraph<GraphClass,Inclusion> getGraph() {
+
+    public DirectedGraph<GraphClass, Inclusion> getGraph() {
         return graph;
     }
 
@@ -103,289 +117,293 @@ public class ISGCIReader extends DefaultHandler{
     /** ContentHandler Interface */
     public void startDocument() {
     }
-    
+
     /** ContentHandler Interface */
     public void endDocument() {
     }
-    
+
     public String getDate() {
         return date;
-    }    
-    
+    }
+
     public String getNodeCount() {
         return nodecount;
-    }    
-    
+    }
+
     public String getEdgeCount() {
         return edgecount;
-    }    
-    
+    }
+
     /** ContentHandler Interface */
-    public void startElement(String uri, String locName, String qName, 
-             Attributes atts) throws SAXException {
+    public void startElement(String uri, String locName, String qName,
+            Attributes atts) throws SAXException {
         try {
-        
-            
-        //---- Statistics ----
-        if (Tags.STATS.equals(qName)) {
-            date = atts.getValue(Tags.DATE);
-            nodecount = atts.getValue(Tags.NODECOUNT);
-            edgecount = atts.getValue(Tags.EDGECOUNT);
-        } else
 
-        //---- GraphClasses ----
-        if (Tags.GRAPHCLASSES.equals(qName)) {
-            // Add the problem reductions
-            int i, size, oldsize;
-            oldsize = reductionsTodo.size();
-            while ((size = reductionsTodo.size()) != 0) {
-                for (i = size-1; i >= 0; i--) {
-                    if (reductionsTodo.get(i).generate())
-                        reductionsTodo.remove(i);
+            // ---- Statistics ----
+            if (Tags.STATS.equals(qName)) {
+                date = atts.getValue(Tags.DATE);
+                nodecount = atts.getValue(Tags.NODECOUNT);
+                edgecount = atts.getValue(Tags.EDGECOUNT);
+            } else
+
+            // ---- GraphClasses ----
+            if (Tags.GRAPHCLASSES.equals(qName)) {
+                // Add the problem reductions
+                int i, size, oldsize;
+                oldsize = reductionsTodo.size();
+                while ((size = reductionsTodo.size()) != 0) {
+                    for (i = size - 1; i >= 0; i--) {
+                        if (reductionsTodo.get(i).generate())
+                            reductionsTodo.remove(i);
+                    }
+                    /*
+                     * Iterator<ReductionWrapper> iter =
+                     * reductionsTodo.iterator(); while (iter.hasNext()) if
+                     * (iter.next().generate()) iter.remove();
+                     */
+                    if (reductionsTodo.size() == oldsize) {
+                        System.err.println(size + " problems not resolved");
+                        System.err.println(reductionsTodo);
+                        return;
+                    }
+                    oldsize = size;
                 }
-                /*Iterator<ReductionWrapper> iter = reductionsTodo.iterator();
-                while (iter.hasNext())
-                    if (iter.next().generate())
-                        iter.remove();*/
-                if (reductionsTodo.size() == oldsize) {
-                    System.err.println(size+" problems not resolved");
-                    System.err.println(reductionsTodo);
-                    return;
+            } else
+
+            // ---- GraphClass ----
+            if (Tags.GRAPHCLASS.equals(qName)) {
+                curClass = new GraphClassWrapper(atts.getValue(Tags.ID),
+                        atts.getValue(Tags.TYPE));
+            } else if (Tags.HERED.equals(qName)) {
+                curClass.hered = atts.getValue(Tags.TYPE);
+            } else if (Tags.SELFCO.equals(qName)) {
+                curClass.selfComplementary = true;
+            } else if (Tags.CLIQUEFIXED.equals(qName)) {
+                curClass.cliqueFixed = true;
+            } else
+
+            // ---- Inclusion/relation ----
+            if (Tags.INCLUSION.equals(qName) || Tags.EQU.equals(qName)) {
+                String gcsuper = Tags.INCLUSION.equals(qName) ? Tags.SUPER
+                        : Tags.GC1;
+                String gcsub = Tags.INCLUSION.equals(qName) ? Tags.SUB
+                        : Tags.GC2;
+                if (atts.getValue(gcsuper) == atts.getValue(gcsub))
+                    throw new SAXException("super = sub = "
+                            + atts.getValue(gcsuper));
+                /*
+                 * System.out.println( atts.getValue(gcsuper) +" -> "+
+                 * atts.getValue(gcsub) +" "+
+                 * classes.get(atts.getValue(gcsuper)) +" ->"+
+                 * classes.get(atts.getValue(gcsub)) );
+                 */
+                if (graph.containsEdge(classes.get(atts.getValue(gcsuper)),
+                        classes.get(atts.getValue(gcsub))))
+                    throw new SAXException("Edge " + atts.getValue(gcsuper)
+                            + " -> " + atts.getValue(gcsub)
+                            + " already exists");
+                curIncl = graph.addEdge(classes.get(atts.getValue(gcsuper)),
+                        classes.get(atts.getValue(gcsub)));
+                curIncl.setProper(atts.getValue(Tags.PROPER) != null);
+                curIncl.setConfidence(Tags.string2confidence(atts
+                        .getValue(Tags.CONFIDENCE)));
+                refs = new ArrayList();
+
+            } else if (Tags.DISJOINT.equals(qName)
+                    || Tags.INCOMPARABLE.equals(qName)) {
+                if (atts.getValue(Tags.GC1) == atts.getValue(Tags.GC2))
+                    throw new SAXException("gc1 = gc2 = "
+                            + atts.getValue(Tags.GC1));
+                if (Tags.DISJOINT.equals(qName))
+                    curRel = new Disjointness(classes.get(atts
+                            .getValue(Tags.GC1)), classes.get(atts
+                            .getValue(Tags.GC2)));
+                else
+                    curRel = new Incomparability(classes.get(atts
+                            .getValue(Tags.GC1)), classes.get(atts
+                            .getValue(Tags.GC2)));
+                curRel.setConfidence(Tags.string2confidence(atts
+                        .getValue(Tags.CONFIDENCE)));
+                for (AbstractRelation r : relations)
+                    if (r.get1() == curRel.get1() && r.get2() == curRel.get2())
+                        throw new SAXException(
+                                "An incomparability or disjointness between "
+                                        + curRel.get1().getID() + " and "
+                                        + curRel.get2().getID()
+                                        + " already exists.");
+                relations.add(curRel);
+                refs = new ArrayList();
+            } else
+
+            // ---- Problem stuff ----
+            if (Tags.PROBLEM_DEF.equals(qName)) {
+                Problem p;
+                String compl = atts.getValue(Tags.PROBLEM_COMPLEMENT);
+                p = Problem.createProblem(atts.getValue(Tags.NAME), graph);
+                problems.add(p);
+                problemNames.put(p.getName(), p);
+                if (compl != null) {
+                    Problem c = (Problem) problemNames.get(compl);
+                    if (c == null)
+                        throw new SAXException("Complement problem " + compl
+                                + "not found.");
+                    p.setComplement((Problem) c);
                 }
-                oldsize = size;
+                curProblem = p;
+                refs = new ArrayList();
+
+            } else if (Tags.PROBLEM_FROM.equals(qName)) {
+                String from = atts.getValue(Tags.NAME);
+                Complexity c = Complexity.getComplexity(atts
+                        .getValue(Tags.COMPLEXITY));
+                reductionsTodo.add(new ReductionWrapper(curProblem, from, c));
+
+            } else if (Tags.ALGO.equals(qName)) {
+                curAlgo = new AlgoWrapper(curClass.id,
+                        atts.getValue(Tags.NAME),
+                        atts.getValue(Tags.COMPLEXITY),
+                        atts.getValue(Tags.BOUNDS));
+
+            } else if (Tags.PROBLEM.equals(qName)) {
+                curClass.complexities.add(new ProblemWrapper(
+                        (Problem) problemNames.get(atts.getValue(Tags.NAME)),
+                        atts.getValue(Tags.COMPLEXITY) != null ? Complexity
+                                .getComplexity(atts.getValue(Tags.COMPLEXITY))
+                                : Complexity.UNKNOWN));
+            } else
+
+            // ---- References ----
+            if (Tags.NOTE.equals(qName)) {
+                chunks.setLength(0);
+                noteName = atts.getValue(Tags.NAME);
+            } else if (Tags.REF.equals(qName) || Tags.SMALLGRAPH.equals(qName)
+                    || Tags.GCREF.equals(qName) || Tags.NAME.equals(qName)) {
+                chunks.setLength(0);
             }
-        } else
-        
-        //---- GraphClass ----
-        if (Tags.GRAPHCLASS.equals(qName)) {
-            curClass = new GraphClassWrapper(atts.getValue(Tags.ID),
-                    atts.getValue(Tags.TYPE));
-        } else if (Tags.HERED.equals(qName)) {
-            curClass.hered = atts.getValue(Tags.TYPE);
-        } else if (Tags.SELFCO.equals(qName)) {
-            curClass.selfComplementary = true;
-        } else if (Tags.CLIQUEFIXED.equals(qName)) {
-            curClass.cliqueFixed = true;
-        } else
 
-        //---- Inclusion/relation ----
-        if (Tags.INCLUSION.equals(qName)  || Tags.EQU.equals(qName)) {
-            String gcsuper = Tags.INCLUSION.equals(qName) ?
-                    Tags.SUPER : Tags.GC1;
-            String gcsub = Tags.INCLUSION.equals(qName) ?
-                    Tags.SUB : Tags.GC2;
-            if (atts.getValue(gcsuper) == atts.getValue(gcsub))
-                throw new SAXException("super = sub = "+
-                        atts.getValue(gcsuper));
-            /*System.out.println(
-                    atts.getValue(gcsuper) +" -> "+ atts.getValue(gcsub) +" "+
-                    classes.get(atts.getValue(gcsuper)) +" ->"+
-                    classes.get(atts.getValue(gcsub)) );*/
-            if (graph.containsEdge(
-                    classes.get(atts.getValue(gcsuper)),
-                    classes.get(atts.getValue(gcsub)) ))
-                throw new SAXException("Edge "+ atts.getValue(gcsuper) +" -> "+
-                        atts.getValue(gcsub) +" already exists");
-            curIncl = graph.addEdge(
-                    classes.get(atts.getValue(gcsuper)),
-                    classes.get(atts.getValue(gcsub)) );
-            curIncl.setProper(atts.getValue(Tags.PROPER) != null);
-            curIncl.setConfidence(Tags.string2confidence(
-                    atts.getValue(Tags.CONFIDENCE)));
-            refs = new ArrayList();
-
-        } else if (Tags.DISJOINT.equals(qName)  ||
-                Tags.INCOMPARABLE.equals(qName)) {
-            if (atts.getValue(Tags.GC1) == atts.getValue(Tags.GC2))
-                throw new SAXException("gc1 = gc2 = "+
-                        atts.getValue(Tags.GC1));
-            if (Tags.DISJOINT.equals(qName))
-                curRel = new Disjointness(
-                        classes.get(atts.getValue(Tags.GC1)),
-                        classes.get(atts.getValue(Tags.GC2)));
-            else
-                curRel = new Incomparability(
-                        classes.get(atts.getValue(Tags.GC1)),
-                        classes.get(atts.getValue(Tags.GC2)));
-            curRel.setConfidence(Tags.string2confidence(
-                    atts.getValue(Tags.CONFIDENCE)));
-            for (AbstractRelation r : relations)
-                if (r.get1() == curRel.get1()  &&  r.get2() == curRel.get2())
-                    throw new SAXException(
-                        "An incomparability or disjointness between "+
-                        curRel.get1().getID() +" and "+ curRel.get2().getID() +
-                        " already exists.");
-            relations.add(curRel);
-            refs = new ArrayList();
-        } else
-
-        //---- Problem stuff ----
-        if (Tags.PROBLEM_DEF.equals(qName)) {
-            Problem p;
-            String compl = atts.getValue(Tags.PROBLEM_COMPLEMENT);
-            p = Problem.createProblem(atts.getValue(Tags.NAME), graph);
-            problems.add(p);
-            problemNames.put(p.getName(), p);
-            if (compl != null) {
-                Problem c = (Problem) problemNames.get(compl);
-                if (c == null)
-                    throw new SAXException("Complement problem "+ compl +
-                            "not found.");
-                p.setComplement((Problem) c);
-            }
-            curProblem = p;
-            refs = new ArrayList();
-
-        } else if (Tags.PROBLEM_FROM.equals(qName)) {
-            String from = atts.getValue(Tags.NAME);
-            Complexity c = Complexity.getComplexity(
-                    atts.getValue(Tags.COMPLEXITY));
-            reductionsTodo.add(new ReductionWrapper(curProblem, from, c));
-
-        } else if (Tags.ALGO.equals(qName)) {
-            curAlgo = new AlgoWrapper(curClass.id, atts.getValue(Tags.NAME),
-                atts.getValue(Tags.COMPLEXITY), atts.getValue(Tags.BOUNDS));
-
-        } else if (Tags.PROBLEM.equals(qName)) {
-            curClass.complexities.add(new ProblemWrapper(
-                (Problem) problemNames.get(atts.getValue(Tags.NAME)),
-                atts.getValue(Tags.COMPLEXITY) != null ?
-                    Complexity.getComplexity(atts.getValue(Tags.COMPLEXITY)) :
-                    Complexity.UNKNOWN));
-        } else
-
-        //---- References ----
-        if (Tags.NOTE.equals(qName)) {
-            chunks.setLength(0);
-            noteName = atts.getValue(Tags.NAME);
-        } else if (Tags.REF.equals(qName) ||  Tags.SMALLGRAPH.equals(qName) ||
-                Tags.GCREF.equals(qName)  ||  Tags.NAME.equals(qName)) {
-            chunks.setLength(0);
-        }
-        
         } catch (Exception e) {
-            String s = "Line "+ Integer.toString(locator.getLineNumber()) +
-                "\nColumn "+ Integer.toString(locator.getColumnNumber()) +
-                "\nId "+ qName +
-                e.toString();
+            String s = "Line " + Integer.toString(locator.getLineNumber())
+                    + "\nColumn "
+                    + Integer.toString(locator.getColumnNumber()) + "\nId "
+                    + qName + e.toString();
             throw new SAXException(s);
         }
     }
-    
+
     /** ContentHandler Interface */
     public void endElement(String uri, String locName, String qName)
             throws SAXException {
         try {
 
-        //---- ISGCI ----
-        if (Tags.ROOT_ISGCI.equals(qName)) {
-            parsingDone = true;
-        }
-
-        //---- GraphClasses ----
-        if (Tags.GRAPHCLASSES.equals(qName)) {
-            // First generate the outstanding graphclasses.
-            int i, size, oldsize = todo.size();
-            while ((size = todo.size()) != 0) {
-                for (i = size-1; i >= 0; i--) {
-                    if (todo.get(i).generate())
-                        todo.remove(i);
-                }
-                if (todo.size() == oldsize) {
-                    System.err.println(size+" classes not resolved");
-                    System.err.println(todo);
-                    return;
-                }
-                oldsize = size;
+            // ---- ISGCI ----
+            if (Tags.ROOT_ISGCI.equals(qName)) {
+                parsingDone = true;
             }
-            //System.out.println(classes.size()+" classes successfully read");
 
-            // Then create the Complexities.
-            for (AlgoWrapper aw : algos)
-                aw.generate();
+            // ---- GraphClasses ----
+            if (Tags.GRAPHCLASSES.equals(qName)) {
+                // First generate the outstanding graphclasses.
+                int i, size, oldsize = todo.size();
+                while ((size = todo.size()) != 0) {
+                    for (i = size - 1; i >= 0; i--) {
+                        if (todo.get(i).generate())
+                            todo.remove(i);
+                    }
+                    if (todo.size() == oldsize) {
+                        System.err.println(size + " classes not resolved");
+                        System.err.println(todo);
+                        return;
+                    }
+                    oldsize = size;
+                }
+                // System.out.println(classes.size()+" classes successfully read");
 
-        } else if (Tags.GRAPHCLASS.equals(qName)) {
-            curClass.end();
-            if (!curClass.generate())
-                todo.add(curClass);
-        } else if (Tags.NAME.equals(qName)) {
-            curClass.name = new String(chunks.toString());
-        } else if (Tags.SMALLGRAPH.equals(qName) || Tags.GCREF.equals(qName)) {
-            if (Tags.INTER.equals(curClass.type) ||
-                    Tags.FORBID.equals(curClass.type) ||
-                    Tags.UNION.equals(curClass.type)) {
-                curClass.set.add(new String(chunks.toString()));
-            } else if (Tags.INDHERED.equals(curClass.type)  ||
-                    Tags.CONHERED.equals(curClass.type) ||
-                    Tags.ISOHERED.equals(curClass.type)  ||
-                    Tags.PROBE.equals(curClass.type)  ||
-                    Tags.CLIQUE.equals(curClass.type)  ||
-                    Tags.COMPL.equals(curClass.type)) {
-                if (curClass.base == null)
-                    curClass.base = new String(chunks.toString());
-                else
-                    throw new SAXException("More than one "+qName+" in "+
-                        curClass.type);
+                // Then create the Complexities.
+                for (AlgoWrapper aw : algos)
+                    aw.generate();
+
+            } else if (Tags.GRAPHCLASS.equals(qName)) {
+                curClass.end();
+                if (!curClass.generate())
+                    todo.add(curClass);
+            } else if (Tags.NAME.equals(qName)) {
+                curClass.name = new String(chunks.toString());
+            } else if (Tags.SMALLGRAPH.equals(qName)
+                    || Tags.GCREF.equals(qName)) {
+                if (Tags.INTER.equals(curClass.type)
+                        || Tags.FORBID.equals(curClass.type)
+                        || Tags.UNION.equals(curClass.type)) {
+                    curClass.set.add(new String(chunks.toString()));
+                } else if (Tags.INDHERED.equals(curClass.type)
+                        || Tags.CONHERED.equals(curClass.type)
+                        || Tags.ISOHERED.equals(curClass.type)
+                        || Tags.PROBE.equals(curClass.type)
+                        || Tags.CLIQUE.equals(curClass.type)
+                        || Tags.COMPL.equals(curClass.type)) {
+                    if (curClass.base == null)
+                        curClass.base = new String(chunks.toString());
+                    else
+                        throw new SAXException("More than one " + qName
+                                + " in " + curClass.type);
+                } else
+                    throw new SAXException("Unexpected " + qName);
             } else
-                throw new SAXException("Unexpected "+qName);
-        } else
 
-        //---- Inclusions ----
-        if (Tags.INCLUSION.equals(qName)) {
-            curIncl.setRefs(refs);
-        } else if (Tags.DISJOINT.equals(qName)  ||
-                Tags.INCOMPARABLE.equals(qName)) {
-            curRel.setRefs(refs);
-        } else
+            // ---- Inclusions ----
+            if (Tags.INCLUSION.equals(qName)) {
+                curIncl.setRefs(refs);
+            } else if (Tags.DISJOINT.equals(qName)
+                    || Tags.INCOMPARABLE.equals(qName)) {
+                curRel.setRefs(refs);
+            } else
 
-        if (Tags.EQU.equals(qName)) {
-            curIncl.setRefs(refs);
-            Inclusion revIncl = graph.addEdge(
-                    graph.getEdgeTarget(curIncl),
-                    graph.getEdgeSource(curIncl) );
-            revIncl.setProper(false);
-            revIncl.setConfidence(curIncl.getConfidence());
-            revIncl.setRefs(new ArrayList(refs));
-        } else
+            if (Tags.EQU.equals(qName)) {
+                curIncl.setRefs(refs);
+                Inclusion revIncl = graph.addEdge(
+                        graph.getEdgeTarget(curIncl),
+                        graph.getEdgeSource(curIncl));
+                revIncl.setProper(false);
+                revIncl.setConfidence(curIncl.getConfidence());
+                revIncl.setRefs(new ArrayList(refs));
+            } else
 
-        //---- Problems ----
-        if (Tags.ALGO.equals(qName)) {
-            curAlgo.end();
-            algos.add(curAlgo);
-        } else if (Tags.PROBLEM_DEF.equals(qName)) {
-            curProblem.setRefs(new ArrayList(refs));
-        } else
+            // ---- Problems ----
+            if (Tags.ALGO.equals(qName)) {
+                curAlgo.end();
+                algos.add(curAlgo);
+            } else if (Tags.PROBLEM_DEF.equals(qName)) {
+                curProblem.setRefs(new ArrayList(refs));
+            } else
 
-        //---- References ----
-        if (Tags.NOTE.equals(qName)) {
-            refs.add(new Note(new String(chunks.toString()), noteName));
-        } else if (Tags.REF.equals(qName)) {
-            refs.add(new Ref(new String(chunks.toString())));
-        }
+            // ---- References ----
+            if (Tags.NOTE.equals(qName)) {
+                refs.add(new Note(new String(chunks.toString()), noteName));
+            } else if (Tags.REF.equals(qName)) {
+                refs.add(new Ref(new String(chunks.toString())));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             throw new SAXException(e.toString());
         }
     }
-    
+
     /** ContentHandler Interface */
     public void characters(char[] ch, int start, int len) {
         chunks.append(ch, start, len);
     }
 
-    
-    //-------------------------- GraphClassWrapper -------------------------
+    // -------------------------- GraphClassWrapper -------------------------
     private class GraphClassWrapper {
         String type, name, id;
-        String base;            // base class id for complement/hereditary
-        HashSet<String> set;    // set for union/intersect/forbidden
+        String base; // base class id for complement/hereditary
+        HashSet<String> set; // set for union/intersect/forbidden
         String hered;
         boolean selfComplementary;
         boolean cliqueFixed;
         List<ProblemWrapper> complexities;
         List refs, prevrefs;
-        
+
         public GraphClassWrapper(String id, String type) {
             name = null;
             base = null;
@@ -396,9 +414,8 @@ public class ISGCIReader extends DefaultHandler{
             complexities = new ArrayList<ProblemWrapper>();
             this.id = id;
             this.type = type;
-            if (Tags.INTER.equals(type) ||
-                    Tags.FORBID.equals(type) ||
-                    Tags.UNION.equals(type)) {
+            if (Tags.INTER.equals(type) || Tags.FORBID.equals(type)
+                    || Tags.UNION.equals(type)) {
                 set = new HashSet<String>();
             }
             prevrefs = ISGCIReader.this.refs;
@@ -409,7 +426,7 @@ public class ISGCIReader extends DefaultHandler{
             ISGCIReader.this.refs = prevrefs;
         }
 
-        public boolean generate() throws SAXException { 
+        public boolean generate() throws SAXException {
             GraphClass gc = null, base2;
             HashSet<GraphClass> set2;
 
@@ -421,7 +438,7 @@ public class ISGCIReader extends DefaultHandler{
             } else if (Tags.COMPL.equals(type)) {
                 if (base == null)
                     throw new SAXException(
-                        "base class required for complement class "+id);
+                            "base class required for complement class " + id);
                 base2 = classes.get(base);
                 if (base2 == null) {
                     return false;
@@ -431,7 +448,7 @@ public class ISGCIReader extends DefaultHandler{
             } else if (Tags.ISOHERED.equals(type)) {
                 if (base == null)
                     throw new SAXException(
-                        "base class required for hereditary class "+id);
+                            "base class required for hereditary class " + id);
                 base2 = classes.get(base);
                 if (base2 == null) {
                     return false;
@@ -441,7 +458,7 @@ public class ISGCIReader extends DefaultHandler{
             } else if (Tags.CONHERED.equals(type)) {
                 if (base == null)
                     throw new SAXException(
-                        "base class required for hereditary class "+id);
+                            "base class required for hereditary class " + id);
                 base2 = classes.get(base);
                 if (base2 == null) {
                     return false;
@@ -451,7 +468,7 @@ public class ISGCIReader extends DefaultHandler{
             } else if (Tags.INDHERED.equals(type)) {
                 if (base == null)
                     throw new SAXException(
-                        "base class required for hereditary class "+id);
+                            "base class required for hereditary class " + id);
                 base2 = classes.get(base);
                 if (base2 == null) {
                     return false;
@@ -483,7 +500,7 @@ public class ISGCIReader extends DefaultHandler{
             } else if (Tags.PROBE.equals(type)) {
                 if (base == null)
                     throw new SAXException(
-                        "base class required for probe class "+id);
+                            "base class required for probe class " + id);
                 base2 = classes.get(base);
                 if (base2 == null) {
                     return false;
@@ -493,7 +510,7 @@ public class ISGCIReader extends DefaultHandler{
             } else if (Tags.CLIQUE.equals(type)) {
                 if (base == null)
                     throw new SAXException(
-                        "base class required for clique class "+id);
+                            "base class required for clique class " + id);
                 base2 = classes.get(base);
                 if (base2 == null) {
                     return false;
@@ -504,9 +521,8 @@ public class ISGCIReader extends DefaultHandler{
 
             if (hered != null) {
                 if (gc.getHereditariness() != GraphClass.Hered.UNKNOWN)
-                    System.out.println(
-                        "Warning: Changing hereditariness for " + id +
-                        ": was "+gc.getHereditariness());
+                    System.out.println("Warning: Changing hereditariness for "
+                            + id + ": was " + gc.getHereditariness());
                 gc.setHereditariness(Tags.string2hereditary(hered));
             }
 
@@ -523,14 +539,13 @@ public class ISGCIReader extends DefaultHandler{
         }
 
         public String toString() {
-            return "<GraphClass: "+id+" "+name+">";
+            return "<GraphClass: " + id + " " + name + ">";
         }
     }
 
-
-    //-------------------------- AlgoWrapper -------------------------
+    // -------------------------- AlgoWrapper -------------------------
     private class AlgoWrapper {
-        String id;                      // graphclass id
+        String id; // graphclass id
         String bounds;
         Problem problem;
         Complexity complexity;
@@ -542,7 +557,7 @@ public class ISGCIReader extends DefaultHandler{
             this.bounds = bounds;
             this.problem = (Problem) problemNames.get(name);
             if (this.problem == null)
-                throw new SAXException("problem not found: "+name);
+                throw new SAXException("problem not found: " + name);
             this.complexity = Complexity.getComplexity(complexity);
             prevrefs = ISGCIReader.this.refs;
             ISGCIReader.this.refs = refs = new ArrayList();
@@ -558,7 +573,7 @@ public class ISGCIReader extends DefaultHandler{
         }
     }
 
-    //---------------------- ProblemWrapper -----------------------
+    // ---------------------- ProblemWrapper -----------------------
     private class ProblemWrapper {
         Problem problem;
         Complexity complexity;
@@ -569,8 +584,7 @@ public class ISGCIReader extends DefaultHandler{
         }
     }
 
-
-    //---------------------- ReductionWrapper -------------------------
+    // ---------------------- ReductionWrapper -------------------------
     private class ReductionWrapper {
         Problem child;
         String parent;

@@ -10,11 +10,10 @@
 
 package teo.isgci.util;
 
-
 /**
  * A unary function.
  */
-public interface UnaryFunction<I,O> {
+public interface UnaryFunction<I, O> {
     public abstract O execute(I o);
 }
 

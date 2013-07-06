@@ -8,34 +8,43 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.xml;
 
-import javax.xml.parsers.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import java.net.URL;
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintStream;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLFilter;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * This class wraps some of the stuff necessary to parse an XML file.
- * All the user has to care about is the file to be parsed, and
- * a ContentHandler, a class that knows how to handle the information
- * that were extracted from the file.
+ * This class wraps some of the stuff necessary to parse an XML file. All the
+ * user has to care about is the file to be parsed, and a ContentHandler, a
+ * class that knows how to handle the information that were extracted from the
+ * file.
  */
-public class XMLParser{
-    
+public class XMLParser {
+
     protected InputSource input;
     protected XMLReader xmlReader;
-    
+
     /**
-     * Create a new parser with only the file specified. If no ContentHandler
-     * is specified explicitly, the parser will only report errors.
+     * Create a new parser with only the file specified. If no ContentHandler is
+     * specified explicitly, the parser will only report errors.
      */
     public XMLParser(InputSource input) {
         this(input, new DefaultHandler(), null);
     }
-    
+
     public XMLParser(InputSource input, ContentHandler cont) {
         this(input, cont, null);
     }
@@ -43,7 +52,7 @@ public class XMLParser{
     /**
      * Create a new parser.
      */
-    public XMLParser(InputSource input, ContentHandler cont, EntityResolver r){
+    public XMLParser(InputSource input, ContentHandler cont, EntityResolver r) {
         this(input, cont, r, null);
     }
 
@@ -51,13 +60,13 @@ public class XMLParser{
      * Create a new parser.
      */
     public XMLParser(InputSource input, ContentHandler cont, EntityResolver r,
-            XMLFilter filter){
+            XMLFilter filter) {
         // SAXParserFactory.newInstance() might fail because it consults
         // system properties, which is not allowed for applets. Moreover it
         // doesn't work for https connections in java 1.2+. So create an
         // instance directly.
         SAXParserFactory spf = SAXParserFactory.newInstance();
-                //new org.apache.crimson.jaxp.SAXParserFactoryImpl();
+        // new org.apache.crimson.jaxp.SAXParserFactoryImpl();
         spf.setValidating(true);
 
         xmlReader = null;
@@ -84,19 +93,19 @@ public class XMLParser{
 
         this.input = input;
     }
-    
+
     /** Set a new file to parse. */
     public void setInput(InputSource input) {
         this.input = input;
     }
-    
+
     /** Set a new ContentHandler that will handle the information. */
-    public void setContentHandler(ContentHandler ch){
+    public void setContentHandler(ContentHandler ch) {
         xmlReader.setContentHandler(ch);
     }
-    
+
     /** Parse the file. */
-    public void parse(){
+    public void parse() {
         try {
             // Tell the XMLReader to parse the XML document
             xmlReader.parse(input);
@@ -108,8 +117,7 @@ public class XMLParser{
             System.exit(1);
         }
     }
-    
-    
+
     /** Error handler to report errors and warnings */
     private static class MyErrorHandler implements ErrorHandler {
         /** Error handler output goes here */
@@ -125,11 +133,9 @@ public class XMLParser{
             if (systemId == null) {
                 systemId = "null";
             }
-            String info = "URI=" + systemId +
-                "\nLine=" + spe.getLineNumber() +
-                "\ncol="+spe.getColumnNumber()+
-                "\nid="+spe.getPublicId()+
-                "\nmsg:" + spe.getMessage();
+            String info = "URI=" + systemId + "\nLine=" + spe.getLineNumber()
+                    + "\ncol=" + spe.getColumnNumber() + "\nid="
+                    + spe.getPublicId() + "\nmsg:" + spe.getMessage();
             return info;
         }
 
@@ -139,7 +145,7 @@ public class XMLParser{
         public void warning(SAXParseException spe) throws SAXException {
             out.println("Warning: " + getParseExceptionInfo(spe));
         }
-        
+
         public void error(SAXParseException spe) throws SAXException {
             out.println("Error: " + getParseExceptionInfo(spe));
         }

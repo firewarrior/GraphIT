@@ -11,19 +11,19 @@
 package teo.isgci.grapht;
 
 import java.util.List;
-import java.util.ArrayList;
-import teo.isgci.gc.GraphClass;
+
 import teo.isgci.db.Relation;
 import teo.isgci.db.RelationData;
+import teo.isgci.gc.GraphClass;
 
 /**
- * Represents an inclusion in the system. For efficiency of the graph
- * structure, equals and hashCode should NOT be overridden!
+ * Represents an inclusion in the system. For efficiency of the graph structure,
+ * equals and hashCode should NOT be overridden!
  */
-public class Inclusion extends org.jgrapht.graph.DefaultEdge
-        implements Relation {
+public class Inclusion extends org.jgrapht.graph.DefaultEdge implements
+        Relation {
 
-    private boolean isProper;       // True if this incl is proper
+    private boolean isProper; // True if this incl is proper
     private RelationData rel;
 
     public Inclusion() {
@@ -31,23 +31,20 @@ public class Inclusion extends org.jgrapht.graph.DefaultEdge
         rel = new RelationData();
     }
 
-    /*public boolean equals(Object other) {
-        if (other == this)
-            return true;
-        if (!(other instanceof Inclusion))
-            return false;
-
-        Inclusion o = (Inclusion) other;
-        return superClass.equals(o.superClass) && subClass.equals(o.subClass);
-    }
-
-    public int hashCode() {
-        return superClass.hashCode() + subClass.hashCode();
-    }*/
+    /*
+     * public boolean equals(Object other) { if (other == this) return true; if
+     * (!(other instanceof Inclusion)) return false;
+     * 
+     * Inclusion o = (Inclusion) other; return superClass.equals(o.superClass)
+     * && subClass.equals(o.subClass); }
+     * 
+     * public int hashCode() { return superClass.hashCode() +
+     * subClass.hashCode(); }
+     */
 
     public String toString() {
         if (getSource() instanceof GraphClass)
-            return getSuper().getID() +" -> "+ getSub().getID();
+            return getSuper().getID() + " -> " + getSub().getID();
         return super.toString();
     }
 
@@ -62,7 +59,7 @@ public class Inclusion extends org.jgrapht.graph.DefaultEdge
     public boolean isProper() {
         return isProper;
     }
-    
+
     public void setProper(boolean b) {
         isProper = b;
     }

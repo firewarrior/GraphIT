@@ -11,17 +11,37 @@
 package teo.isgci.xml;
 
 import java.io.Writer;
-import java.util.*;
 import java.text.SimpleDateFormat;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.Graphs;
-import teo.isgci.grapht.*;
-import teo.isgci.db.*;
-import teo.isgci.gc.*;
-import teo.isgci.problem.*;
+import org.jgrapht.graph.SimpleDirectedGraph;
+import org.xml.sax.SAXException;
+
+import teo.isgci.db.AbstractRelation;
+import teo.isgci.db.Disjointness;
+import teo.isgci.db.Note;
+import teo.isgci.db.Ref;
+import teo.isgci.gc.BaseClass;
+import teo.isgci.gc.ComplementClass;
+import teo.isgci.gc.DerivedClass;
+import teo.isgci.gc.ForbiddenClass;
+import teo.isgci.gc.GraphClass;
+import teo.isgci.gc.HereditaryClass;
+import teo.isgci.gc.IntersectClass;
+import teo.isgci.gc.UnionClass;
+import teo.isgci.grapht.GAlg;
+import teo.isgci.grapht.Inclusion;
+import teo.isgci.problem.Algorithm;
+import teo.isgci.problem.Complexity;
+import teo.isgci.problem.Problem;
+import teo.isgci.problem.Reduction;
 import teo.isgci.util.LessLatex;
 import teo.sax.XMLWriter;
 
@@ -38,40 +58,46 @@ public class ISGCIWriter {
     /** Write all, for the web pages */
     public static final int MODE_FULL = 2;
 
-
     /**
      * Create a new ISGCIWriter
-     * @param writer where to write to
-     * @param mode what should be written
+     * 
+     * @param writer
+     *            where to write to
+     * @param mode
+     *            what should be written
      */
     public ISGCIWriter(Writer writer, int mode) {
         this.writer = new XMLWriter(writer);
         this.mode = mode;
     }
 
-
     /**
      * Write a full ISGCI dataset as an XML document.
-     * @param g the graph whose data to write
-     * @param problems the problems to write
-     * @param complementAnn a Set of complement nodes per node
-     * @param xmldecl XML declaration (may be null)
+     * 
+     * @param g
+     *            the graph whose data to write
+     * @param problems
+     *            the problems to write
+     * @param complementAnn
+     *            a Set of complement nodes per node
+     * @param xmldecl
+     *            XML declaration (may be null)
      */
-    public void writeISGCIDocument(DirectedGraph<GraphClass,Inclusion> g,
+    public void writeISGCIDocument(DirectedGraph<GraphClass, Inclusion> g,
             Collection<Problem> problems,
             Collection<AbstractRelation> relations,
-            Map<GraphClass,Set<GraphClass> > complementAnn,
-            String xmldecl) throws SAXException {
-        TreeMap<String,GraphClass> names = null;
-        boolean sortbyname =  mode == MODE_FULL || mode == MODE_SAGE; 
+            Map<GraphClass, Set<GraphClass>> complementAnn, String xmldecl)
+            throws SAXException {
+        TreeMap<String, GraphClass> names = null;
+        boolean sortbyname = mode == MODE_FULL || mode == MODE_SAGE;
 
-         if (sortbyname) {
-            names = new TreeMap<String,GraphClass>(new LessLatex());
+        if (sortbyname) {
+            names = new TreeMap<String, GraphClass>(new LessLatex());
             GraphClass w;
             for (GraphClass v : g.vertexSet()) {
                 if ((w = names.put(v.toString(), v)) != null)
-                    System.err.println("Duplicate classname! "+
-                        v.getID() +" "+ w.getID() +" "+ v +" "+w);
+                    System.err.println("Duplicate classname! " + v.getID()
+                            + " " + w.getID() + " " + v + " " + w);
             }
         }
 
@@ -81,28 +107,27 @@ public class ISGCIWriter {
             writer.startDocument(xmldecl);
         writer.startElement(Tags.ROOT_ISGCI);
         writer.characters("\n");
-            writeStatistics(g);
-            writeProblemDefs(problems);
-            writeNodes(sortbyname ?  names.values() : g.vertexSet(),
-                    problems, complementAnn, g);
+        writeStatistics(g);
+        writeProblemDefs(problems);
+        writeNodes(sortbyname ? names.values() : g.vertexSet(), problems,
+                complementAnn, g);
 
-            writer.startElement(Tags.INCLUSIONS);
-            writer.characters("\n");
-                writeEdges(g);
-                writeRelations(relations);
-            writer.endElement(Tags.INCLUSIONS);
-            writer.characters("\n");
+        writer.startElement(Tags.INCLUSIONS);
+        writer.characters("\n");
+        writeEdges(g);
+        writeRelations(relations);
+        writer.endElement(Tags.INCLUSIONS);
+        writer.characters("\n");
         writer.endElement(Tags.ROOT_ISGCI);
         writer.endDocument();
     }
 
-
-    private void writeStatistics(DirectedGraph<GraphClass,Inclusion> g)
+    private void writeStatistics(DirectedGraph<GraphClass, Inclusion> g)
             throws SAXException {
         SimpleAttributes atts = new SimpleAttributes();
 
-        DirectedGraph<GraphClass,Inclusion> closedGraph =
-                new SimpleDirectedGraph<GraphClass,Inclusion>(Inclusion.class);
+        DirectedGraph<GraphClass, Inclusion> closedGraph = new SimpleDirectedGraph<GraphClass, Inclusion>(
+                Inclusion.class);
         Graphs.addGraph(closedGraph, g);
         GAlg.transitiveClosure(closedGraph);
 
@@ -116,18 +141,20 @@ public class ISGCIWriter {
         writer.characters("\n");
     }
 
-
     /**
      * Write the GraphClasses.
-     * @param nodes the nodes to write
-     * @param problems the problems that can occur for nodes
+     * 
+     * @param nodes
+     *            the nodes to write
+     * @param problems
+     *            the problems that can occur for nodes
      */
     private void writeNodes(Iterable<GraphClass> nodes,
             Collection<Problem> problems,
-            Map<GraphClass,Set<GraphClass> > complementAnn,
-            DirectedGraph<GraphClass,Inclusion> g) throws SAXException {
+            Map<GraphClass, Set<GraphClass>> complementAnn,
+            DirectedGraph<GraphClass, Inclusion> g) throws SAXException {
         SimpleAttributes atts = new SimpleAttributes();
-        Map<GraphClass,Set<GraphClass> > scc = GAlg.calcSCCMap(g);
+        Map<GraphClass, Set<GraphClass>> scc = GAlg.calcSCCMap(g);
 
         writer.startElement(Tags.GRAPHCLASSES);
         writer.characters("\n");
@@ -138,41 +165,40 @@ public class ISGCIWriter {
             atts.addAttribute(Tags.TYPE, Tags.graphClassType(gc));
             writer.startElement("", Tags.GRAPHCLASS, "", atts);
             writer.characters("\n");
-                // Name
-                if (mode == MODE_FULL  ||  mode == MODE_SAGE  ||
-                            gc.namedExplicitly()) {
-                    writer.dataElement(Tags.NAME, gc.toString());
-                    writer.characters("\n");
-                }
-                // Set
-                if (gc.getClass() != BaseClass.class) {
-                    if (gc instanceof ForbiddenClass)
-                        writeForbiddenSet(((ForbiddenClass) gc).getSet());
-                    else if (gc instanceof IntersectClass)
-                        writeClassesSet(((IntersectClass) gc).getSet());
-                    else if (gc instanceof UnionClass)
-                        writeClassesSet(((UnionClass) gc).getSet());
-                    else if (gc instanceof ComplementClass)
-                        writeClassesSet( ((ComplementClass) gc).getBase() );
-                    else if (gc instanceof HereditaryClass)
-                        writeClassesSet( ((HereditaryClass) gc).getBase() );
-                    else if (gc instanceof DerivedClass)
-                        writeClassesSet( ((DerivedClass) gc).getBase() );
-                    else
-                        throw new RuntimeException(
-                                "Unknown class for node "+gc.getID());
-                    writer.characters("\n");
-                }
-                // Hereditariness, Complements, references and notes
-                if (mode == MODE_FULL) {
-                    writeHereditariness(gc);
-                    writeCliqueFixed(gc);
-                    writeEquivs( scc.get(gc) );
-                    writeComplements(complementAnn.get(gc));
-                    writeRefs(gc.getRefs());
-                }
-                // Problems
-                writeComplexities(gc, problems);
+            // Name
+            if (mode == MODE_FULL || mode == MODE_SAGE || gc.namedExplicitly()) {
+                writer.dataElement(Tags.NAME, gc.toString());
+                writer.characters("\n");
+            }
+            // Set
+            if (gc.getClass() != BaseClass.class) {
+                if (gc instanceof ForbiddenClass)
+                    writeForbiddenSet(((ForbiddenClass) gc).getSet());
+                else if (gc instanceof IntersectClass)
+                    writeClassesSet(((IntersectClass) gc).getSet());
+                else if (gc instanceof UnionClass)
+                    writeClassesSet(((UnionClass) gc).getSet());
+                else if (gc instanceof ComplementClass)
+                    writeClassesSet(((ComplementClass) gc).getBase());
+                else if (gc instanceof HereditaryClass)
+                    writeClassesSet(((HereditaryClass) gc).getBase());
+                else if (gc instanceof DerivedClass)
+                    writeClassesSet(((DerivedClass) gc).getBase());
+                else
+                    throw new RuntimeException("Unknown class for node "
+                            + gc.getID());
+                writer.characters("\n");
+            }
+            // Hereditariness, Complements, references and notes
+            if (mode == MODE_FULL) {
+                writeHereditariness(gc);
+                writeCliqueFixed(gc);
+                writeEquivs(scc.get(gc));
+                writeComplements(complementAnn.get(gc));
+                writeRefs(gc.getRefs());
+            }
+            // Problems
+            writeComplexities(gc, problems);
             writer.endElement(Tags.GRAPHCLASS);
             writer.characters("\n\n");
             atts.clear();
@@ -180,7 +206,6 @@ public class ISGCIWriter {
         writer.endElement(Tags.GRAPHCLASSES);
         writer.characters("\n");
     }
-
 
     /**
      * Write the edges.
@@ -191,8 +216,8 @@ public class ISGCIWriter {
         SimpleAttributes atts = new SimpleAttributes();
 
         for (AbstractRelation r : relations) {
-            String tag = r instanceof Disjointness ? Tags.DISJOINT :
-                    Tags.INCOMPARABLE;
+            String tag = r instanceof Disjointness ? Tags.DISJOINT
+                    : Tags.INCOMPARABLE;
 
             atts.addAttribute(Tags.GC1, r.get1().getID());
             atts.addAttribute(Tags.GC2, r.get2().getID());
@@ -209,10 +234,11 @@ public class ISGCIWriter {
             atts.clear();
         }
     }
+
     /**
      * Write the edges.
      */
-    private void writeEdges(DirectedGraph<GraphClass,Inclusion> g)
+    private void writeEdges(DirectedGraph<GraphClass, Inclusion> g)
             throws SAXException {
         int confidence;
         SimpleAttributes atts = new SimpleAttributes();
@@ -237,33 +263,34 @@ public class ISGCIWriter {
         }
     }
 
-
     /**
      * Write the forbidden subgraphs in set.
      */
-    private void writeForbiddenSet(Iterable set) throws SAXException{
+    private void writeForbiddenSet(Iterable set) throws SAXException {
         for (Object elem : set)
             writer.dataElement(Tags.SMALLGRAPH, elem.toString());
     }
 
-
     /**
      * Write the graphclasses in set.
-     * @param set the graphclasses to write
+     * 
+     * @param set
+     *            the graphclasses to write
      */
-    private void writeClassesSet(Iterable<GraphClass> set) throws SAXException{
+    private void writeClassesSet(Iterable<GraphClass> set) throws SAXException {
         for (GraphClass gc : set)
             writer.dataElement(Tags.GCREF, gc.getID());
     }
 
     /**
      * Write the single graphclass gc as a set.
-     * @param gc the graphclass to write
+     * 
+     * @param gc
+     *            the graphclass to write
      */
     private void writeClassesSet(GraphClass gc) throws SAXException {
         writer.dataElement(Tags.GCREF, gc.getID());
     }
-
 
     /**
      * Write the hereditary element (if needed) for gc.
@@ -274,10 +301,9 @@ public class ISGCIWriter {
 
         SimpleAttributes atts = new SimpleAttributes();
         atts.addAttribute(Tags.TYPE,
-            Tags.hereditariness2string(gc.getHereditariness()));
+                Tags.hereditariness2string(gc.getHereditariness()));
         writer.emptyElement("", Tags.HERED, "", atts);
     }
-
 
     /**
      * Write the clique-fixed element (if needed) for gc.
@@ -290,8 +316,6 @@ public class ISGCIWriter {
         writer.emptyElement("", Tags.CLIQUEFIXED, "", atts);
     }
 
-
-
     /**
      * Write a note containing the given equivalent classes.
      */
@@ -301,28 +325,26 @@ public class ISGCIWriter {
         SimpleAttributes atts = new SimpleAttributes();
         atts.addAttribute(Tags.NAME, Tags.EQUIVALENTS);
         writer.startElement("", Tags.NOTE, "", atts);
-            for (GraphClass eq : eqs) {
-                writeClassesSet(eq);
-            }
+        for (GraphClass eq : eqs) {
+            writeClassesSet(eq);
+        }
         writer.endElement(Tags.NOTE);
     }
 
     /**
      * Write a note containing the given complementclasses.
      */
-    private void writeComplements(Set<GraphClass> cos)
-            throws SAXException {
+    private void writeComplements(Set<GraphClass> cos) throws SAXException {
         if (cos == null)
             return;
         SimpleAttributes atts = new SimpleAttributes();
         atts.addAttribute(Tags.NAME, Tags.COMPLEMENTS);
         writer.startElement("", Tags.NOTE, "", atts);
-            for (GraphClass co : cos) {
-                writeClassesSet(co);
-            }
+        for (GraphClass co : cos) {
+            writeClassesSet(co);
+        }
         writer.endElement(Tags.NOTE);
     }
-
 
     /**
      * Write all Complexities for GraphClass n.
@@ -330,27 +352,25 @@ public class ISGCIWriter {
     private void writeComplexities(GraphClass n, Collection<Problem> problems)
             throws SAXException {
         for (Problem p : problems) {
-            writeComplexity(p, p.getDerivedComplexity(n),
-                    p.getAlgos(n));
+            writeComplexity(p, p.getDerivedComplexity(n), p.getAlgos(n));
         }
     }
-
 
     /**
      * Write a Complexity for Problem problem.
      */
-    private void writeComplexity(Problem problem, Complexity c,
-            Iterator algos) throws SAXException {
+    private void writeComplexity(Problem problem, Complexity c, Iterator algos)
+            throws SAXException {
         if (c == null)
             return;
         SimpleAttributes atts = new SimpleAttributes();
         atts.addAttribute(Tags.NAME, problem.getName());
         atts.addAttribute(Tags.COMPLEXITY, problem.getComplexityString(c));
-        if (mode == MODE_ONLINE  ||  mode == MODE_SAGE) {
+        if (mode == MODE_ONLINE || mode == MODE_SAGE) {
             writer.emptyElement("", Tags.PROBLEM, "", atts);
         } else {
             writer.startElement("", Tags.PROBLEM, "", atts);
-                writeAlgorithms(problem, algos);
+            writeAlgorithms(problem, algos);
             writer.endElement(Tags.PROBLEM);
         }
     }
@@ -360,7 +380,7 @@ public class ISGCIWriter {
      */
     private void writeAlgorithms(Problem problem, Iterator algos)
             throws SAXException {
-        if (mode == MODE_ONLINE  ||  mode == MODE_SAGE  ||  algos == null)
+        if (mode == MODE_ONLINE || mode == MODE_SAGE || algos == null)
             return;
         SimpleAttributes atts = new SimpleAttributes();
         while (algos.hasNext()) {
@@ -371,21 +391,19 @@ public class ISGCIWriter {
             if (a.getTimeBounds() != null)
                 atts.addAttribute(Tags.BOUNDS, a.getTimeBounds());
             writer.startElement("", Tags.ALGO, "", atts);
-                if (a.getGraphClass() != null)
-                    writer.dataElement(Tags.GCREF, a.getGraphClass().getID());
-                writeRefs(a.getRefs());
+            if (a.getGraphClass() != null)
+                writer.dataElement(Tags.GCREF, a.getGraphClass().getID());
+            writeRefs(a.getRefs());
             writer.endElement(Tags.ALGO);
             writer.characters("\n");
             atts.clear();
         }
     }
 
-
     /**
      * Write the references in refs.
      */
-    private void writeRefs(Collection refs)
-            throws SAXException {
+    private void writeRefs(Collection refs) throws SAXException {
         if (refs == null)
             return;
 
@@ -396,16 +414,15 @@ public class ISGCIWriter {
                 if (n.getName() != null)
                     atts.addAttribute(Tags.NAME, n.getName());
                 writer.startElement("", Tags.NOTE, "", atts);
-                    writer.charactersRaw(n.toString());
+                writer.charactersRaw(n.toString());
                 writer.endElement(Tags.NOTE);
                 atts.clear();
             } else if (o instanceof Ref) {
                 writer.dataElement(Tags.REF, ((Ref) o).getLabel());
             } else
-                throw new RuntimeException("Not a note/ref"+ o);
+                throw new RuntimeException("Not a note/ref" + o);
         }
     }
-
 
     /**
      * Write Problem definitions.
@@ -426,15 +443,15 @@ public class ISGCIWriter {
         }
     }
 
-    private void writeReductions(Iterator<Reduction> reds) throws SAXException{
+    private void writeReductions(Iterator<Reduction> reds) throws SAXException {
         Reduction red;
         SimpleAttributes atts = new SimpleAttributes();
 
         while (reds.hasNext()) {
             red = reds.next();
             atts.addAttribute(Tags.NAME, red.getParent().getName());
-            atts.addAttribute(Tags.COMPLEXITY,
-                    red.getComplexity().getComplexityString());
+            atts.addAttribute(Tags.COMPLEXITY, red.getComplexity()
+                    .getComplexityString());
             writer.emptyElement("", Tags.PROBLEM_FROM, "", atts);
             atts.clear();
         }

@@ -10,17 +10,22 @@
 
 package teo.isgci.problem;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.HashSet;
-import org.jgrapht.DirectedGraph;
-import teo.isgci.grapht.*;
-import teo.isgci.gc.*;
-import teo.isgci.db.Note;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.jgrapht.DirectedGraph;
+
+import teo.isgci.db.Note;
+import teo.isgci.gc.ComplementClass;
+import teo.isgci.gc.GraphClass;
+import teo.isgci.gc.UnionClass;
+import teo.isgci.grapht.Annotation;
+import teo.isgci.grapht.GAlg;
+import teo.isgci.grapht.Inclusion;
 
 /**
  * Stores the information about a graph problem.
@@ -29,15 +34,16 @@ public class Problem {
 
     protected String name;
     /** Inclusion graph */
-    protected DirectedGraph<GraphClass,Inclusion> graph;
+    protected DirectedGraph<GraphClass, Inclusion> graph;
     /** Stores complexity information on a graph class */
-    protected Annotation<GraphClass,Inclusion,Complexity> complexAnn;
+    protected Annotation<GraphClass, Inclusion, Complexity> complexAnn;
     /** Stores algorithms on a graph class */
-    protected Annotation<GraphClass,Inclusion,ProblemOnNode> algoAnn;
+    protected Annotation<GraphClass, Inclusion, ProblemOnNode> algoAnn;
     /** More/less general problems */
     protected List<Reduction> parents;
     protected List<Reduction> children;
-    /** Solving this on G is polytime equivalent to solving complement on co-G
+    /**
+     * Solving this on G is polytime equivalent to solving complement on co-G
      */
     protected Problem complement;
     /** The algorithms (node independent) that solve depending on co-G. */
@@ -45,26 +51,30 @@ public class Problem {
     /** References for this problem */
     List refs;
 
-    protected Problem(String name, DirectedGraph<GraphClass,Inclusion> g) {
+    protected Problem(String name, DirectedGraph<GraphClass, Inclusion> g) {
         this(name, g, null);
     }
 
     /**
      * Create a problem.
-     * @param name the name of the problem ("Independent set")
-     * @param g the graph of classes for which the problem exists
-     * @param complement the complement of the problem (Clique)
+     * 
+     * @param name
+     *            the name of the problem ("Independent set")
+     * @param g
+     *            the graph of classes for which the problem exists
+     * @param complement
+     *            the complement of the problem (Clique)
      */
-    protected Problem(String name, DirectedGraph<GraphClass,Inclusion> g,
-            Problem complement){
+    protected Problem(String name, DirectedGraph<GraphClass, Inclusion> g,
+            Problem complement) {
         this.name = name;
         this.graph = g;
         setComplement(complement);
         this.parents = new ArrayList<Reduction>();
         this.children = new ArrayList<Reduction>();
-        this.complexAnn = new Annotation<GraphClass,Inclusion,Complexity>(g);
-        this.algoAnn = deducing ?
-                new Annotation<GraphClass,Inclusion,ProblemOnNode>(g) : null;
+        this.complexAnn = new Annotation<GraphClass, Inclusion, Complexity>(g);
+        this.algoAnn = deducing ? new Annotation<GraphClass, Inclusion, ProblemOnNode>(
+                g) : null;
         this.coAlgos = null;
     }
 
@@ -87,7 +97,6 @@ public class Problem {
     public Iterator<Reduction> getReductions() {
         return parents.iterator();
     }
-
 
     public void setComplement(Problem thecomplement) {
         this.complement = thecomplement;
@@ -114,8 +123,8 @@ public class Problem {
     /**
      * Create a new problem with the given name and graph;
      */
-    public static Problem createProblem(
-            String name, DirectedGraph<GraphClass,Inclusion> g) {
+    public static Problem createProblem(String name,
+            DirectedGraph<GraphClass, Inclusion> g) {
         Problem p = null;
         if (name.equals("Cliquewidth"))
             p = new Cliquewidth(name, g);
@@ -128,7 +137,7 @@ public class Problem {
         return p;
     }
 
-    //====================== Complexity on a node ===========================
+    // ====================== Complexity on a node ===========================
 
     /**
      * Return the stored complexity of this problem on n. Return UNKNOWN if
@@ -139,16 +148,13 @@ public class Problem {
         return c == null ? Complexity.UNKNOWN : c;
     }
 
-
     /**
-     * Return a string representation of the given complexity.  The
-     * string chosen depends on whether this problem is a tree/cliquewidth
-     * parameter or not.
+     * Return a string representation of the given complexity. The string chosen
+     * depends on whether this problem is a tree/cliquewidth parameter or not.
      */
     public String getComplexityString(Complexity c) {
         return c.getComplexityString();
     }
-
 
     /**
      * Set the complexity of this on n to c.
@@ -157,20 +163,17 @@ public class Problem {
         complexAnn.setNode(n, c);
     }
 
-
     /**
      * Return the complexity of this problem on n, as derived in the last
-     * completed step.
-     * Meant to be used internally and for XML writing.
+     * completed step. Meant to be used internally and for XML writing.
      */
     public Complexity getDerivedComplexity(GraphClass n) {
         ProblemOnNode pon = algoAnn.getNode(n);
 
-        return pon == null ? Complexity.UNKNOWN :
-                pon.getComplexity(
-                    Problem.currentStep > 0 ? Problem.currentStep-1 : 0);
+        return pon == null ? Complexity.UNKNOWN
+                : pon.getComplexity(Problem.currentStep > 0 ? Problem.currentStep - 1
+                        : 0);
     }
-
 
     /**
      * Get the complexity of n, consulting the parent problem, too.
@@ -184,13 +187,12 @@ public class Problem {
         for (Reduction r : parents) {
             pc = r.fromParent(r.getParent().getParentallyDerivedComplexity(n));
             if (!c.isCompatible(pc))
-                throw new Error("Inconsistent data for "+n+" "+name);
+                throw new Error("Inconsistent data for " + n + " " + name);
             if (pc.betterThan(c))
                 c = pc;
         }
         return c;
     }
-
 
     /**
      * Get the complexity of n, consulting the child problem, too.
@@ -204,7 +206,7 @@ public class Problem {
         for (Reduction r : children) {
             cc = r.fromChild(r.getChild().getProgeniallyDerivedComplexity(n));
             if (!cc.isCompatible(c))
-                throw new Error("Inconsistent data for "+n+" "+name);
+                throw new Error("Inconsistent data for " + n + " " + name);
             if (cc.betterThan(c))
                 c = cc;
         }
@@ -219,9 +221,7 @@ public class Problem {
         return c.betterThan(Complexity.P) ? Complexity.P : c;
     }
 
-
-    //============================ Algorithms =============================
-
+    // ============================ Algorithms =============================
 
     /**
      * Add an algorithm for this problem on graphclass n and update the
@@ -230,8 +230,8 @@ public class Problem {
     protected void addAlgo(GraphClass n, Algorithm a) {
         if (!graph.containsVertex(n))
             throw new IllegalArgumentException("Invalid node");
-        if (a.getProblem() != this  &&  a.getProblem() != complement)
-            throw new IllegalArgumentException("Invalid algorithm "+ a);
+        if (a.getProblem() != this && a.getProblem() != complement)
+            throw new IllegalArgumentException("Invalid algorithm " + a);
 
         ProblemOnNode pon = algoAnn.getNode(n);
         if (pon == null) {
@@ -250,11 +250,9 @@ public class Problem {
             addAlgo(n, (Algorithm) iter.next());
     }
 
-
     /**
-     * Create a new algorithm for this problem on a node n, add it to node n
-     * and return it.
-     * n may be null.
+     * Create a new algorithm for this problem on a node n, add it to node n and
+     * return it. n may be null.
      */
     public Algorithm createAlgo(GraphClass n, Complexity complexity,
             String bounds, List refs) {
@@ -266,16 +264,13 @@ public class Problem {
 
     /**
      * Create a new algorithm for this problem on a node n with a simple
-     * explanation (Note text), add it to node n and return it.
-     * n may be null.
+     * explanation (Note text), add it to node n and return it. n may be null.
      */
-    public Algorithm createAlgo(GraphClass n, Complexity complexity,
-            String why) {
+    public Algorithm createAlgo(GraphClass n, Complexity complexity, String why) {
         List refs = new ArrayList();
         refs.add(new Note(why, null));
         return createAlgo(n, complexity, null, refs);
     }
-
 
     /**
      * Get the algorithms for this problem that work on node n or null if there
@@ -289,7 +284,6 @@ public class Problem {
         return pon == null ? null : pon.getAlgoSet();
     }
 
-
     /**
      * Return an iterator over the algorithms for this problem on the given
      * node. Never returns null.
@@ -299,23 +293,23 @@ public class Problem {
         if (hash == null)
             hash = new HashSet<Algorithm>();
         return hash.iterator();
-    } 
+    }
 
-
-    //====================== Distribution of algorithms =====================
-
+    // ====================== Distribution of algorithms =====================
 
     /**
      * Distribute the Algorithms for this problem over all nodes.
-     * initAlgo/addAlgo must have been called for all problems.
-     * Assumes the graph is transitively closed!
-     * @param gc2node maps GraphClass to Node in g
+     * initAlgo/addAlgo must have been called for all problems. Assumes the
+     * graph is transitively closed!
+     * 
+     * @param gc2node
+     *            maps GraphClass to Node in g
      */
     protected void distributeAlgorithms() {
         Complexity c;
-        Map<GraphClass,Set<GraphClass> > scc = GAlg.calcSCCMap(graph);
+        Map<GraphClass, Set<GraphClass>> scc = GAlg.calcSCCMap(graph);
 
-        //---- Add every set of algorithms to the super/subnodes' set. ----
+        // ---- Add every set of algorithms to the super/subnodes' set. ----
         for (GraphClass n : graph.vertexSet()) {
             HashSet algos = getAlgoSet(n);
             if (algos != null) {
@@ -330,23 +324,21 @@ public class Problem {
         }
     }
 
-
     /**
      * Distribute the algorithms for the parents to this problem.
      */
     protected void distributeParents() {
         Complexity c;
 
-        for (GraphClass n: graph.vertexSet()) {
+        for (GraphClass n : graph.vertexSet()) {
             for (Reduction r : parents) {
-                c = r.fromParent(
-                        r.getParent().getParentallyDerivedComplexity(n) );
+                c = r.fromParent(r.getParent().getParentallyDerivedComplexity(
+                        n));
                 if (!c.isUnknown())
                     addAlgo(n, r.getChildAlgo(c));
             }
         }
     }
-
 
     /**
      * Distribute the algorithms for the children to this problem.
@@ -356,23 +348,20 @@ public class Problem {
 
         for (GraphClass n : graph.vertexSet()) {
             for (Reduction r : children) {
-                c = r.fromChild(
-                        r.getChild().getProgeniallyDerivedComplexity(n) );
+                c = r.fromChild(r.getChild()
+                        .getProgeniallyDerivedComplexity(n));
                 if (!c.isUnknown())
                     addAlgo(n, r.getParentAlgo(c));
             }
         }
     }
 
-
     /**
      * Distribute the Algorithms for this problem over all nodes via the
-     * complement.
-     * initAlgo/addAlgo must have been called for all problems.
+     * complement. initAlgo/addAlgo must have been called for all problems.
      * distributeAlgorithms must have been called for this problem, and all
-     * parent/child problems.
-     * Assumes the graph is transitively closed and the complement index is
-     * set!
+     * parent/child problems. Assumes the graph is transitively closed and the
+     * complement index is set!
      */
     public void distributeComplement() {
         if (complement == null)
@@ -388,39 +377,38 @@ public class Problem {
             nc = getDerivedComplexity(n);
             conc = complement.getDerivedComplexity(con);
             if (!nc.isCompatible(complementComplexity(conc))) {
-                System.err.println("ComplexityClash: "+
-                        n +" "+ this.name +"="+ nc +" but "+
-                        con +" "+ this.complement.name +"="+ conc);
+                System.err.println("ComplexityClash: " + n + " " + this.name
+                        + "=" + nc + " but " + con + " "
+                        + this.complement.name + "=" + conc);
             } else if (nc.isUnknown() && !conc.isUnknown()) {
                 addAlgo(n, getComplementAlgo(complementComplexity(conc)));
             } else if (conc.isUnknown() && !nc.isUnknown()) {
-                complement.addAlgo(con, complement.getComplementAlgo(
-                        complement.complementComplexity(nc)) );
+                complement.addAlgo(con,
+                        complement.getComplementAlgo(complement
+                                .complementComplexity(nc)));
             }
         }
     }
 
-
     /**
      * Try moving complexity information UP to union nodes. We only change the
      * complexity class for Union nodes, and do not generate new references or
-     * timebounds.
-     * The reasoning is: If we can solve the problem for every part of the
-     * union in polytime, then we can apply all part algorithms in polytime,
-     * and check their solutions in polytime. So the problem is solvable in
-     * polytime on the union.
+     * timebounds. The reasoning is: If we can solve the problem for every part
+     * of the union in polytime, then we can apply all part algorithms in
+     * polytime, and check their solutions in polytime. So the problem is
+     * solvable in polytime on the union.
      */
     protected void distributeUpUnion() {
         int i;
         boolean ok;
         Complexity c;
 
-        for (GraphClass n: graph.vertexSet()) {
-            if ( !(n instanceof UnionClass) ||
-                    getDerivedComplexity(n).betterOrEqual(Complexity.P) )
+        for (GraphClass n : graph.vertexSet()) {
+            if (!(n instanceof UnionClass)
+                    || getDerivedComplexity(n).betterOrEqual(Complexity.P))
                 continue;
 
-            //---- Check whether all parts are in P ----
+            // ---- Check whether all parts are in P ----
             ok = true;
             for (GraphClass part : ((UnionClass) n).getSet()) {
                 if (!getDerivedComplexity(part).betterOrEqual(Complexity.P)) {
@@ -430,29 +418,30 @@ public class Problem {
             }
 
             if (ok) {
-                //System.err.println("NOTE: distributeUpUnion invoked on "+
-                        //n.getName()+" "+toString());
+                // System.err.println("NOTE: distributeUpUnion invoked on "+
+                // n.getName()+" "+toString());
                 createAlgo(n, Complexity.P, "From the constituent classes.");
             }
         }
     }
 
+    /**
+     * Try moving complexity information DOWN to intersection nodes. Example: If
+     * we can recognize every part of the intersection in polytime/lin, then we
+     * can take their conjunction in polytime/lin as well.
+     * 
+     * @param gc2node
+     *            translates a GraphClass into the corresponding ISGCINode
+     */
+    protected void distributeDownIntersect() {
+    }
 
     /**
-     * Try moving complexity information DOWN to intersection nodes.
-     * Example: If we can recognize every part of the intersection in
-     * polytime/lin, then we can take their conjunction in polytime/lin as
-     * well.
-     * @param gc2node translates a GraphClass into the corresponding ISGCINode
+     * Do special deductions for a particular problem. Default implementation
+     * does nothing.
      */
-    protected void distributeDownIntersect() {}
-
-    /**
-     * Do special deductions for a particular problem.
-     * Default implementation does nothing.
-     */
-    protected void distributeSpecial() {}
-
+    protected void distributeSpecial() {
+    }
 
     /**
      * Adds the algorithms in algos to the classes in nodes.
@@ -463,15 +452,15 @@ public class Problem {
         }
     }
 
-    //--------------------- Derived algorithms ---------------------------
+    // --------------------- Derived algorithms ---------------------------
 
     /**
      * Find in the given list an algorithm of the requested complexity. If it
-     * doesn't exist yet, create it node-independently with the given
-     * complexity and text.
+     * doesn't exist yet, create it node-independently with the given complexity
+     * and text.
      */
-    protected Algorithm getDerivedAlgo(List<Algorithm> l,
-            Complexity c, String why) {
+    protected Algorithm getDerivedAlgo(List<Algorithm> l, Complexity c,
+            String why) {
         for (Algorithm a : l)
             if (a.getComplexity().equals(c))
                 return a;
@@ -480,41 +469,36 @@ public class Problem {
         l.add(a);
         return a;
     }
-    
 
     /**
      * Return an algorithm that solves this on a class in time c, assuming the
      * complement can be solved on co-G.
      */
     protected Algorithm getComplementAlgo(Complexity c) {
-        final String why = "from "+ complement +" on the complement";
+        final String why = "from " + complement + " on the complement";
 
-        if (coAlgos ==  null)
+        if (coAlgos == null)
             coAlgos = new ArrayList<Algorithm>();
         return getDerivedAlgo(coAlgos, c, why);
     }
 
-    //================= Controlling the deduction process ====================
+    // ================= Controlling the deduction process ====================
     /**
-    * Complexities are deduced in multiple steps, as follows:
-    * Repeat twice:
-    * - Algorithms for problem on node or on a super/subclass of node.
-    * - Derived from previous step by parent/child problems
-    * - Derived from previous step by union/intersect/special
-    * Derived from previous step by complement problems.
-    * Repeat twice:
-    * - Algorithms for problem on node or on a super/subclass of node.
-    * - Derived from previous step by parent/child problems
-    * - Derived from previous step by union/intersect/special
-    */
-    static final int STEPS = 4*3 + 1;
+     * Complexities are deduced in multiple steps, as follows: Repeat twice: -
+     * Algorithms for problem on node or on a super/subclass of node. - Derived
+     * from previous step by parent/child problems - Derived from previous step
+     * by union/intersect/special Derived from previous step by complement
+     * problems. Repeat twice: - Algorithms for problem on node or on a
+     * super/subclass of node. - Derived from previous step by parent/child
+     * problems - Derived from previous step by union/intersect/special
+     */
+    static final int STEPS = 4 * 3 + 1;
     /** The current step */
     private static int currentStep;
     /** Whether we are doing deductions */
     private static boolean deducing;
     /** The problems */
     private static List<Problem> problems;
-
 
     /**
      * Call this before reading the graph when you're going to deduce.
@@ -524,7 +508,6 @@ public class Problem {
         currentStep = 0;
         problems = new ArrayList<Problem>();
     }
-
 
     /**
      * Perform a single sequence of complexity deductions (3 steps), without
@@ -549,10 +532,11 @@ public class Problem {
         currentStep++;
     }
 
-
     /**
      * Distribute/deduce the algorithms and complexities.
-     * @param gc2node maps GraphClass to Node in g
+     * 
+     * @param gc2node
+     *            maps GraphClass to Node in g
      */
     public static void distributeComplexities() {
         distributeComplexitiesBasic();
@@ -566,6 +550,5 @@ public class Problem {
         distributeComplexitiesBasic();
     }
 }
-
 
 /* EOF */

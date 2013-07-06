@@ -16,7 +16,7 @@ class ComplexityClashException extends RuntimeException {
     }
 
     public ComplexityClashException(Complexity a, Complexity b) {
-        super(a.toString() +" /\\ "+ b.toString());
+        super(a.toString() + " /\\ " + b.toString());
     }
 }
 

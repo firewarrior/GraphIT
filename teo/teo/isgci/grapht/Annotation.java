@@ -12,7 +12,9 @@ package teo.isgci.grapht;
 
 import java.util.Collection;
 import java.util.WeakHashMap;
+
 import org.jgrapht.Graph;
+
 import teo.isgci.util.UnaryFunction;
 
 /**
@@ -20,33 +22,31 @@ import teo.isgci.util.UnaryFunction;
  */
 public class Annotation<V, E, D> {
     /** The graph this annotation belongs to */
-    private Graph<V,E> graph;
+    private Graph<V, E> graph;
     /** Annotations for the nodes */
-    private WeakHashMap<V,D> nodeData;
+    private WeakHashMap<V, D> nodeData;
     /** Annotations for the edges */
-    private WeakHashMap<E,D> edgeData;
+    private WeakHashMap<E, D> edgeData;
     /** Creates annotation for vertices */
-    private UnaryFunction<V,D> nodeCreator;
+    private UnaryFunction<V, D> nodeCreator;
     /** Creates annotation for edges */
-    private UnaryFunction<E,D> edgeCreator;
-
+    private UnaryFunction<E, D> edgeCreator;
 
     /**
      * Create a new annotation for the given graph.
      */
-    public Annotation(Graph<V,E> g) {
+    public Annotation(Graph<V, E> g) {
         this(g, null, null);
     }
 
-
     /**
      * Create a new annotation for the given graph.
      */
-    public Annotation(Graph<V,E> g, UnaryFunction<V,D> nodeCreator,
-            UnaryFunction<E,D> edgeCreator) {
+    public Annotation(Graph<V, E> g, UnaryFunction<V, D> nodeCreator,
+            UnaryFunction<E, D> edgeCreator) {
         graph = g;
-        nodeData = new WeakHashMap<V,D>();
-        edgeData = new WeakHashMap<E,D>();
+        nodeData = new WeakHashMap<V, D>();
+        edgeData = new WeakHashMap<E, D>();
         this.nodeCreator = nodeCreator;
         this.edgeCreator = edgeCreator;
     }
@@ -54,18 +54,16 @@ public class Annotation<V, E, D> {
     /**
      * Set the node creator.
      */
-    public void setNodeCreator(UnaryFunction<V,D> creator) {
+    public void setNodeCreator(UnaryFunction<V, D> creator) {
         nodeCreator = creator;
     }
-
 
     /**
      * Set the edge creator.
      */
-    public void setEdgeCreator(UnaryFunction<E,D> creator) {
+    public void setEdgeCreator(UnaryFunction<E, D> creator) {
         edgeCreator = creator;
     }
-
 
     /**
      * Return the data attached to node n or null.
@@ -75,7 +73,6 @@ public class Annotation<V, E, D> {
             throw new IllegalArgumentException();
         return nodeData.get(n);
     }
-
 
     /**
      * Return the data attached to node n. If there is no data for n, it is
@@ -90,7 +87,6 @@ public class Annotation<V, E, D> {
         return res;
     }
 
-
     /**
      * Set the data attached to node n.
      */
@@ -100,7 +96,6 @@ public class Annotation<V, E, D> {
         nodeData.put(n, data);
     }
 
-
     /**
      * Return the data attached to edge e or null.
      */
@@ -109,7 +104,6 @@ public class Annotation<V, E, D> {
             throw new IllegalArgumentException();
         return edgeData.get(e);
     }
-
 
     /**
      * Return the data attached to edge e. If there is no data for e, it is
@@ -123,7 +117,6 @@ public class Annotation<V, E, D> {
         }
         return res;
     }
-
 
     /**
      * Set the data attached to edge e.

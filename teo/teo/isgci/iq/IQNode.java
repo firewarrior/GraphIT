@@ -10,24 +10,23 @@
 
 package teo.isgci.iq;
 
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
-import teo.isgci.gc.GraphClass;
+
 import teo.isgci.db.Algo;
 import teo.isgci.db.DataSet;
+import teo.isgci.gc.GraphClass;
 
 /**
  * IQNode is a node in the parse tree of an ISGCI Query.
  */
 class IQNode {
     /**
-     * Evaluate the expression and return the resulting set.
-     * This method is intended to be called for the root node, and maybe
-     * investigated subnodes directly (i.e. without calling their eval
-     * methods).
+     * Evaluate the expression and return the resulting set. This method is
+     * intended to be called for the root node, and maybe investigated subnodes
+     * directly (i.e. without calling their eval methods).
      */
     public Set<GraphClass> eval() {
         return new HashSet<GraphClass>();
@@ -49,7 +48,7 @@ class IQgc extends IQNode {
     }
 
     public String toString() {
-        return "\""+ name +"\"";
+        return "\"" + name + "\"";
     }
 }
 
@@ -77,7 +76,7 @@ class IQop extends IQNode {
             if (!">=".equals(op))
                 set.removeAll(DataSet.getEquivalentClasses(gc.gc));
         } else
-            throw new RuntimeException("Unknown operator "+ op);
+            throw new RuntimeException("Unknown operator " + op);
         return set;
     }
 
@@ -102,7 +101,7 @@ class IQnot extends IQNode {
     }
 
     public String toString() {
-        return "not "+ gc;
+        return "not " + gc;
     }
 }
 
@@ -119,11 +118,9 @@ class IQparen extends IQNode {
     }
 
     public String toString() {
-        return "("+ gc +")";
+        return "(" + gc + ")";
     }
 }
-
-
 
 /** A binary operator IQNode */
 class IQbinop extends IQNode {
@@ -134,7 +131,6 @@ class IQbinop extends IQNode {
         this.op = op;
         this.gc = gc;
     }
-
 
     public Set<GraphClass> eval() {
         Set<GraphClass> set = null;
@@ -161,22 +157,21 @@ class IQbinop extends IQNode {
                         set.removeAll(((IQnot) g).gc.eval());
                 }
         } else
-            throw new RuntimeException("Unknown operator "+ op);
+            throw new RuntimeException("Unknown operator " + op);
 
         return set;
     }
 
-
     public String toString() {
         StringBuffer b = new StringBuffer();
-        //b.append("(");
+        // b.append("(");
         Iterator<IQNode> iter = gc.iterator();
         while (iter.hasNext()) {
             b.append(iter.next());
             if (iter.hasNext())
-                b.append(" "+op+" ");
+                b.append(" " + op + " ");
         }
-        //b.append(")");
+        // b.append(")");
         return b.toString();
     }
 }

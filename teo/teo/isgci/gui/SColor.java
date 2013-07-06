@@ -11,12 +11,12 @@
 package teo.isgci.gui;
 
 import java.awt.Color;
-import javax.swing.*;
 
 public class SColor {
     private static final double FACTOR = 0.7;
 
-    private SColor() {}
+    private SColor() {
+    }
 
     /**
      * Return a brighter version of c.
@@ -30,26 +30,26 @@ public class SColor {
      * Is c a shade of black?
      */
     public static boolean isGray(Color c) {
-        return c.getRed() == c.getGreen()  &&  c.getRed() == c.getBlue();
+        return c.getRed() == c.getGreen() && c.getRed() == c.getBlue();
     }
 
     public static float getGray(Color c) {
-        return (float) c.getRed()/255;
+        return (float) c.getRed() / 255;
     }
 
     /**
      * Return an html colour string #rrggbb for the given colour.
      */
     public static String getHtml(Color color) {
-        return String.format("#%1$02X%2$02X%3$02X",
-                color.getRed(), color.getGreen(), color.getBlue());
+        return String.format("#%1$02X%2$02X%3$02X", color.getRed(),
+                color.getGreen(), color.getBlue());
     }
 
     /**
      * Brighten colour component c.
      */
     private static final int brighter(int c) {
-        return Math.min(c + (int)((255-c) * FACTOR), 255);
+        return Math.min(c + (int) ((255 - c) * FACTOR), 255);
     }
 }
 

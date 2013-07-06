@@ -11,8 +11,8 @@
 package teo.isgci.problem;
 
 import java.util.List;
-import teo.isgci.gc.GraphClass;
 
+import teo.isgci.gc.GraphClass;
 
 /**
  * Stores the complexity of some algorithm.
@@ -28,7 +28,6 @@ public class SimpleAlgorithm extends Algorithm {
     protected List refs;
     /** On which graphclass was this algorithm defined? */
     protected GraphClass gc;
-
 
     SimpleAlgorithm(Problem problem, GraphClass gc, Complexity complexity,
             String bounds, List refs) {
@@ -67,7 +66,6 @@ public class SimpleAlgorithm extends Algorithm {
         return timeBounds;
     }
 
-
     public List getRefs() {
         return refs;
     }
@@ -85,12 +83,10 @@ public class SimpleAlgorithm extends Algorithm {
     }
 
     public String toString() {
-        return "{"+
-                (problem != null ? problem.getName() : "(null)") +" "+
-                (complexity != null ? complexity.toString() : "(null)") +
-                (timeBounds != null ?  "["+timeBounds+"]" : "") +
-                " on "+
-                (gc != null ? gc.getID() : "(null)") +"}";
+        return "{" + (problem != null ? problem.getName() : "(null)") + " "
+                + (complexity != null ? complexity.toString() : "(null)")
+                + (timeBounds != null ? "[" + timeBounds + "]" : "") + " on "
+                + (gc != null ? gc.getID() : "(null)") + "}";
     }
 }
 

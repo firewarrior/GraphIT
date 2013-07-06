@@ -19,7 +19,6 @@ public class Latex2JHtml extends Latex {
         super();
     }
 
-
     /**
      * Return s as an html string.
      */
@@ -59,7 +58,6 @@ public class Latex2JHtml extends Latex {
         super.endCo(s);
     }
 
-
     protected void drawPlainString(State state, String str) {
         ((HtmlState) state).target.append(str);
     }
@@ -72,7 +70,6 @@ public class Latex2JHtml extends Latex {
             t.append(g.getName());
         }
     }
-
 
     protected class HtmlState extends Latex.State {
         protected StringBuffer target;

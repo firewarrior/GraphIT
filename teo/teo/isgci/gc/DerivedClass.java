@@ -8,15 +8,12 @@
  * Email: isgci@graphclasses.org
  */
 
-
 package teo.isgci.gc;
 
-
 public abstract class DerivedClass extends GraphClass {
-    
+
     /** Contains the base class */
     private GraphClass base;
-    
 
     /**
      * Sets base as given.
@@ -28,7 +25,6 @@ public abstract class DerivedClass extends GraphClass {
         base = g;
     }
 
-
     /**
      * Return the GraphClass this is based on.
      */
@@ -36,16 +32,15 @@ public abstract class DerivedClass extends GraphClass {
         return base;
     }
 
-    
     /**
-     * Returns <tt>true</tt> if <tt>obj</tt> is of the same class as this
-     * and based on an equal graphclass.
+     * Returns <tt>true</tt> if <tt>obj</tt> is of the same class as this and
+     * based on an equal graphclass.
      */
-    public boolean equals(Object obj){
+    public boolean equals(Object obj) {
         if (obj == this)
             return true;
-        if (obj != null  &&  obj.getClass() == getClass()) {
-            return base.equals(((DerivedClass)obj).base);
+        if (obj != null && obj.getClass() == getClass()) {
+            return base.equals(((DerivedClass) obj).base);
         }
         return false;
     }

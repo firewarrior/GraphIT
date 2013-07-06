@@ -13,11 +13,18 @@ package teo.isgci.gui;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
 import teo.isgci.db.Algo;
 
 public class NamingDialog extends JDialog implements ActionListener {
@@ -25,8 +32,7 @@ public class NamingDialog extends JDialog implements ActionListener {
     protected ButtonGroup group;
     protected JRadioButton basicBox, derivedBox, forbiddenBox;
     protected JButton okButton, cancelButton;
-    protected Dimension minSize = new Dimension(292,147);
-
+    protected Dimension minSize = new Dimension(292, 147);
 
     public NamingDialog(ISGCIMainFrame parent) {
         super(parent, "Naming preference", true);
@@ -67,10 +73,9 @@ public class NamingDialog extends JDialog implements ActionListener {
         label = latex.newLabel("e.g. (P_4,2K_2,C_4)-free");
         gridbag.setConstraints(label, c);
         contents.add(label);
-        
+
         c.gridwidth = 1;
-        derivedBox = new JRadioButton("Derived",
-                mode == Algo.NamePref.DERIVED);
+        derivedBox = new JRadioButton("Derived", mode == Algo.NamePref.DERIVED);
         group.add(derivedBox);
         gridbag.setConstraints(derivedBox, c);
         contents.add(derivedBox);
@@ -78,7 +83,6 @@ public class NamingDialog extends JDialog implements ActionListener {
         label = latex.newLabel("e.g. cograph \\cap split");
         gridbag.setConstraints(label, c);
         contents.add(label);
-
 
         JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 0));
         okButton = new JButton("OK");
@@ -93,7 +97,6 @@ public class NamingDialog extends JDialog implements ActionListener {
         cancelButton.addActionListener(this);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }
-
 
     protected void closeDialog() {
         setVisible(false);

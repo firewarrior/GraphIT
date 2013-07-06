@@ -10,7 +10,6 @@
 
 package teo.isgci.util;
 
-
 /**
  * A unary int-function.
  */

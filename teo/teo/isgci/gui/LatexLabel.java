@@ -11,29 +11,29 @@
 package teo.isgci.gui;
 
 import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Graphics;
-import java.awt.Font;
 import java.awt.FontMetrics;
-import javax.swing.*;
-import java.net.*;
-import java.io.*;
+import java.awt.Graphics;
+import java.awt.Insets;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 /**
- * A Label that can depict a subset of latex. drawLatexString can also
- * be called from other classes.
+ * A Label that can depict a subset of latex. drawLatexString can also be called
+ * from other classes.
  */
 public class LatexLabel extends JComponent {
 
     /** Where the glyphs come from. */
     private LatexGraphics latex;
-    
+
     /** Contents of this label */
     private String text;
 
     private int align;
-    //private int border;
 
+    // private int border;
 
     /**
      * Creates a new label without text.
@@ -44,8 +44,9 @@ public class LatexLabel extends JComponent {
 
     /**
      * Creates a new label
-     *
-     * @param text the contents of the label
+     * 
+     * @param text
+     *            the contents of the label
      */
     public LatexLabel(LatexGraphics l, String text) {
         this(l, text, JLabel.LEFT);
@@ -53,22 +54,25 @@ public class LatexLabel extends JComponent {
 
     /**
      * Creates a new label
-     *
-     * @param text contents of the label
-     * @param alignment alignment of the label (only LEFT supported )
+     * 
+     * @param text
+     *            contents of the label
+     * @param alignment
+     *            alignment of the label (only LEFT supported )
      */
     public LatexLabel(LatexGraphics l, String text, int alignment) {
         this.latex = l;
         this.text = text;
         align = alignment;
         setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
-        //border = 5;
+        // border = 5;
     }
 
     /**
      * Paints the label
-     *
-     * @param g the graphics context
+     * 
+     * @param g
+     *            the graphics context
      */
     protected void paintComponent(Graphics graphics) {
         Graphics g = graphics.create();
@@ -88,17 +92,18 @@ public class LatexLabel extends JComponent {
         FontMetrics fm = g.getFontMetrics();
         Insets insets = getInsets();
 
-        drawLatexString(g, text, insets.left, //border,
-                insets.top /*border*/ + fm.getLeading() + fm.getMaxAscent());
+        drawLatexString(g, text, insets.left, // border,
+                insets.top /* border */+ fm.getLeading() + fm.getMaxAscent());
     }
 
     /**
      * Changes the text of the label
-     *
-     * @param text the new text
+     * 
+     * @param text
+     *            the new text
      */
     public void setText(String text) {
-        this.text=text;
+        this.text = text;
         repaint();
     }
 
@@ -111,11 +116,12 @@ public class LatexLabel extends JComponent {
 
     /**
      * Changes the alignment of the label (only LEFT supported).
-     *
-     * @param align the new alignment
+     * 
+     * @param align
+     *            the new alignment
      */
     public void setAlignment(int align) {
-        this.align=align;
+        this.align = align;
     }
 
     /**
@@ -140,9 +146,9 @@ public class LatexLabel extends JComponent {
             g = getGraphics().create();
         g.setFont(getFont());
         FontMetrics fm = g.getFontMetrics();
-        Dimension d = new Dimension(
-                insets.left + insets.right + latex.getLatexWidth(g, text),
-                insets.top + insets.bottom + fm.getHeight());
+        Dimension d = new Dimension(insets.left + insets.right
+                + latex.getLatexWidth(g, text), insets.top + insets.bottom
+                + fm.getHeight());
         g.dispose();
         return d;
     }
@@ -158,33 +164,39 @@ public class LatexLabel extends JComponent {
      * Returns the maximal size of the label.
      */
     public Dimension getMaximumSize() {
-        return new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE);
-        //return getPreferredSize();
+        return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        // return getPreferredSize();
     }
-
 
     /**
      * Paints a string that contains latexcodes and returns its width.
-     * @param g the graphics context
-     * @param f the font metrics
-     * @param str the string to draw
-     * @param x where to paint
-     * @param y where to paint
+     * 
+     * @param g
+     *            the graphics context
+     * @param f
+     *            the font metrics
+     * @param str
+     *            the string to draw
+     * @param x
+     *            where to paint
+     * @param y
+     *            where to paint
      */
     public int drawLatexString(Graphics g, String str, int x, int y) {
         return latex.drawLatexString(g, str, x, y);
     }
 
-
     /**
      * Returns the width of a latexstring.
-     * @param str the string
-     * @param f the fontmetrics
+     * 
+     * @param str
+     *            the string
+     * @param f
+     *            the fontmetrics
      */
     public int getLatexWidth(Graphics g, String str) {
         return latex.getLatexWidth(g, str);
     }
-
 
 }
 

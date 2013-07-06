@@ -14,16 +14,13 @@ package teo.isgci.grapht;
 
 import org.jgrapht.DirectedGraph;
 
-public class UBFSWalker<V,E> extends BFSWalker<V,E> {
+public class UBFSWalker<V, E> extends BFSWalker<V, E> {
 
-    public UBFSWalker(
-            DirectedGraph<V,E> graph,
-            V start,
-            Annotation<V,E,WalkerInfo<V,E> > mark,
+    public UBFSWalker(DirectedGraph<V, E> graph, V start,
+            Annotation<V, E, WalkerInfo<V, E>> mark,
             GraphWalker.InitCode initCode) {
         super(graph, start, mark, initCode);
     }
-
 
     public void visit(V v) {
         /* This does lead to parent edges being explored again */
@@ -33,7 +30,7 @@ public class UBFSWalker<V,E> extends BFSWalker<V,E> {
             explore(e, graph.getEdgeSource(e), graph.getEdgeTarget(e));
         finish(v);
     }
-    
+
 }
 
 /* EOF */

@@ -10,8 +10,11 @@
 
 package teo.isgci.gui;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import teo.isgci.gc.GraphClass;
 
 /**
@@ -20,7 +23,7 @@ import teo.isgci.gc.GraphClass;
 class ListGroup implements ListSelectionListener {
     protected int used;
     protected JList[] lists;
-    protected boolean busy;     // To prevent event handling causing new evs.
+    protected boolean busy; // To prevent event handling causing new evs.
 
     /**
      * Make a new ListGroup of the specified number of Lists.
@@ -61,13 +64,12 @@ class ListGroup implements ListSelectionListener {
         return (GraphClass) getSelectedItem();
     }
 
-
     public void valueChanged(ListSelectionEvent event) {
-        if (!event.getValueIsAdjusting()  &&  !busy) {
+        if (!event.getValueIsAdjusting() && !busy) {
             Object source = event.getSource();
             busy = true;
             for (int i = 0; i < lists.length; i++) {
-                if (lists[i] != source  &&  !lists[i].isSelectionEmpty())
+                if (lists[i] != source && !lists[i].isSelectionEmpty())
                     lists[i].clearSelection();
             }
             busy = false;

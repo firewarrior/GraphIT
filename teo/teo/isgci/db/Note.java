@@ -16,7 +16,7 @@ package teo.isgci.db;
 public class Note {
     String text;
     String name;
-    
+
     public Note(String text, String name) {
         this.text = text != null ? text : "";
         this.name = name;

@@ -1,12 +1,6 @@
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.ListenableDirectedGraph;
-
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.swing.mxGraphComponent;
 
 public class FirstGraphTest {
 
@@ -28,22 +22,23 @@ public class FirstGraphTest {
         g.addEdge(v3, v4);
 
         System.out.println(g);
-        
-        //JGraphXModelAdapter<String, DefaultEdge> graph = new JGraphXModelAdapter<>(g);
-//        graph.setAutoSizeCells(true);
-//		graph.setCellsResizable(true);
-//        for (Object o : graph.getChildCells(graph.getDefaultParent(), true, false)) {
-//			graph.updateCellSize(o, true);
-//		}
-        
-        
-//        mxHierarchicalLayout m = new mxHierarchicalLayout(graph);
-//		m.execute(graph.getDefaultParent());
-		//mxGraphComponent graphComponent = new mxGraphComponent(graph);
-//		JFrame frame = new JFrame("First test");
-//		frame.getContentPane().add(graphComponent);
-//        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        frame.pack();
-//        frame.setVisible(true);
+
+        // JGraphXModelAdapter<String, DefaultEdge> graph = new
+        // JGraphXModelAdapter<>(g);
+        // graph.setAutoSizeCells(true);
+        // graph.setCellsResizable(true);
+        // for (Object o : graph.getChildCells(graph.getDefaultParent(), true,
+        // false)) {
+        // graph.updateCellSize(o, true);
+        // }
+
+        // mxHierarchicalLayout m = new mxHierarchicalLayout(graph);
+        // m.execute(graph.getDefaultParent());
+        // mxGraphComponent graphComponent = new mxGraphComponent(graph);
+        // JFrame frame = new JFrame("First test");
+        // frame.getContentPane().add(graphComponent);
+        // frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        // frame.pack();
+        // frame.setVisible(true);
     }
 }

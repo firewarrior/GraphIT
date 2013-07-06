@@ -10,14 +10,13 @@
 
 package teo.isgci.db;
 
-import java.util.List;
 import java.util.ArrayList;
-
+import java.util.List;
 
 public class RelationData implements Relation {
 
     private List refs;
-    private int confidence;         // How reliable this relation is
+    private int confidence; // How reliable this relation is
 
     public RelationData() {
         refs = null;

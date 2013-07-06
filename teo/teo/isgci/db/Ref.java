@@ -24,8 +24,8 @@ public class Ref {
 
     /** Return a formatted reference: [123] or "trivial" */
     public String toString() {
-        if (id.startsWith("ref_")) 
-            return new String("["+id.substring("ref_".length())+"]");
+        if (id.startsWith("ref_"))
+            return new String("[" + id.substring("ref_".length()) + "]");
         else if (id.equals("def"))
             return "by definition";
         else if (id.equals("trivial"))
@@ -39,7 +39,7 @@ public class Ref {
         else if (id.equals("basederived"))
             return "from the baseclasses";
         else
-            System.out.println("Reference not understood "+id);
+            System.out.println("Reference not understood " + id);
 
         return "";
     }

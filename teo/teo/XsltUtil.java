@@ -10,7 +10,10 @@
 
 package teo;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+
 import teo.isgci.util.Latex2Html;
 
 public class XsltUtil {
@@ -31,7 +34,6 @@ public class XsltUtil {
         p.waitFor();
     }
 
-    
     /**
      * Run a command and return its output.
      */
@@ -43,8 +45,8 @@ public class XsltUtil {
         cmd[2] = command;
         Process p = Runtime.getRuntime().exec(cmd);
 
-        BufferedReader r =
-                new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader r = new BufferedReader(new InputStreamReader(
+                p.getInputStream()));
         StringBuilder s = new StringBuilder();
         while ((c = r.read()) != -1)
             s.append((char) c);
@@ -53,9 +55,7 @@ public class XsltUtil {
         return s.toString();
     }
 
-    
-
-    //----------------------------- Latex stuff -----------------------------
+    // ----------------------------- Latex stuff -----------------------------
     static Latex2Html converter = new Latex2Html("images/");
 
     /**
@@ -65,6 +65,5 @@ public class XsltUtil {
         return converter.html(str);
     }
 }
-
 
 /* EOF */

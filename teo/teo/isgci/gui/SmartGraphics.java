@@ -24,8 +24,11 @@ public abstract class SmartGraphics extends Graphics {
 
     /**
      * Draw an arrow (more or less) through the given points.
-     * @param vec Points of the arrow
-     * @param unproper mark the edge as unproper?
+     * 
+     * @param vec
+     *            Points of the arrow
+     * @param unproper
+     *            mark the edge as unproper?
      */
     public abstract void drawArrow(Vector vec, boolean unproper);
 

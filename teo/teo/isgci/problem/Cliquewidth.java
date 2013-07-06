@@ -11,15 +11,16 @@
 package teo.isgci.problem;
 
 import org.jgrapht.DirectedGraph;
-import teo.isgci.grapht.*;
-import teo.isgci.gc.*;
-import teo.isgci.db.Note;
+
+import teo.isgci.gc.GraphClass;
+import teo.isgci.gc.ProbeClass;
+import teo.isgci.grapht.Inclusion;
 
 /**
  * Stores information about the cliquewidth of a graph.
  */
 public class Cliquewidth extends Problem {
-    public Cliquewidth(String name, DirectedGraph<GraphClass,Inclusion> g) {
+    public Cliquewidth(String name, DirectedGraph<GraphClass, Inclusion> g) {
         super(name, g);
     }
 
@@ -31,34 +32,30 @@ public class Cliquewidth extends Problem {
         return c;
     }
 
-
     /**
-     * Distribute the algorithms for the children to this problem.
-     * Overloaded because cliquewidth NPC distributes DOWNWARD to cliquewidth
-     * expression. It would come back to cwd again, causing a loop, which looks
-     * suspicious to the user.
+     * Distribute the algorithms for the children to this problem. Overloaded
+     * because cliquewidth NPC distributes DOWNWARD to cliquewidth expression.
+     * It would come back to cwd again, causing a loop, which looks suspicious
+     * to the user.
      */
     protected void distributeChildren() {
         Complexity c;
 
         for (GraphClass n : graph.vertexSet()) {
             for (Reduction r : children) {
-                c = r.fromChild(
-                        r.getChild().getProgeniallyDerivedComplexity(n) );
-                if (!c.isUnknown()  &&  (
-                        !getDerivedComplexity(n).isNPC() ||
-                        !"Cliquewidth expression".equals(
-                            r.getChild().getName())  ||
-                        !c.isNPC() ) )
+                c = r.fromChild(r.getChild()
+                        .getProgeniallyDerivedComplexity(n));
+                if (!c.isUnknown()
+                        && (!getDerivedComplexity(n).isNPC()
+                                || !"Cliquewidth expression".equals(r
+                                        .getChild().getName()) || !c.isNPC()))
                     addAlgo(n, r.getParentAlgo(c));
             }
         }
     }
 
-
     /**
-     * Do special deductions for a particular problem.
-     * Deduce probe X from X.
+     * Do special deductions for a particular problem. Deduce probe X from X.
      */
     protected void distributeSpecial() {
         int i;
@@ -66,8 +63,8 @@ public class Cliquewidth extends Problem {
         Complexity c;
 
         for (GraphClass n : graph.vertexSet()) {
-            if ( !(n instanceof ProbeClass) ||
-                    getDerivedComplexity(n).betterOrEqual(Complexity.P) )
+            if (!(n instanceof ProbeClass)
+                    || getDerivedComplexity(n).betterOrEqual(Complexity.P))
                 continue;
 
             GraphClass base = ((ProbeClass) n).getBase();

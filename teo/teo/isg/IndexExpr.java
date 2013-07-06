@@ -10,16 +10,16 @@
 
 package teo.isg;
 
-import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
- * An IndexExpr is a unary total function natural -> int. It is used to
- * create (sub)families using hmt-grammars.
+ * An IndexExpr is a unary total function natural -> int. It is used to create
+ * (sub)families using hmt-grammars.
  */
-public class IndexExpr{
+public class IndexExpr {
 
-    protected Token[] tokens;            // These make up the expression in RPN
+    protected Token[] tokens; // These make up the expression in RPN
 
     /**
      * Initialize <tt>this</tt> from blank-separated expression s, e.g.
@@ -31,8 +31,8 @@ public class IndexExpr{
 
         StringTokenizer tok = new StringTokenizer(s);
         while (tok.hasMoreElements()) {
-            p = (String)tok.nextElement();
-            if (p.length() == 1  &&  "+-*/x".indexOf(p.charAt(0)) >= 0)
+            p = (String) tok.nextElement();
+            if (p.length() == 1 && "+-*/x".indexOf(p.charAt(0)) >= 0)
                 v.addElement(new Token(p.charAt(0), 0));
             else
                 v.addElement(new Token('i', Integer.parseInt(p)));
@@ -50,36 +50,36 @@ public class IndexExpr{
 
         for (i = 0; i < tokens.length; i++)
             switch (tokens[i].op) {
-                case 'i':                      // Integer constant
-                    break;
-                case 'x':
-                    tokens[i].value = x;
-                    break;
-                case '+':
-                    tokens[i].value = tokens[i-2].value + tokens[i-1].value;
-                    break;
-                case '-':
-                    tokens[i].value = tokens[i-2].value - tokens[i-1].value;
-                    break;
-                case '*':
-                    tokens[i].value = tokens[i-2].value * tokens[i-1].value;
-                    break;
-                case '/':
-                    tokens[i].value = tokens[i-2].value / tokens[i-1].value;
-                    break;
-                default:
-                    throw new RuntimeException("Unknown token "+tokens[i].op+
-                            " for IndexExpr");
+            case 'i': // Integer constant
+                break;
+            case 'x':
+                tokens[i].value = x;
+                break;
+            case '+':
+                tokens[i].value = tokens[i - 2].value + tokens[i - 1].value;
+                break;
+            case '-':
+                tokens[i].value = tokens[i - 2].value - tokens[i - 1].value;
+                break;
+            case '*':
+                tokens[i].value = tokens[i - 2].value * tokens[i - 1].value;
+                break;
+            case '/':
+                tokens[i].value = tokens[i - 2].value / tokens[i - 1].value;
+                break;
+            default:
+                throw new RuntimeException("Unknown token " + tokens[i].op
+                        + " for IndexExpr");
             }
-        return tokens[tokens.length-1].value;
+        return tokens[tokens.length - 1].value;
     }
 
-    /*====================================================================*/
+    /* ==================================================================== */
 
     /**
      * Token in IndexExpr.
      */
-    protected class Token{
+    protected class Token {
         char op;
         int value;
 

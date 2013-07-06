@@ -10,14 +10,19 @@
 
 package teo.isgci.problem;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import org.jgrapht.DirectedGraph;
-import teo.isgci.grapht.*;
-import teo.isgci.gc.*;
-import teo.isgci.db.Note;
+
+import teo.isgci.gc.ForbiddenClass;
+import teo.isgci.gc.GraphClass;
+import teo.isgci.gc.IntersectClass;
+import teo.isgci.gc.UnionClass;
+import teo.isgci.grapht.GAlg;
+import teo.isgci.grapht.Inclusion;
 
 /**
  * Stores information about recognizing a graph.
@@ -26,37 +31,35 @@ public class Recognition extends Problem {
     /** Whether the first distribution of algorithms has been done */
     boolean firstDistributeDone;
 
-    public Recognition(String name, DirectedGraph<GraphClass,Inclusion> g) {
+    public Recognition(String name, DirectedGraph<GraphClass, Inclusion> g) {
         super(name, g);
         firstDistributeDone = false;
     }
 
-
     /**
      * Distribute the Algorithms for this problem over all nodes.
-     * initAlgo/addAlgo must have been called for all problems.
-     * We must redefine this function because Recognition distributes neither
-     * upwards nor downwards.
-     * Assumes the graph g is transitively closed!
+     * initAlgo/addAlgo must have been called for all problems. We must redefine
+     * this function because Recognition distributes neither upwards nor
+     * downwards. Assumes the graph g is transitively closed!
      */
     protected void distributeAlgorithms() {
-        Map<GraphClass,Set<GraphClass> > scc = GAlg.calcSCCMap(graph);
+        Map<GraphClass, Set<GraphClass>> scc = GAlg.calcSCCMap(graph);
 
-        //---- Assert finite ForbiddenClass polynomial
+        // ---- Assert finite ForbiddenClass polynomial
         if (!firstDistributeDone) {
             for (GraphClass n : graph.vertexSet()) {
-                if (n instanceof ForbiddenClass  &&
-                        ((ForbiddenClass) n).isFinite()) {
+                if (n instanceof ForbiddenClass
+                        && ((ForbiddenClass) n).isFinite()) {
                     createAlgo(n, Complexity.P,
-                        "Finite forbidden subgraph characterization");
+                            "Finite forbidden subgraph characterization");
                 }
             }
         }
 
-        //---- Repeat twice in case of an intersection of unions or the other
+        // ---- Repeat twice in case of an intersection of unions or the other
         // way around
-        /*for (int repeat = 0; repeat < 2; repeat++)*/ {
-            //---- Add every set of algorithms to the equivalent nodes' set.
+        /* for (int repeat = 0; repeat < 2; repeat++) */{
+            // ---- Add every set of algorithms to the equivalent nodes' set.
             for (GraphClass n : graph.vertexSet()) {
                 HashSet h = getAlgoSet(n);
                 if (h != null) {
@@ -64,19 +67,18 @@ public class Recognition extends Problem {
                 }
             }
 
-            /*distributeUpUnion(gc2node);
-            distributeDownIntersect(gc2node);*/
+            /*
+             * distributeUpUnion(gc2node); distributeDownIntersect(gc2node);
+             */
         }
         firstDistributeDone = true;
     }
 
-
     /**
      * Try moving complexity information UP to union nodes. We only change the
      * complexity class for Union nodes, and do not generate new references or
-     * timebounds.
-     * The reasoning is: If we can recognize every part of the union in
-     * polytime/lin, then we can take the disjunction of their results in
+     * timebounds. The reasoning is: If we can recognize every part of the union
+     * in polytime/lin, then we can take the disjunction of their results in
      * polytime/lin as well. So the union is recognizable in polytime/lin.
      */
     protected void distributeUpUnion() {
@@ -85,40 +87,39 @@ public class Recognition extends Problem {
         Complexity c;
 
         for (GraphClass n : graph.vertexSet()) {
-            if ( !(n instanceof UnionClass) ||
-                    getDerivedComplexity(n).betterOrEqual(Complexity.LINEAR) )
+            if (!(n instanceof UnionClass)
+                    || getDerivedComplexity(n)
+                            .betterOrEqual(Complexity.LINEAR))
                 continue;
 
-            //---- Check whether all parts are in P ----
+            // ---- Check whether all parts are in P ----
             ok = true;
             linear = true;
             Iterator<GraphClass> parts = ((UnionClass) n).getSet().iterator();
-            while (ok  &&  parts.hasNext()) {
+            while (ok && parts.hasNext()) {
                 GraphClass part = parts.next();
                 c = getDerivedComplexity(part);
                 ok = ok && c.betterOrEqual(Complexity.P);
                 linear = linear && c.betterOrEqual(Complexity.LINEAR);
             }
 
-            if (ok  &&  (linear ||
-                    !getDerivedComplexity(n).betterOrEqual(Complexity.P))) {
-                //System.err.println("NOTE: distributeUpUnion invoked on "+
-                        //n.getName()+" "+toString());
-                createAlgo(n,
-                        linear ? Complexity.LINEAR : Complexity.P,
+            if (ok
+                    && (linear || !getDerivedComplexity(n).betterOrEqual(
+                            Complexity.P))) {
+                // System.err.println("NOTE: distributeUpUnion invoked on "+
+                // n.getName()+" "+toString());
+                createAlgo(n, linear ? Complexity.LINEAR : Complexity.P,
                         "From the constituent classes.");
             }
         }
     }
 
-
     /**
      * Try moving complexity information DOWN to intersection nodes. We only
      * change the complexity class for Intersect nodes, and do not generate new
-     * references or timebounds.
-     * The reasoning is: If we can recognize every part of the intersection in
-     * polytime/lin, then we can take their conjunction in polytime/lin as
-     * well.
+     * references or timebounds. The reasoning is: If we can recognize every
+     * part of the intersection in polytime/lin, then we can take their
+     * conjunction in polytime/lin as well.
      */
     protected void distributeDownIntersect() {
         int i;
@@ -126,29 +127,30 @@ public class Recognition extends Problem {
         Complexity c;
 
         for (GraphClass n : graph.vertexSet()) {
-            if ( !(n instanceof IntersectClass) ||
-                    getDerivedComplexity(n).betterOrEqual(Complexity.LINEAR) )
+            if (!(n instanceof IntersectClass)
+                    || getDerivedComplexity(n)
+                            .betterOrEqual(Complexity.LINEAR))
                 continue;
 
-            //---- Check whether all parts are in P ----
+            // ---- Check whether all parts are in P ----
             ok = true;
             linear = true;
-            Iterator<GraphClass> parts =
-                    ((IntersectClass) n).getSet().iterator();
-            while (ok  &&  parts.hasNext()) {
+            Iterator<GraphClass> parts = ((IntersectClass) n).getSet()
+                    .iterator();
+            while (ok && parts.hasNext()) {
                 GraphClass part = parts.next();
                 c = getDerivedComplexity(part);
                 ok = ok && c.betterOrEqual(Complexity.P);
                 linear = linear && c.betterOrEqual(Complexity.LINEAR);
             }
 
-            if (ok  &&  (linear ||
-                    !getDerivedComplexity(n).betterOrEqual(Complexity.P))) {
-                //System.err.println(
-                        //"NOTE: distributeDownIntersect invoked on "+
-                        //n.getName()+" "+toString());
-                createAlgo(n,
-                        linear ? Complexity.LINEAR : Complexity.P,
+            if (ok
+                    && (linear || !getDerivedComplexity(n).betterOrEqual(
+                            Complexity.P))) {
+                // System.err.println(
+                // "NOTE: distributeDownIntersect invoked on "+
+                // n.getName()+" "+toString());
+                createAlgo(n, linear ? Complexity.LINEAR : Complexity.P,
                         "From the constituent classes.");
             }
         }

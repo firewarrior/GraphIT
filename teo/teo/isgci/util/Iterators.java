@@ -10,10 +10,10 @@
 
 package teo.isgci.util;
 
-import java.util.NoSuchElementException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 /**
  * Adapted from java2s.com/Collections data structures.
@@ -21,66 +21,65 @@ import java.util.ArrayList;
 public class Iterators {
 
     /** Prevent instances */
-    private Iterators() {}
-  
+    private Iterators() {
+    }
+
     /**
      * Return the union of two iterators.
      */
     public static <E> Iterator<E> union(Iterator<E> a, Iterator<E> b) {
-        List<Iterator<E> > iters = new ArrayList<Iterator<E> >();
+        List<Iterator<E>> iters = new ArrayList<Iterator<E>>();
         iters.add(a);
         iters.add(b);
         return union(iters);
     }
 
-
     /**
      * Return the union of a list of iterators.
      */
-    public static <E> Iterator<E> union(final List<Iterator<E> > iterators) {
+    public static <E> Iterator<E> union(final List<Iterator<E>> iterators) {
         return new Iterator<E>() {
             private int iteratorIndex = 0;
-            private Iterator<E> current = iterators.size() > 0 ?
-                    iterators.get(0) : null; 
+            private Iterator<E> current = iterators.size() > 0 ? iterators
+                    .get(0) : null;
 
-            public boolean hasNext() {  
-                for(;;) {
-                    if(current == null) {
+            public boolean hasNext() {
+                for (;;) {
+                    if (current == null) {
                         return false;
                     }
-                    if(current.hasNext()) {
+                    if (current.hasNext()) {
                         return true;
                     }
                     iteratorIndex++;
-                    current = iteratorIndex >= iterators.size() ? null :
-                        iterators.get(iteratorIndex);
-                }       
+                    current = iteratorIndex >= iterators.size() ? null
+                            : iterators.get(iteratorIndex);
+                }
             }
 
             public E next() {
-                for(;;) {
-                    if(this.current == null) {
+                for (;;) {
+                    if (this.current == null) {
                         throw new NoSuchElementException();
                     }
                     try {
                         return this.current.next();
-                    } catch(NoSuchElementException nse) {
+                    } catch (NoSuchElementException nse) {
                         this.iteratorIndex++;
-                        this.current = this.iteratorIndex >= iterators.size()
-                            ? null : iterators.get(this.iteratorIndex);
+                        this.current = this.iteratorIndex >= iterators.size() ? null
+                                : iterators.get(this.iteratorIndex);
                     }
                 }
             }
 
             public void remove() {
-                if(this.current == null) {
+                if (this.current == null) {
                     throw new NoSuchElementException();
                 }
                 this.current.remove();
             }
         };
     }
-  
 
     /**
      * Return an iterator with just the single given element.
@@ -94,7 +93,7 @@ public class Iterators {
             }
 
             public E next() {
-                if(this.gotItem) {
+                if (this.gotItem) {
                     throw new NoSuchElementException();
                 }
                 this.gotItem = true;
