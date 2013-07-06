@@ -39,6 +39,7 @@ import teo.isgci.util.Utility;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel.mxVisibleChange;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
@@ -57,7 +58,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 	private mxGraphComponent component = new mxGraphComponent(new mxGraph());
 	private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
 	private mxHierarchicalLayout layout;
-	public CellHighlighter highliter = new CellHighlighter(component, Color.yellow);
+	public CellHighlighter highliter = new CellHighlighter(component, Color.orange);
 	public mxUndoManager undoManager;
 
 	/** ISGCI Components */
@@ -193,8 +194,6 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 			public void invoke(Object source, mxEventObject evt) {
 				List<mxUndoableChange> changes = ((mxUndoableEdit) evt
 						.getProperty("edit")).getChanges();
-				adapter.setSelectionCells(adapter
-						.getSelectionCellsForChanges(changes));
 				if (evt.getName().equals(mxEvent.UNDO)) {
 					System.out.println("UNDO");
 					Set<GraphClass> tmp = parent.classesHandler
@@ -203,7 +202,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 					List<Set<GraphClass>> redo = new LinkedList<Set<GraphClass>>();
 					System.out.println(Arrays.toString(adapter
 							.getSelectionCells()));
-					for (Object o : adapter.getSelectionCells()) {
+					for (Object o : adapter.getSelectionCellsForChanges(changes)) {
 						mxCell cell = (mxCell) o;
 						for (GraphClass gc : tmp) {
 							if (cell.isVertex()
@@ -231,10 +230,8 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 				}
 				if (evt.getName().equals(mxEvent.REDO)) {
 					System.out.println("REDO");
-					System.out.println(Arrays.toString(adapter
-							.getSelectionCellsForChanges(changes)));
 					for (Object o : adapter
-							.getSelectionCellsForChanges(changes)) {
+							.getRemovedCellsForChanges(changes)) {
 						mxCell cell = (mxCell) o;
 						if (cell.isVertex()) {
 							Set<GraphClass> gcs = adapter.getCellToVertex(cell);
@@ -243,6 +240,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 					}
 					parent.classesList.revalidate();
 					parent.classesList.repaint();
+					component.refresh();
 				}
 			}
 		};
@@ -586,6 +584,9 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 	}
 
 	public List<GraphClass> getGraphClassList() {
+	    if (classes == null) {
+	        return new ArrayList<GraphClass>();
+	    }
 		Set<GraphClass> gcl = new HashSet<GraphClass>();
 		for (GraphClass gc : classes) {
 			gcl.addAll(DataSet.getEquivalentClasses(gc));
