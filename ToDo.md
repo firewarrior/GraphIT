@@ -6,7 +6,6 @@ Softwareproject University of Konstanz Summer Term 2013
 Überarbeitung ISGCI:
 
 TODO:
-   - Redo in classesList
    - Knoten Rename: Größenanpassung symmetrisch
 
    
@@ -40,7 +39,8 @@ DONE:
    - Maussymbol beim versuchten Verschieben von Knoten entfernen
    - Markierung selektierter Nodes
    - Verschieben von Kante: Serializable-Exception
+   - Redo in classesList
+   - Redo funktioniert nicht, Beispiel: Zeichne (0,3)-colorable mit Subclasses, Rechtsklick auf die Wurzel, Hide Subclasses, Undo, Redo; dann fehlen nur die Knoten, die Kanten bleiben, durch Zoomen verschwinden die Kanten dann.
    
 PROBLEM:
    - Probleme in ScrollPane
-   - Redo funktioniert nicht, Beispiel: Zeichne (0,3)-colorable mit Subclasses, Rechtsklick auf die Wurzel, Hide Subclasses, Undo, Redo; dann fehlen nur die Knoten, die Kanten bleiben, durch Zoomen verschwinden die Kanten dann.
