@@ -214,6 +214,7 @@
       </manifest>
       <fileset dir="${build.classes.dir}">
 	 <include name="teo/**"/>
+     <include name="com/**" />
 	 <exclude name="teo/isg/FindISG.class"/>
 	 <exclude name="teo/isg/Permutation*.class"/>
 	 <exclude name="teo/isgci/xml/SmallGraphWriter.class"/>
@@ -690,7 +691,8 @@
    description="Run isgci">
 
    <java jar="${isgci.jar}" fork="true">
-      <arg value="file://${web.dir}/"/>
+      <!--<arg value="file://${web.dir}/"/>-->
+   	<arg value="http://www.graphclasses.org" />
      <!-- <jvmarg value="-Xdebug" />
 		  <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5432" />
 	 -->

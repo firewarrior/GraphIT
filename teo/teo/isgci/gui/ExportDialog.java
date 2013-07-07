@@ -39,7 +39,8 @@ import javax.swing.border.EmptyBorder;
 import org.jgrapht.graph.DefaultEdge;
 
 import teo.isgci.gc.GraphClass;
-import teo.isgci.util.JGraphTXAdapter;
+
+import com.mxGraph.adapter.mxJGraphTAdapter;
 
 /**
  * Filechooser for svg-export. Offers options to relayout and display full
@@ -75,10 +76,10 @@ public class ExportDialog extends JDialog implements ActionListener {
     protected Dimension minSize = new Dimension(534, 425);
 
     /* JGraphT 2 JGraphX Adapter */
-    JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
+    mxJGraphTAdapter<Set<GraphClass>, DefaultEdge> adapter;
 
     public ExportDialog(ISGCIMainFrame parent,
-            JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter) {
+            mxJGraphTAdapter<Set<GraphClass>, DefaultEdge> adapter) {
         super(parent, "Export drawing to SVG", true);
         this.parent = parent;
         this.setMinimumSize(minSize);

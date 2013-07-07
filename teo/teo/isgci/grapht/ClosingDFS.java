@@ -17,6 +17,7 @@ import org.jgrapht.DirectedGraph;
 
 import teo.isgci.util.UnaryFunction;
 
+
 /**
  * A DFSWalker that transitively closes the graph.
  */

@@ -1,4 +1,4 @@
-package teo.isgci.util;
+package com.mxGraph.adapter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +36,7 @@ import com.mxgraph.view.mxGraph;
  * @since 1.6
  * 
  */
-public class JGraphTXAdapter<V, E> extends mxGraph implements
+public class mxJGraphTAdapter<V, E> extends mxGraph implements
         GraphListener<V, E>, mxIEventListener {
 
     /**
@@ -76,7 +76,7 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
      * @param graphT
      *            the Graph to describe as an mxGraph
      */
-    public JGraphTXAdapter(Graph<V, E> graphT) {
+    public mxJGraphTAdapter(Graph<V, E> graphT) {
         this(graphT, null, null);
     }
 
@@ -94,7 +94,7 @@ public class JGraphTXAdapter<V, E> extends mxGraph implements
      *            optional style information for the mxGraph vertices.
      *            <code>null</code> if no style is desired
      */
-    public JGraphTXAdapter(Graph<V, E> graphT, String edgeStyle,
+    public mxJGraphTAdapter(Graph<V, E> graphT, String edgeStyle,
             String vertexStyle) {
         this.graphT = graphT;
         this.edgeStyle = edgeStyle;

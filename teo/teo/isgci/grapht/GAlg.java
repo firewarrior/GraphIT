@@ -30,6 +30,7 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import teo.isgci.util.Itera;
 
+
 public class GAlg {
 
     /**

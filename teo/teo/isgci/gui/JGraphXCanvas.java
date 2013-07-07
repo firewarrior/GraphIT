@@ -32,10 +32,10 @@ import teo.isgci.grapht.Inclusion;
 import teo.isgci.grapht.RevBFSWalker;
 import teo.isgci.problem.Complexity;
 import teo.isgci.problem.Problem;
-import teo.isgci.util.JGraphTXAdapter;
 import teo.isgci.util.Latex2JHtml;
 import teo.isgci.util.Utility;
 
+import com.mxGraph.adapter.mxJGraphTAdapter;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -66,7 +66,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
 
     /** JGraphX Components */
     private mxGraphComponent component = new mxGraphComponent(new mxGraph());
-    private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
+    private mxJGraphTAdapter<Set<GraphClass>, DefaultEdge> adapter;
     private mxHierarchicalLayout layout;
     public CellHighlighter highliter = new CellHighlighter(component,
             Color.orange);
@@ -143,7 +143,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
      *            to be drawn
      */
     private void setGraph(Graph<Set<GraphClass>, DefaultEdge> graph) {
-        adapter = new JGraphTXAdapter<Set<GraphClass>, DefaultEdge>(graph,
+        adapter = new mxJGraphTAdapter<Set<GraphClass>, DefaultEdge>(graph,
                 "noLabel=1", null) {
 
             /*
@@ -223,6 +223,10 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
                                 Set<GraphClass> gcs = DataSet
                                         .getEquivalentClasses(gc);
                                 redo.add(gcs);
+                                for (GraphClass gcr : gcs) {
+                                    parent.classesHandler.getDeactivated()
+                                            .remove(gcr);
+                                }
                                 break;
                             }
                         }
@@ -607,7 +611,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
         return createLabel(converter.html(Utility.getShortName(gcn)));
     }
 
-    public JGraphTXAdapter<Set<GraphClass>, DefaultEdge> getAdapter() {
+    public mxJGraphTAdapter<Set<GraphClass>, DefaultEdge> getAdapter() {
         return adapter;
     }
 

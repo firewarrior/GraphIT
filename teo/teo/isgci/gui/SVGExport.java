@@ -12,10 +12,10 @@ import teo.isgci.db.DataSet;
 import teo.isgci.gc.GraphClass;
 import teo.isgci.grapht.GAlg;
 import teo.isgci.grapht.Inclusion;
-import teo.isgci.util.JGraphTXAdapter;
 import teo.isgci.util.Latex2JHtml;
 import teo.isgci.util.Utility;
 
+import com.mxGraph.adapter.mxJGraphTAdapter;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -33,7 +33,7 @@ import com.mxgraph.view.mxGraph;
  */
 public class SVGExport {
 
-    private JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter;
+    private mxJGraphTAdapter<Set<GraphClass>, DefaultEdge> adapter;
     private mxGraph graph;
     private LatexGraphics latexgraphics;
     private String svg;
@@ -48,7 +48,7 @@ public class SVGExport {
      * @param c
      * @param shortLa
      */
-    public SVGExport(JGraphTXAdapter<Set<GraphClass>, DefaultEdge> adapter,
+    public SVGExport(mxJGraphTAdapter<Set<GraphClass>, DefaultEdge> adapter,
             boolean shortLabels, boolean relayout) {
         this.adapter = adapter;
         this.shortLabels = shortLabels;

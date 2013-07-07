@@ -83,6 +83,24 @@ public class GraphUnitTest {
         assertEquals(new TreeSet<String>(graphT.vertexSet()).toString(), "[]");
     }
 
+    @Test
+    public void graphWithoutEdges() {
+        ListenableGraph<String, DefaultEdge> graphT = new ListenableDirectedGraph<String, DefaultEdge>(
+                DefaultEdge.class);
+        String s1 = "0,2 Colorable";
+        String s2 = "PURE-2-DIR";
+        graphT.addVertex(s1);
+        graphT.addVertex(s2);
+        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+                graphT, "noLabel=1",
+                "shape=triangle;perimeter=trianglePerimeter");
+        assertEquals(vertexSet(graphX).toString(),
+                new TreeSet<String>(graphT.vertexSet()).toString());
+        Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
+        edgesT.addAll(graphT.edgeSet());
+        assertEquals(edgesT.toString(), edgeSet(graphX).toString());
+    }
+
     /**
      * Test whether
      */
@@ -172,7 +190,6 @@ public class GraphUnitTest {
         } finally {
             graphX.getModel().endUpdate();
         }
-        // System.out.println(edgeSet(graphX));
         assertEquals(vertexSet(graphX).toString(),
                 new TreeSet<String>(graphT.vertexSet()).toString());
         Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
@@ -204,14 +221,10 @@ public class GraphUnitTest {
         try {
             mxICell tree = graphX.getVertexToCell("tree convex");
             mxICell star = graphX.getVertexToCell("star convex");
-            // System.out.println(((mxCell)graphX.getEdgesBetween(star,
-            // tree)[0]).isEdge());
             graphX.removeCells((graphX.getEdgesBetween(star, tree)));
         } finally {
             graphX.getModel().endUpdate();
         }
-        // System.out.println(edgeSet(graphX));
-        // System.out.println(graphT.edgeSet());
         assertEquals(vertexSet(graphX).toString(),
                 new TreeSet<String>(graphT.vertexSet()).toString());
         Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
@@ -226,48 +239,6 @@ public class GraphUnitTest {
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphT.removeEdge("modular", "cubical");
-        assertEquals(vertexSet(graphX).toString(),
-                new TreeSet<String>(graphT.vertexSet()).toString());
-        Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
-        edgesT.addAll(graphT.edgeSet());
-        assertEquals(edgesT.toString(), edgeSet(graphX).toString());
-    }
-
-    @Test
-    public void graphXDoesNotPropagate() {
-        ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
-                graphT, "noLabel=1",
-                "shape=triangle;perimeter=trianglePerimeter");
-        graphX.getModel().beginUpdate();
-        try {
-            mxICell tree = graphX.getVertexToCell("tree convex");
-            mxICell star = graphX.getVertexToCell("star convex");
-            mxCell edge = (mxCell) graphX.getEdgesBetween(star, tree)[0];
-            graphX.removeCells(new Object[] { edge });
-            // graphX.getModel().remove((graphX.getEdgesBetween(star,
-            // tree)[0]));
-        } finally {
-            graphX.getModel().endUpdate();
-        }
-        assertEquals(vertexSet(graphX).toString(),
-                new TreeSet<String>(graphT.vertexSet()).toString());
-        Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
-        edgesT.addAll(graphT.edgeSet());
-        assertEquals(edgesT.toString(), edgeSet(graphX).toString());
-    }
-
-    @Test
-    public void graphWithoutEdges() {
-        ListenableGraph<String, DefaultEdge> graphT = new ListenableDirectedGraph<String, DefaultEdge>(
-                DefaultEdge.class);
-        String s1 = "0,2 Colorable";
-        String s2 = "PURE-2-DIR";
-        graphT.addVertex(s1);
-        graphT.addVertex(s2);
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
-                graphT, "noLabel=1",
-                "shape=triangle;perimeter=trianglePerimeter");
         assertEquals(vertexSet(graphX).toString(),
                 new TreeSet<String>(graphT.vertexSet()).toString());
         Set<DefaultEdge> edgesT = new TreeSet<DefaultEdge>(comparator);
