@@ -12,6 +12,7 @@ import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
@@ -22,7 +23,10 @@ import com.mxgraph.view.mxGraph;
  * {@link com.mxgraph.view.mxGraph}. Propagates changes (adding and deleting
  * vertices and edges) from the mxGraph to the Graph. If the Graph is also an
  * instance of ListenableGraph, changes from the Graph will also be propagated
- * to the mxGraph. Dangling edges are not supported and will not be added.
+ * to the mxGraph. Only changes causing an mxEvent.ADD_CELLS or
+ * mxEvent.REMOVE_CELLS will be propagated (so don't use methods from the
+ * underlying mxIGraphModel). Dangling edges are not supported and will not be
+ * added.
  * 
  * 
  * @author Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu, Moritz
@@ -53,14 +57,14 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
     /**
      * maps from the Graph vertices to the mxCells of the mxGraph and vice versa
      */
-    private Map<V, mxCell> vertexToCell = new HashMap<V, mxCell>();
-    private Map<mxCell, V> cellToVertex = new HashMap<mxCell, V>();
+    private Map<V, mxICell> vertexToCell = new HashMap<V, mxICell>();
+    private Map<mxICell, V> cellToVertex = new HashMap<mxICell, V>();
 
     /**
      * maps from the Graph edges to the mxCells of the mxGraph and vice versa
      */
-    private Map<E, mxCell> edgeToCell = new HashMap<E, mxCell>();
-    private Map<mxCell, E> cellToEdge = new HashMap<mxCell, E>();
+    private Map<E, mxICell> edgeToCell = new HashMap<E, mxICell>();
+    private Map<mxICell, E> cellToEdge = new HashMap<mxICell, E>();
 
     /**
      * sets for propagating changes between JGraphX and JGraphT and to avoid
@@ -68,8 +72,8 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
      */
     private Set<Object> jtElementBeingAdded = new HashSet<Object>();
     private Set<Object> jtElementBeingRemoved = new HashSet<Object>();
-    private Set<mxCell> jxElementBeingAdded = new HashSet<mxCell>();
-    private Set<mxCell> jxElementBeingRemoved = new HashSet<mxCell>();
+    private Set<mxICell> jxElementBeingAdded = new HashSet<mxICell>();
+    private Set<mxICell> jxElementBeingRemoved = new HashSet<mxICell>();
 
     /**
      * simple constructor without style information
@@ -170,17 +174,17 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
      * 
      * @return the associated cell
      */
-    public mxCell getVertexToCell(V vertex) {
+    public mxICell getVertexToCell(V vertex) {
         return vertexToCell.get(vertex);
     }
 
     /**
-     * * returns the associated vertex for a given mxCell. returns
+     * returns the associated vertex for a given mxCell. returns
      * <code>null</code> if the vertex is invalid.
      * 
      * @return the associated vertex
      */
-    public V getCellToVertex(mxCell cell) {
+    public V getCellToVertex(mxICell cell) {
         return cellToVertex.get(cell);
     }
 
@@ -190,17 +194,17 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
      * 
      * @return the associated cell
      */
-    public mxCell getEdgeToCell(E edge) {
+    public mxICell getEdgeToCell(E edge) {
         return edgeToCell.get(edge);
     }
 
     /**
-     * * returns the associated mxCell for a given edge. returns
-     * <code>null</code> if the edge is invalid.
+     * returns the associated mxCell for a given edge. returns <code>null</code>
+     * if the edge is invalid.
      * 
      * @return the associated vertex
      */
-    public E getCellToEdge(mxCell cell) {
+    public E getCellToEdge(mxICell cell) {
         return cellToEdge.get(cell);
     }
 
@@ -208,7 +212,8 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
      * Below are the internally add and remove Methods
      */
 
-    private void insertEdgeInternally(mxCell cell, mxCell source, mxCell target) {
+    private void insertEdgeInternally(mxICell cell, mxICell source,
+            mxICell target) {
         jxElementBeingAdded.add(cell);
         model.beginUpdate();
         try {
@@ -219,7 +224,7 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
         jxElementBeingAdded.remove(cell);
     }
 
-    private void insertVertexInternally(mxCell cell) {
+    private void insertVertexInternally(mxICell cell) {
         jxElementBeingAdded.add(cell);
         model.beginUpdate();
         try {
@@ -230,7 +235,7 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
         jxElementBeingAdded.remove(cell);
     }
 
-    private void removeEdgeInternally(mxCell cell) {
+    private void removeEdgeInternally(mxICell cell) {
         jxElementBeingRemoved.add(cell);
         model.beginUpdate();
         try {
@@ -241,7 +246,7 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
         jxElementBeingRemoved.remove(cell);
     }
 
-    private void removeVertexInternally(mxCell cell) {
+    private void removeVertexInternally(mxICell cell) {
         jxElementBeingRemoved.add(cell);
         model.beginUpdate();
         try {
@@ -252,11 +257,12 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
         jxElementBeingRemoved.remove(cell);
     }
 
-    private void internallyAddJGraphTEdge(V source, V target, E edge) {
+    private void internallyAddJGraphTEdge(V source, V target, mxICell cell) {
+        E edge = graphT.getEdgeFactory().createEdge(source, target);
         jtElementBeingAdded.add(edge);
-        // prevent dangling edges
         if (source != null && target != null) {
             graphT.addEdge(source, target, edge);
+            cell.setValue(edge);
         }
         jtElementBeingAdded.remove(edge);
     }
@@ -344,8 +350,9 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
                     mxCell cell = (mxCell) o;
                     if (cell.isEdge()) {
                         if (!jxElementBeingAdded.remove(cell)) {
-                            internallyAddJGraphTEdge((V) cell.getSource(),
-                                    (V) cell.getTarget(), (E) cell.getValue());
+                            internallyAddJGraphTEdge(
+                                    getCellToVertex(cell.getSource()),
+                                    getCellToVertex(cell.getTarget()), cell);
                         }
                         cellToEdge.put(cell, (E) cell.getValue());
                         edgeToCell.put((E) cell.getValue(), cell);

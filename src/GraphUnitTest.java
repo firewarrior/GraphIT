@@ -1,3 +1,4 @@
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.Comparator;
@@ -9,6 +10,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.ListenableDirectedGraph;
 import org.junit.Test;
 
+import com.mxGraph.adapter.mxJGraphTAdapter;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.view.mxGraph;
@@ -55,7 +57,7 @@ public class GraphUnitTest {
     @Test
     public void translationTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "startArrow=none;endArrow=none",
                 "shape=triangle;perimeter=trianglePerimeter");
         assertEquals(vertexSet(graphX).toString(),
@@ -69,7 +71,7 @@ public class GraphUnitTest {
     public void emptyGraph() {
         ListenableGraph<String, DefaultEdge> graphT = new ListenableDirectedGraph<String, DefaultEdge>(
                 DefaultEdge.class);
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         assertEquals(vertexSet(graphX).toString(),
@@ -91,7 +93,7 @@ public class GraphUnitTest {
         String s2 = "PURE-2-DIR";
         graphT.addVertex(s1);
         graphT.addVertex(s2);
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         assertEquals(vertexSet(graphX).toString(),
@@ -107,7 +109,7 @@ public class GraphUnitTest {
     @Test
     public void graphXVertexDeletionTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphX.getModel().beginUpdate();
@@ -127,7 +129,7 @@ public class GraphUnitTest {
     @Test
     public void graphTVertexDeletionTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphT.removeVertex("modular"); // Test if deletion in JGraphT also
@@ -142,7 +144,7 @@ public class GraphUnitTest {
     @Test
     public void graphXVertexAdditionTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphX.getModel().beginUpdate();
@@ -163,7 +165,7 @@ public class GraphUnitTest {
     @Test
     public void graphTVertexAdditionTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphT.addVertex("foo"); // Test if addition in JGraphT also occurs in
@@ -178,13 +180,14 @@ public class GraphUnitTest {
     @Test
     public void graphXEdgeAdditionTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphX.getModel().beginUpdate();
         try {
             mxICell modular = graphX.getVertexToCell("modular");
             mxICell cubical = graphX.getVertexToCell("cubical");
+            System.out.println(modular + " " + cubical);
             graphX.insertEdge(graphX.getDefaultParent(), null, "", modular,
                     cubical);
         } finally {
@@ -200,7 +203,7 @@ public class GraphUnitTest {
     @Test
     public void graphTEdgeAdditionTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphT.addEdge("modular", "cubical");
@@ -214,7 +217,7 @@ public class GraphUnitTest {
     @Test
     public void graphXEdgeDeletionTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphX.getModel().beginUpdate();
@@ -235,7 +238,7 @@ public class GraphUnitTest {
     @Test
     public void graphTEdgeDeletionTest() {
         ListenableGraph<String, DefaultEdge> graphT = initTestGraph();
-        JGraphTXAdapter<String, DefaultEdge> graphX = new JGraphTXAdapter<String, DefaultEdge>(
+        mxJGraphTAdapter<String, DefaultEdge> graphX = new mxJGraphTAdapter<String, DefaultEdge>(
                 graphT, "noLabel=1",
                 "shape=triangle;perimeter=trianglePerimeter");
         graphT.removeEdge("modular", "cubical");
