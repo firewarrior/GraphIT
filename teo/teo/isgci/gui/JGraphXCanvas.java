@@ -420,24 +420,32 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
      * Draws the appropriate ending of the edge
      */
     private void setUnproperEdges() {
-        if (!drawUnproper) {
-            adapter.setCellStyles(mxConstants.STYLE_STARTARROW,
-                    mxConstants.NONE, adapter.getChildCells(
-                            adapter.getDefaultParent(), false, true));
-            return;
-        }
-        List<Object> unproperEdges = new LinkedList<Object>();
-        for (Object o : adapter.getChildCells(adapter.getDefaultParent(),
-                false, true)) {
-            if (o instanceof mxCell) {
-                mxCell e = (mxCell) o;
-                if (!getProperness(e)) {
-                    unproperEdges.add(e);
+        adapter.getModel().removeListener(undoHandler, mxEvent.UNDO);
+        adapter.getView().removeListener(undoHandler, mxEvent.UNDO);
+        try {
+            if (!drawUnproper) {
+                adapter.setCellStyles(mxConstants.STYLE_STARTARROW,
+                        mxConstants.NONE, adapter.getChildCells(
+                                adapter.getDefaultParent(), false, true));
+                return;
+            }
+            List<Object> unproperEdges = new LinkedList<Object>();
+            for (Object o : adapter.getChildCells(adapter.getDefaultParent(),
+                    false, true)) {
+                if (o instanceof mxCell) {
+                    mxCell e = (mxCell) o;
+                    if (!getProperness(e)) {
+                        unproperEdges.add(e);
+                    }
                 }
             }
+            adapter.setCellStyles(mxConstants.STYLE_STARTARROW,
+                    mxConstants.ARROW_DIAMOND, unproperEdges.toArray());
         }
-        adapter.setCellStyles(mxConstants.STYLE_STARTARROW,
-                mxConstants.ARROW_DIAMOND, unproperEdges.toArray());
+        finally {
+            adapter.getModel().addListener(mxEvent.UNDO, undoHandler);
+            adapter.getView().addListener(mxEvent.UNDO, undoHandler);
+        }
     }
 
     /*
