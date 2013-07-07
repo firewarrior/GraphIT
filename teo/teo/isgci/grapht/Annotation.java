@@ -17,7 +17,6 @@ import org.jgrapht.Graph;
 
 import teo.isgci.util.UnaryFunction;
 
-
 /**
  * Data (D) that is annotated to a node (V) or an edge (E).
  */

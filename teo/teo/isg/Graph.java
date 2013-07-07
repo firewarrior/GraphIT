@@ -528,8 +528,8 @@ public class Graph extends SmallGraph {
 
     /**
      * Rekursive Hilfsfunktion zur Bestimmung von <tt>darf<tt>.
-     * Die Matrix <tt>darf</tt> enthält an der Stell i,j eine 1, wenn der Knoten
-     * i in <tt>this<tt> den gleichen Grad hat wie der Knoten j in
+     * Die Matrix <tt>darf</tt> enthält an der Stell i,j eine 1, wenn der
+     * Knoten i in <tt>this<tt> den gleichen Grad hat wie der Knoten j in
      * <tt>g<tt>. In mask ist hierbei gespeichert welcher Teil des Graphen
      * bearbeitet werden soll. In mask[0] beschreibt hierbei <tt>this<tt> und
      * mask[1] <tt>g<tt>.

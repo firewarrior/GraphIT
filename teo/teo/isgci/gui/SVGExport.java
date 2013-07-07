@@ -28,7 +28,7 @@ import com.mxgraph.view.mxGraph;
  * scalable vector graphic file.
  * 
  * @author Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu, Moritz
- *         Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ *         Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  */
 public class SVGExport {
@@ -38,19 +38,21 @@ public class SVGExport {
     private LatexGraphics latexgraphics;
     private String svg;
     private SVGGraphics svggraphics;
-    private boolean shortLabels, relayout;
+    private boolean shortLabels, relayout, unproper;
 
     /**
      * Constructor
      * 
      * @param adapter
      *            for JGraphT to JGraphX
+     * @param unproper 
      * @param c
      * @param shortLa
      */
     public SVGExport(mxJGraphTAdapter<Set<GraphClass>, DefaultEdge> adapter,
-            boolean shortLabels, boolean relayout) {
+            boolean shortLabels, boolean relayout, boolean unproper) {
         this.adapter = adapter;
+        this.unproper = unproper;
         this.shortLabels = shortLabels;
         this.relayout = relayout;
         svggraphics = new SVGGraphics();
@@ -63,7 +65,7 @@ public class SVGExport {
      */
     public String createExportString() {
         if (adapter == null) {
-            return "";
+            return SVGGraphics.defaultprolog + "</svg>";
         }
 
         latexgraphics = new LatexGraphics();
@@ -191,6 +193,10 @@ public class SVGExport {
                 }
             }
         }
+        
+        if(graph.getView().getState(cell) == null){
+            return;
+        }
 
         boolean first = true;
         svg += "<path d=\"";
@@ -204,7 +210,7 @@ public class SVGExport {
             }
 
         }
-        if (!getProperness(cell2)) {
+        if (!getProperness(cell2) && unproper) {
             svg += "\" fill=\"none\" stroke=\"black\" marker-end=\"url(#arrow)\" marker-start=\"url(#unproper)\" /> \n";
             return;
         }

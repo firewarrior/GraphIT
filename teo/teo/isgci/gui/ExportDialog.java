@@ -47,7 +47,7 @@ import com.mxGraph.adapter.mxJGraphTAdapter;
  * labels.
  * 
  * @author ISGCI, Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu,
- *         Moritz Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ *         Moritz Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  */
 public class ExportDialog extends JDialog implements ActionListener {
@@ -216,7 +216,7 @@ public class ExportDialog extends JDialog implements ActionListener {
             out = new OutputStreamWriter(f, "UTF-8");
             SVGExport export = new SVGExport(adapter,
                     m_shortLabels.isSelected(), m_relayout.isSelected()
-                            && (m_relayout.isEnabled()));
+                            && (m_relayout.isEnabled()), parent.miDrawUnproper.isSelected());
             outstr = export.createExportString();
             out.write(outstr, 0, outstr.length());
         } catch (IOException ex) {

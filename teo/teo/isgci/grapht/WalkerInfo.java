@@ -15,7 +15,6 @@ import org.jgrapht.DirectedGraph;
 
 import teo.isgci.util.UnaryFunction;
 
-
 public class WalkerInfo<V, E> {
     public GraphWalker.Status status;
     /** How this node was reached in e.g. BFS-tree */

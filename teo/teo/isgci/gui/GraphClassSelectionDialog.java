@@ -182,7 +182,7 @@ public class GraphClassSelectionDialog extends JDialog implements
         boolean doSuper = superCheck.isSelected(), doSub = subCheck
                 .isSelected();
 
-        for (Object o : classesList.getSelectedValuesList()) {
+        for (Object o : classesList.getSelectedValues()) {
             GraphClass gc = (GraphClass) o;
             result.add(gc);
             if (doSuper) {

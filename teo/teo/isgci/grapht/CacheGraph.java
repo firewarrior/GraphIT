@@ -20,7 +20,6 @@ import org.jgrapht.graph.ListenableDirectedGraph;
 
 import teo.isgci.util.Pair;
 
-
 public class CacheGraph<V, E> extends ListenableDirectedGraph<V, E> implements
         GraphListener<V, E> {
 

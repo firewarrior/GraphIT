@@ -69,7 +69,7 @@ public class OpenProblemDialog extends JDialog implements ItemListener,
             "Colourability", "Clique cover", "3-Colourability", "Cutwidth",
             "Hamiltonian cycle", "Hamiltonian path",
             "Weighted feedback vertex set", "Feedback vertex set" };
-    protected JComboBox<String> chooseProblem;
+    protected JComboBox chooseProblem;
     protected Dimension minSize = new Dimension(550, 270);
 
     public OpenProblemDialog(ISGCIMainFrame parent) {
@@ -103,7 +103,7 @@ public class OpenProblemDialog extends JDialog implements ItemListener,
         contents.add(label, c);
 
         // CheckBox with the different Problems
-        chooseProblem = new JComboBox<String>(problems);
+        chooseProblem = new JComboBox(problems);
         c.gridx = 0;
         c.gridy = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;

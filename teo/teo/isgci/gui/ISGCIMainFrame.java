@@ -94,7 +94,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
             "3-Colourability", "Cutwidth", "Hamiltonian cycle",
             "Hamiltonian path", "Weighted feedback vertex set",
             "Feedback vertex set" };
-    protected JComboBox<String> chooseProblem;
+    protected JComboBox chooseProblem;
 
     // New added for Graph Browser
     protected NodeList classesList;
@@ -368,7 +368,7 @@ public class ISGCIMainFrame extends JFrame implements WindowListener,
         TitledBorder prob = BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.black), "Problem:");
         JLabel l_color = new JLabel("Color for");
-        chooseProblem = new JComboBox<String>(problems);
+        chooseProblem = new JComboBox(problems);
         probPanel.setBorder(prob);
         probPanel.add(l_color);
         probPanel.add(chooseProblem);

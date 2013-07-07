@@ -18,11 +18,11 @@ import teo.isgci.gc.GraphClass;
  * this subset from being selected.
  * 
  * @author Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu, Moritz
- *         Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ *         Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  */
 public class NodeListVisibilityHandler implements ListSelectionListener,
-        ListCellRenderer<GraphClass> {
+        ListCellRenderer {
 
     private Set<GraphClass> deactivated = new HashSet<GraphClass>();
     private LatexGraphics latex;
@@ -77,9 +77,8 @@ public class NodeListVisibilityHandler implements ListSelectionListener,
      * Grays out the deactivated entries.
      */
     @Override
-    public Component getListCellRendererComponent(
-            JList<? extends GraphClass> list, GraphClass gc, int index,
-            boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList list, Object gc,
+            int index, boolean isSelected, boolean cellHasFocus) {
 
         LatexLabel label = latex.newLabel(((GraphClass) gc).toString());
 

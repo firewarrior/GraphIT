@@ -22,10 +22,11 @@ import com.mxgraph.view.mxGraph;
  * {@link com.mxgraph.view.mxGraph}. Propagates changes (adding and deleting
  * vertices and edges) from the mxGraph to the Graph. If the Graph is also an
  * instance of ListenableGraph, changes from the Graph will also be propagated
- * to the mxGraph.
+ * to the mxGraph. Dangling edges are not supported and will not be added.
  * 
  * 
- * @author GraphIT
+ * @author Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu, Moritz
+ *         Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  * @param <V>
  *            type of the vertices of the corresponding
@@ -253,7 +254,8 @@ public class mxJGraphTAdapter<V, E> extends mxGraph implements
 
     private void internallyAddJGraphTEdge(V source, V target, E edge) {
         jtElementBeingAdded.add(edge);
-        if (target != null) {
+        // prevent dangling edges
+        if (source != null && target != null) {
             graphT.addEdge(source, target, edge);
         }
         jtElementBeingAdded.remove(edge);

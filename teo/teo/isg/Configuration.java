@@ -399,7 +399,8 @@ public class Configuration extends SmallGraph {
                 }
 
                 /*
-                 * alle außer identische Trafo zu /Transforamtionen/ hinzufügen
+                 * alle außer identische Trafo zu /Transforamtionen/
+                 * hinzufügen
                  */
                 for (j = 0; j < cntOpt; j++)
                     if (transformation[j] != j) {
@@ -575,10 +576,10 @@ public class Configuration extends SmallGraph {
 
         /*
          * Speichere in Grad[0][i] den Grad des Knoten i in der Configuration
-         * this Analog für die Configuration c wenn der Index 1 gewählt ist. Das
-         * ganze aber nur dann, wenn in der jeweiligen Maske das Flag für den
-         * entsprechenden Knoten gesetzt ist. Nebenbei wird ermittelt, ob die
-         * Gradzahlen in beiden Graphen übereinsstimmen.
+         * this Analog für die Configuration c wenn der Index 1 gewählt ist.
+         * Das ganze aber nur dann, wenn in der jeweiligen Maske das Flag für
+         * den entsprechenden Knoten gesetzt ist. Nebenbei wird ermittelt, ob
+         * die Gradzahlen in beiden Graphen übereinsstimmen.
          */
         for (i = 0; i < cnt; i++) {
             int h;
@@ -740,7 +741,8 @@ public class Configuration extends SmallGraph {
         }
 
         /*
-         * jetzt Knoten entfernen, so daß keine optionalen Kanten mehr vorkommen
+         * jetzt Knoten entfernen, so daß keine optionalen Kanten mehr
+         * vorkommen
          */
         {
             Graph h = new Graph(cnt);

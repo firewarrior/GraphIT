@@ -11,7 +11,7 @@ import com.mxgraph.view.mxCellState;
  * Custom mxCellMarker to change highlighting of vertices and edges.
  * 
  * @author Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu, Moritz
- *         Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ *         Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  */
 public class CellHighlighter extends mxCellMarker {

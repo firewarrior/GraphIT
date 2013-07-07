@@ -19,7 +19,6 @@ import java.awt.MediaTracker;
 import teo.isgci.util.Latex;
 import teo.isgci.util.LatexGlyph;
 
-
 public class LatexGraphics extends Latex {
 
     /**

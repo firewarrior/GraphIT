@@ -25,7 +25,7 @@ import teo.isgci.gc.GraphClass;
  * Creates a context menu for edges and offers an information dialogue.
  * 
  * @author ISGCI, Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu,
- *         Moritz Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ *         Moritz Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  */
 public class EdgePopup extends JPopupMenu implements ActionListener {

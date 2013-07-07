@@ -29,7 +29,7 @@ import teo.isgci.util.Latex2Html;
  * superclasses, information and change name.
  * 
  * @author ISGCI, Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu,
- *         Moritz Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ *         Moritz Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  */
 public class NodePopup extends JPopupMenu implements ActionListener {

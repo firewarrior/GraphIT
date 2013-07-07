@@ -16,7 +16,6 @@ import java.io.PrintWriter;
 
 import teo.isgci.util.Latex2Html;
 
-
 public class XsltUtil {
 
     /**

@@ -16,7 +16,6 @@ import java.util.Set;
 
 import teo.isgci.util.LessLatex;
 
-
 /**
  * A GraphClass defined by intersection/union of two or more other GraphClasses.
  */

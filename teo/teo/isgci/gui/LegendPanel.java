@@ -15,7 +15,7 @@ import javax.swing.WindowConstants;
  * Display the legend for the matching of complexity classes and their colors.
  * 
  * @author Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu, Moritz
- *         Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ *         Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  */
 public class LegendPanel extends JPanel {

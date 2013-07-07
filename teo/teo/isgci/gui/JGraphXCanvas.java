@@ -50,22 +50,15 @@ import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
 import com.mxgraph.view.mxGraph;
 
 /**
- * Handles the drawn mxGraph. This includes: 
- * - drawing a new mxGraph on top of a Graph 
- * - layouting the mxGraph 
- * - colors the mxGraph for a given Problem 
- * - hiding sub- and superclasses 
- * - marking unproper inclusions 
- * - restoring the original mxGraph 
- * - zoom functionality 
- * - undo/redo 
- * - highlighted selection of edges and vertices 
- * - panning 
- * - context menu on edges and vertices 
- * - tooltips on vertices
+ * Handles the drawn mxGraph. This includes: - drawing a new mxGraph on top of a
+ * Graph - layouting the mxGraph - colors the mxGraph for a given Problem -
+ * hiding sub- and superclasses - marking unproper inclusions - restoring the
+ * original mxGraph - zoom functionality - undo/redo - highlighted selection of
+ * edges and vertices - panning - context menu on edges and vertices - tooltips
+ * on vertices
  * 
  * @author Fabian Brosda, Thorsten Breitkreutz, Cristiana Grigoriu, Moritz
- *         Heine, Florian Krönert, Thorsten Sauter, Christian Stohr
+ *         Heine, Florian Kroenert, Thorsten Sauter, Christian Stohr
  * 
  */
 public class JGraphXCanvas implements MouseListener, MouseWheelListener,
@@ -448,8 +441,7 @@ public class JGraphXCanvas implements MouseListener, MouseWheelListener,
             }
             adapter.setCellStyles(mxConstants.STYLE_STARTARROW,
                     mxConstants.ARROW_DIAMOND, unproperEdges.toArray());
-        }
-        finally {
+        } finally {
             adapter.getModel().addListener(mxEvent.UNDO, undoHandler);
             adapter.getView().addListener(mxEvent.UNDO, undoHandler);
         }
